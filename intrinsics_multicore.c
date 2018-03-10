@@ -17,6 +17,7 @@
 #include <omp.h>
 #include <sys/time.h>
 
+#define BYTES_IN_VECT 32
 #define N_FA_ARRAYS 8 // from fa0 to fa7
 #define N_THREADS 8
 #define MAXFLOPS_ITERS 1000000000
@@ -119,7 +120,7 @@ int main() {
   fprintf(stderr,"%f\n\n",sum(fa0[0]));
 
   double e_time = (double)((t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec)/1000000;
-  double gflops = (double)((long)N_THREADS*MAXFLOPS_ITERS*N_FA_ARRAYS*(32/4)*2)/1000000000;
+  double gflops = (double)((long)N_THREADS*MAXFLOPS_ITERS*N_FA_ARRAYS*(BYTES_IN_VECT/4)*2)/1000000000;
   fprintf(stderr, "Used %fs\n",e_time);
   fprintf(stderr, "Computed %.3f GFLOPS\n", gflops);
   fprintf(stderr, "%f GFLOPS/s\n",gflops/e_time);

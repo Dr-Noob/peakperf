@@ -11,7 +11,7 @@ OUTPUT2=knl.out
 
 all: Makefile $(SOURCE1) $(SOURCE2)
 	$(CXX) $(SOURCE1) $(CXXFLAGS1) -o $(OUTPUT1)
-	#$(CXX) $(SOURCE2) $(CXXFLAGS2) -o $(OUTPUT2)
+	$(CXX) $(SOURCE2) $(CXXFLAGS2) -o $(OUTPUT2)
 
 
 clean:
