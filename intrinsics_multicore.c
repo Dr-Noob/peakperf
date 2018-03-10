@@ -3,7 +3,7 @@
 #include <stdio.h>
 #include <omp.h>
 
-#define MAXFLOPS_ITERS 1000000000
+#define MAXFLOPS_ITERS 10000000000
 #define FLOPS_ARRAY_SIZE (1024*1024)
 #define LOOP_COUNT 64
 #define N_THREADS 8
@@ -37,7 +37,7 @@ __m256 fb6[N_THREADS];
 __m256 fb7[N_THREADS];
 
 void compute(int index, __m256 mult) {
-  for(int i=0; i<MAXFLOPS_ITERS; i++) {
+  for(long i=0; i<MAXFLOPS_ITERS; i++) {
       fa0[index] = _mm256_fmadd_ps(mult, fa0[index], fb0[index]);
       fa1[index] = _mm256_fmadd_ps(mult, fa1[index], fb1[index]);
       fa2[index] = _mm256_fmadd_ps(mult, fa2[index], fb2[index]);
@@ -88,22 +88,9 @@ can be vectorized]
 [icc could be able to do so but it is
 really bad when using instrinsics]
 
-#pragma omp parallel for private(i)
-  for(t=0; t<N_THREADS; t++) {
-    for(i=0; i<MAXFLOPS_ITERS; i++) {
-        fa0[t] = _mm256_fmadd_ps(mult, fa0[t], fb0[t]);
-        fa1[t] = _mm256_fmadd_ps(mult, fa1[t], fb1[t]);
-        fa2[t] = _mm256_fmadd_ps(mult, fa2[t], fb2[t]);
-        fa3[t] = _mm256_fmadd_ps(mult, fa3[t], fb3[t]);
-        fa4[t] = _mm256_fmadd_ps(mult, fa4[t], fb4[t]);
-        fa5[t] = _mm256_fmadd_ps(mult, fa5[t], fb5[t]);
-        fa6[t] = _mm256_fmadd_ps(mult, fa6[t], fb6[t]);
-        fa7[t] = _mm256_fmadd_ps(mult, fa7[t], fb7[t]);
-    }
-  }
 */
 
-#pragma omp parallel for private(i)
+#pragma omp parallel for
   for(t=0; t<N_THREADS; t++)
     compute(t,mult);
 
