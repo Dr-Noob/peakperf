@@ -1,17 +1,16 @@
 CXX=gcc
 
-CXXFLAGS1=-O3 -march=core-avx2 -fopenmp
-CXXFLAGS2=-O3 -march=knl -fopenmp
+CXXFLAGS1=-O2 -march=core-avx2 	-fopenmp 	-DAVX_256 -DN_THREADS=8
+CXXFLAGS2=-O2 -march=knl 				-fopenmp	-DAVX_512 -DN_THREADS=256
 
-SOURCE1=intrinsics_multicore.c
-SOURCE2=knl.c
+SOURCE=FLOPS.c
 
-OUTPUT1=multi.out
-OUTPUT2=knl.out
+OUTPUT1=256.out
+OUTPUT2=512.out
 
-all: Makefile $(SOURCE1) $(SOURCE2)
-	$(CXX) $(SOURCE1) $(CXXFLAGS1) -o $(OUTPUT1)
-	$(CXX) $(SOURCE2) $(CXXFLAGS2) -o $(OUTPUT2)
+$(OUTPUT1) $(OUTPUT2): Makefile $(SOURCE)
+	$(CXX) $(SOURCE) $(CXXFLAGS1) -o $(OUTPUT1)
+	$(CXX) $(SOURCE) $(CXXFLAGS2) -o $(OUTPUT2)
 
 
 clean:
