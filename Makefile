@@ -1,7 +1,7 @@
 CXX=gcc
 
-CXXFLAGS1=-O2 -march=core-avx2 	-fopenmp 	-DAVX_256 -DN_THREADS=8
-CXXFLAGS2=-O2 -march=knl 				-fopenmp	-DAVX_512 -DN_THREADS=256
+CXXFLAGS1=-O2 -march=core-avx2 -fopenmp -DAVX_256 -DN_THREADS=8
+CXXFLAGS2=-O2 -march=knl -fopenmp -DAVX_512 -DN_THREADS=256
 
 SOURCE=FLOPS.c
 
