@@ -1,19 +1,22 @@
 CXX=gcc
 
-CXXFLAGS1=-O2 -march=core-avx2 -fopenmp -DAVX_256 -DN_THREADS=8
-CXXFLAGS2=-O2 -march=knl -fopenmp -DAVX_512 -DN_THREADS=256
+CXXFLAGS_HASWELL=-O2 -march=core-avx2 -fopenmp -DAVX_256 -DN_THREADS=8
+CXXFLAGS_KNL=-O2 -march=knl -fopenmp -DAVX_512 -DN_THREADS=256
 
-MAIN=FLOPS.c
+MAIN=main.c
 HASWELL=Haswell.c
 KNL=Knl.c
 
-OUTPUT1=256.out
-OUTPUT2=512.out
+OUTPUT_HASWELL=haswell_256
+OUTPUT_KNL=knl_512
 
-$(OUTPUT1) $(OUTPUT2): Makefile $(MAIN) $(HASWELL) $(KNL)
-	$(CXX) $(MAIN) $(HASWELL) $(CXXFLAGS1) -o $(OUTPUT1)
-	$(CXX) $(MAIN) $(KNL) $(CXXFLAGS2) -o $(OUTPUT2)
+all: $(OUTPUT_HASWELL) $(OUTPUT_KNL)
 
+$(OUTPUT_HASWELL): Makefile $(MAIN) $(HASWELL)
+	$(CXX) $(MAIN) $(HASWELL) $(CXXFLAGS_HASWELL) -o $(OUTPUT_HASWELL)
+
+$(OUTPUT_KNL): Makefile $(MAIN) $(KNL)
+	$(CXX) $(MAIN) $(KNL) $(CXXFLAGS_KNL) -o $(OUTPUT_KNL)
 
 clean:
-	@rm $(OUTPUT1) $(OUTPUT2)
+	@rm $(OUTPUT_HASWELL) $(OUTPUT_KNL)

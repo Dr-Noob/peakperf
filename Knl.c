@@ -32,11 +32,9 @@ void initialize(float fa[FLOPS_ARRAY_SIZE]) {
   mult = _mm512_set1_ps(0.1f);
 
   for(int i=0;i<N_THREADS;i++) {
-    for(int j=0;j<16;j++)
+    for(int j=0;j<SIZE;j++)
       farr[i][j] = _mm512_set_ps (fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],
                                   fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++]);
-
-    farr[i][16] = _mm512_set_ps (0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0);
   }
 }
 

@@ -29,12 +29,9 @@ void initialize(float fa[FLOPS_ARRAY_SIZE]) {
   int c = 0;
   mult = _mm256_set1_ps(0.1f);
 
-  for(int i=0;i<N_THREADS;i++) {
-    for(int j=0;j<SIZE-1;j++)
+  for(int i=0;i<N_THREADS;i++)
+    for(int j=0;j<SIZE;j++)
       farr[i][j] = _mm256_set_ps (fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++]);
-
-    farr[i][SIZE-1] = _mm256_set_ps (0,0,0,0,0,0,0,0);
-  }
 }
 
 float summarize() {
