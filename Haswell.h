@@ -1,7 +1,7 @@
 #ifndef __HASWELL__
 #define __HASWELL__
+#include "Arch.h"
 
-#include <immintrin.h>
 #define MAXFLOPS_ITERS 1000000000
 #define BYTES_IN_VECT 32
 #define TYPE __m256
@@ -18,9 +18,5 @@
 5   -> Haswell FMA latency
 0.5 -> Haswell FMA CPI
 ***/
-
-void compute(int index);
-void initialize(float fa[FLOPS_ARRAY_SIZE]);
-float summarize();
 
 #endif

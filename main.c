@@ -19,7 +19,7 @@ int main(int argc, char* argv[]) {
 
   initialize(fa);
 
-  printf("Running test '%s' with %d iterations on %d threads...\n",TEST_NAME,MAXFLOPS_ITERS,N_THREADS);
+  printf("Running test '%s' with %li iterations on %d threads...\n",TEST_NAME,MAXFLOPS_ITERS,N_THREADS);
   struct timeval t0,t1;
   gettimeofday(&t0, 0);
 #pragma omp parallel for
