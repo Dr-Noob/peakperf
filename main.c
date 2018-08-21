@@ -4,6 +4,7 @@
 #include <omp.h>
 #include <math.h>
 #include <sys/time.h>
+#include "getarg.h"
 #define DEFAULT_N_TRIALS      10
 #define DEFAULT_WARMUP_TRIALS 2
 
@@ -30,8 +31,21 @@ int main(int argc, char* argv[]) {
     printf(RED "Usage: %s [number_trials number_warmup_trials]" RESET "\n",argv[0]);
     return EXIT_FAILURE;
   } else if (argc == 3) {
-    nTrials = atoi(argv[1]);
-    nWarmupTrials = atoi(argv[2]);
+    nTrials = getarg_int(1,argv);
+    if(errn != 0) {
+      printf(RED "ERROR: number_trials is not valid: ");
+      printerror();
+      printf(RESET);
+      return EXIT_FAILURE;
+    }
+    nWarmupTrials = getarg_int(2,argv);
+    if(errn != 0) {
+      printf(RED "ERROR: number_warmup_trials is not valid: ");
+      printerror();
+      printf(RESET);
+      return EXIT_FAILURE;
+    }
+
     if(nTrials <= 0) {
       printf(RED "ERROR: number_trials must be greater than zero" RESET "\n");
       return EXIT_FAILURE;
