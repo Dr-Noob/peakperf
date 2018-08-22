@@ -18,6 +18,8 @@
   #include "Arch/512_12.h"
 #elif defined AVX_256_10
   #include "Arch/256_10.h"
+#elif defined AVX_256_8
+  #include "Arch/256_8.h"
 #endif
 
 float fa[FLOPS_ARRAY_SIZE];
