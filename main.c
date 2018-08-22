@@ -5,6 +5,7 @@
 #include <math.h>
 #include <sys/time.h>
 #include "getarg.h"
+
 #define DEFAULT_N_TRIALS      10
 #define DEFAULT_WARMUP_TRIALS 2
 
@@ -13,10 +14,10 @@
 #define GREEN "\x1b[42m"
 #define RESET "\x1b[0m"
 
-#ifdef AVX_512
-  #include "Knl.h"
-#elif defined AVX_256
-  #include "Haswell.h"
+#ifdef AVX_512_12
+  #include "Arch/512_12.h"
+#elif defined AVX_256_10
+  #include "Arch/256_10.h"
 #endif
 
 float fa[FLOPS_ARRAY_SIZE];

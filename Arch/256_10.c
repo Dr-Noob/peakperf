@@ -1,4 +1,4 @@
-#include "Haswell.h"
+#include "256_10.h"
 
 TYPE mult;
 TYPE farr[N_THREADS][SIZE] __attribute__((aligned(64)));

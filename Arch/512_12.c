@@ -1,4 +1,4 @@
-#include "Knl.h"
+#include "512_12.h"
 
 TYPE mult;
 TYPE farr[N_THREADS][SIZE] __attribute__((aligned(64)));
