@@ -1,6 +1,7 @@
 CXX=gcc
 
-CXXFLAGS_GENERIC=-O2 -fopenmp -lm
+SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wstrict-overflow=5 -Wformat=2
+CXXFLAGS_GENERIC=-O2 -fopenmp -lm $(SANITY_FLAGS)
 CXXFLAGS_HASWELL = -DTEST_NAME="\"Haswell - 256 bits\"" -DAVX_256_10 -DN_THREADS=8   -march=core-avx2 $(CXXFLAGS_GENERIC)
 CXXFLAGS_SKYLAKE = -DTEST_NAME="\"Skylake - 256 bits\"" -DAVX_256_8  -DN_THREADS=4   -march=core-avx2 $(CXXFLAGS_GENERIC)
 CXXFLAGS_KNL     = -DTEST_NAME="\"KNL - 512 bits\""     -DAVX_512_12 -DN_THREADS=256 -march=knl       $(CXXFLAGS_GENERIC)

@@ -25,8 +25,8 @@
 
     for(int i=0;i<N_THREADS;i++) {
       for(int j=0;j<SIZE;j++)
-        farr[i][j] = _mm512_set_ps (fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],
-                                    fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++]);
+        farr[i][j] = _mm512_set_ps (fa[i*SIZE+j],fa[i*SIZE+j+1],fa[i*SIZE+j+2],fa[i*SIZE+j+3],fa[i*SIZE+j+4],fa[i*SIZE+j+5],fa[i*SIZE+j+6],fa[i*SIZE+j+7],
+                                    fa[i*SIZE+j+8],fa[i*SIZE+j+9],fa[i*SIZE+j+10],fa[i*SIZE+j+11],fa[i*SIZE+j+12],fa[i*SIZE+j+13],fa[i*SIZE+j+14],fa[i*SIZE+j+15]);
     }
   }
 
@@ -78,12 +78,11 @@
   }
 
   static void initialize(float fa[FLOPS_ARRAY_SIZE]) {
-    int c = 0;
     mult = _mm256_set1_ps(0.1f);
 
     for(int i=0;i<N_THREADS;i++)
       for(int j=0;j<SIZE;j++)
-        farr[i][j] = _mm256_set_ps (fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++],fa[c++]);
+        farr[i][j] = _mm256_set_ps (fa[i*SIZE+j],fa[i*SIZE+j+1],fa[i*SIZE+j+2],fa[i*SIZE+j+3],fa[i*SIZE+j+4],fa[i*SIZE+j+5],fa[i*SIZE+j+6],fa[i*SIZE+j+7]);
   }
 
   static float summarize() {

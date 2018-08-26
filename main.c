@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
 
   printf("\n" BOLD "Benchmarking FLOPS by Dr-Noob(github.com/Dr-Noob/FLOPS)." RESET "\n");
   printf("   Test name: %s\n",TEST_NAME);
-  printf("  Iterations: %li\n",MAXFLOPS_ITERS);
+  printf("  Iterations: %d\n",MAXFLOPS_ITERS);
   printf("       GFLOP: %.2f\n",gflops);
   printf("     Threads: %d\n\n", N_THREADS);
 
