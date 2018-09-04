@@ -70,3 +70,4 @@ Here follows a table where I'll be updating results using different processors u
 |:-------------------------:|:----------------:|:------------------------:|:-------:|
 | Intel i7-4790K(Haswell)   | `511.61 GFLOP/S` | `511.38 +- 0.01 GFLOP/S` | `~0.23` |
 | Intel i5-6400(Skylake)    | `396.67 GFLOP/S` | `396.61 +- 0.01 GFLOP/S` | `~0.06` |
+| AMD Ryzen 2600           | `357.60 GFLOP/S` | `355.84 +- 0.04 GFLOP/S` | `~1.10` |
