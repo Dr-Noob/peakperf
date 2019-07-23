@@ -1,7 +1,8 @@
 CXX=gcc
 
-SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wstrict-overflow=5 -Wformat=2
-CXXFLAGS_GENERIC=-O2 -fopenmp -lm $(SANITY_FLAGS)
+SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
+CXXFLAGS_GENERIC=-std=c99 -O2 $(SANITY_FLAGS)
+CXXFLAGS_LINK=-lm -fopenmp
 CXXFLAGS_HASWELL = -DTEST_NAME="\"Haswell - 256 bits\"" -DAVX_256_10 -DN_THREADS=8   -march=core-avx2 $(CXXFLAGS_GENERIC)
 CXXFLAGS_SKYLAKE = -DTEST_NAME="\"Skylake - 256 bits\"" -DAVX_256_8  -DN_THREADS=4   -march=core-avx2 $(CXXFLAGS_GENERIC)
 CXXFLAGS_KNL     = -DTEST_NAME="\"KNL - 512 bits\""     -DAVX_512_12 -DN_THREADS=256 -march=knl       $(CXXFLAGS_GENERIC)
@@ -30,16 +31,16 @@ OUTPUT_KNL=knl_512
 all: $(OUTPUT_HASWELL) $(OUTPUT_SKYLAKE) $(OUTPUT_KNL) $(OUTPUT_ZEN_PLUS)
 
 $(OUTPUT_HASWELL): Makefile $(MAIN) $(HASWELL) $(HASWELL_HEADERS)
-	$(CXX) $(CXXFLAGS_HASWELL) $(MAIN) $(HASWELL) -o $(OUTPUT_HASWELL)
+	$(CXX) $(CXXFLAGS_HASWELL) $(MAIN) $(HASWELL) $(CXXFLAGS_LINK) -o $(OUTPUT_HASWELL)
 
 $(OUTPUT_SKYLAKE): Makefile $(MAIN) $(SKYLAKE) $(SKYLAKE_HEADERS)
-	$(CXX) $(CXXFLAGS_SKYLAKE) $(MAIN) $(SKYLAKE) -o $(OUTPUT_SKYLAKE)
+	$(CXX) $(CXXFLAGS_SKYLAKE) $(MAIN) $(SKYLAKE) $(CXXFLAGS_LINK) -o $(OUTPUT_SKYLAKE)
 
 $(OUTPUT_ZEN_PLUS): Makefile $(MAIN) $(ZEN_PLUS) $(ZEN_PLUS_HEADERS)
-	$(CXX) $(CXXFLAGS_ZEN_PLUS) $(MAIN) $(ZEN_PLUS) -o $(OUTPUT_ZEN_PLUS)
+	$(CXX) $(CXXFLAGS_ZEN_PLUS) $(MAIN) $(ZEN_PLUS) $(CXXFLAGS_LINK) -o $(OUTPUT_ZEN_PLUS)
 
 $(OUTPUT_KNL): Makefile $(MAIN) $(KNL) $(KNL_HEADERS)
-	$(CXX) $(CXXFLAGS_KNL) $(MAIN) $(KNL) -o $(OUTPUT_KNL)
+	$(CXX) $(CXXFLAGS_KNL) $(MAIN) $(KNL) $(CXXFLAGS_LINK) -o $(OUTPUT_KNL)
 
 clean:
 	@rm $(OUTPUT_HASWELL) $(OUTPUT_KNL) $(OUTPUT_ZEN_PLUS) $(OUTPUT_SKYLAKE)
