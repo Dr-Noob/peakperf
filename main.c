@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
       printf("%5d %8.5f %8.2f *\n",trial+1, e_time, gflops/e_time);
   }
 
-  /*** CALCULATE STANDART DERIVATION ***/
+  /*** CALCULATE STANDARD DEVIATION ***/
   mean=mean/(double)nTrials;
   for(int i=0;i<nTrials;i++)
     sum += (gflops_list[i] - mean)*(gflops_list[i] - mean);
