@@ -1,21 +1,15 @@
 #ifndef __GETARG__
 #define __GETARG__
 
-extern int errn;
+#include <stdbool.h>
 
-/***
-Returns a int representing arg at the passed index
-If index is out of bounts, returns INVALID_INDEX
-If arg is not a number, returns INVALID_ARG
-If integer is out of limits, returns OVERFLOW, or UNDERFLOW
-***/
+#define INVALID_N_THREADS -1
 
-int getarg_int(int index, char* argv[]);
+bool parseArgs(int argc, char* argv[]);
 
-/***
-Prints the error
-***/
-
-void printerror();
+bool showHelp();
+int get_n_trials();
+int get_warmup_trials();
+int get_n_threads();
 
 #endif

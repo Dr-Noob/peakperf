@@ -7,50 +7,33 @@
 #include "getarg.h"
 #include "Arch/Arch.h"
 
-#define DEFAULT_N_TRIALS      10
-#define DEFAULT_WARMUP_TRIALS 2
-
 #define RED   "\x1b[31;1m"
 #define BOLD  "\x1b[1m"
 #define GREEN "\x1b[42m"
 #define RESET "\x1b[0m"
 
+void printHelp(char *argv[]) {
+  printf("Usage: %s [-h] [-r n_trials] [-w warmup_trials] [-t n_threads] \n\
+    Options: \n\
+      -h      Print this help and exit\n\
+      -r      Set the number of trials of the benchmark\n\
+      -w      Set the number of warmup trials\n\
+      -t      Set the number of threads to use\n",
+      argv[0]);
+}
+
 int main(int argc, char* argv[]) {
-  int nTrials = DEFAULT_N_TRIALS;
-  int nWarmupTrials = DEFAULT_WARMUP_TRIALS;
-
-  /*** BASIC ARGS PROCESSING ***/
-  if(argc > 3 || argc == 2) {
-    printf(RED "ERROR: Wrong number of parameters" RESET "\n");
-    printf(RED "Usage: %s [number_trials number_warmup_trials]" RESET "\n",argv[0]);
-    return EXIT_FAILURE;
-  } else if (argc == 3) {
-    nTrials = getarg_int(1,argv);
-    if(errn != 0) {
-      printf(RED "ERROR: number_trials is not valid: ");
-      printerror();
-      printf(RESET);
-      return EXIT_FAILURE;
-    }
-    nWarmupTrials = getarg_int(2,argv);
-    if(errn != 0) {
-      printf(RED "ERROR: number_warmup_trials is not valid: ");
-      printerror();
-      printf(RESET);
-      return EXIT_FAILURE;
-    }
-
-    if(nTrials <= 0) {
-      printf(RED "ERROR: number_trials must be greater than zero" RESET "\n");
-      return EXIT_FAILURE;
-    }
-    if(nWarmupTrials < 0) {
-      printf(RED "ERROR: number_warmup_trials cannot be less than zero" RESET "\n");
-      return EXIT_FAILURE;
-    }
-  }
+  if(!parseArgs(argc, argv)) return EXIT_FAILURE;
   
-  int n_threads = omp_get_max_threads();
+  if(showHelp()) {
+    printHelp(argv);
+    return EXIT_SUCCESS;
+  }
+  int nTrials = get_n_trials();
+  int nWarmupTrials = get_warmup_trials();
+  int n_threads = get_n_threads();
+  if(n_threads == INVALID_N_THREADS) n_threads = omp_get_max_threads();
+  
   int flops_array_size = SIZE*n_threads;
   struct timeval t0,t1;
   
@@ -84,8 +67,8 @@ int main(int argc, char* argv[]) {
     /*** COMPUTE TAKES PLACE HERE ***/
     gettimeofday(&t0, 0);
     #pragma omp parallel for
-      for(int t=0; t<n_threads; t++)
-        compute(farr, mult, t);
+    for(int t=0; t<n_threads; t++)
+      compute(farr, mult, t);
     gettimeofday(&t1, 0);
 
     /*** NOW CALCULATE TIME AND PERFORMANCE ***/
