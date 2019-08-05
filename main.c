@@ -5,6 +5,7 @@
 #include <math.h>
 #include <sys/time.h>
 #include "getarg.h"
+#include "Arch/Arch.h"
 
 #define DEFAULT_N_TRIALS      10
 #define DEFAULT_WARMUP_TRIALS 2
@@ -13,14 +14,6 @@
 #define BOLD  "\x1b[1m"
 #define GREEN "\x1b[42m"
 #define RESET "\x1b[0m"
-
-#ifdef AVX_512_12
-  #include "Arch/512_12.h"
-#elif defined AVX_256_10
-  #include "Arch/256_10.h"
-#elif defined AVX_256_8
-  #include "Arch/256_8.h"
-#endif
 
 int main(int argc, char* argv[]) {
   int nTrials = DEFAULT_N_TRIALS;
