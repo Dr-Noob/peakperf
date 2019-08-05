@@ -21,8 +21,8 @@
 
     for(int i=0;i<n_threads;i++) {
       for(int j=0;j<SIZE;j++)
-        farr[i][j] = _mm512_set_ps (fa[i*SIZE+j],fa[i*SIZE+j+1],fa[i*SIZE+j+2],fa[i*SIZE+j+3],fa[i*SIZE+j+4],fa[i*SIZE+j+5],fa[i*SIZE+j+6],fa[i*SIZE+j+7],
-                                    fa[i*SIZE+j+8],fa[i*SIZE+j+9],fa[i*SIZE+j+10],fa[i*SIZE+j+11],fa[i*SIZE+j+12],fa[i*SIZE+j+13],fa[i*SIZE+j+14],fa[i*SIZE+j+15]);
+        farr[i][j] = _mm512_set_ps (fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],
+                                    fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j]);
     }
   }
 #elif defined AVX_256_10 || defined AVX_256_8
@@ -41,7 +41,7 @@
     
     for(int i=0;i<n_threads;i++)
       for(int j=0;j<SIZE;j++)
-        farr[i][j] = _mm256_set_ps (fa[i*SIZE+j],fa[i*SIZE+j+1],fa[i*SIZE+j+2],fa[i*SIZE+j+3],fa[i*SIZE+j+4],fa[i*SIZE+j+5],fa[i*SIZE+j+6],fa[i*SIZE+j+7]);
+        farr[i][j] = _mm256_set_ps (fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j]);
   }
 #endif
 
