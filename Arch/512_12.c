@@ -1,6 +1,6 @@
 #include "512_12.h"
 
-void compute(int index) {
+void compute(TYPE farr[][SIZE], TYPE mult, int index) {
   for(long i=0; i<MAXFLOPS_ITERS; i++) {
       farr[index][0]  = _mm512_fmadd_ps(mult, farr[index][0], farr[index][1]);
       farr[index][2]  = _mm512_fmadd_ps(mult, farr[index][2], farr[index][3]);

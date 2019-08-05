@@ -22,8 +22,6 @@
   #include "Arch/256_8.h"
 #endif
 
-float fa[FLOPS_ARRAY_SIZE];
-
 int main(int argc, char* argv[]) {
   int nTrials = DEFAULT_N_TRIALS;
   int nWarmupTrials = DEFAULT_WARMUP_TRIALS;
@@ -58,35 +56,43 @@ int main(int argc, char* argv[]) {
       return EXIT_FAILURE;
     }
   }
-
+  
+  int n_threads = omp_get_max_threads();
+  int flops_array_size = SIZE*n_threads;
   struct timeval t0,t1;
+  
   /*** NEEDED TO COMPUTE SD ***/
-  double gflops = (double)((long)N_THREADS*MAXFLOPS_ITERS*OP_PER_IT*(BYTES_IN_VECT/4)*2)/1000000000;
+  double gflops = (double)((long)n_threads*MAXFLOPS_ITERS*OP_PER_IT*(BYTES_IN_VECT/4)*2)/1000000000;
   double e_time = 0;
   double mean = 0;
   double sd = 0;
   double sum = 0;
   double gflops_list[nTrials];
 
-  omp_set_num_threads(N_THREADS);
-  for(int i=0; i<FLOPS_ARRAY_SIZE; i++)
+  omp_set_num_threads(n_threads);
+  
+  /*** PREPARE DATA ***/
+  TYPE mult = {0};
+  TYPE farr[n_threads][SIZE] __attribute__((aligned(64)));
+  float fa[flops_array_size];
+  for(int i=0; i<flops_array_size; i++)
     fa[i] = (float)i + 0.1f;
 
-  initialize(fa);
+  initialize(n_threads, mult, farr, fa);
 
   printf("\n" BOLD "Benchmarking FLOPS by Dr-Noob(github.com/Dr-Noob/FLOPS)." RESET "\n");
   printf("   Test name: %s\n",TEST_NAME);
   printf("  Iterations: %d\n",MAXFLOPS_ITERS);
   printf("       GFLOP: %.2f\n",gflops);
-  printf("     Threads: %d\n\n", N_THREADS);
+  printf("     Threads: %d\n\n", n_threads);
 
   printf(BOLD "%6s %8s %8s" RESET "\n","Nº","Time(s)","GFLOP/S");
   for (int trial = 0; trial < nTrials+nWarmupTrials; trial++) {
     /*** COMPUTE TAKES PLACE HERE ***/
     gettimeofday(&t0, 0);
     #pragma omp parallel for
-      for(int t=0; t<N_THREADS; t++)
-        compute(t);
+      for(int t=0; t<n_threads; t++)
+        compute(farr, mult, t);
     gettimeofday(&t1, 0);
 
     /*** NOW CALCULATE TIME AND PERFORMANCE ***/
