@@ -1,7 +1,6 @@
 #ifndef __512_12__
 #define __512_12__
 
-#define MAXFLOPS_ITERS 1000000000
 #define OP_PER_IT 12
 
 #include "Arch.h"

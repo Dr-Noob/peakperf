@@ -2,7 +2,9 @@
 #define __ARCH__
 
 #include <immintrin.h>
+
 #define SIZE OP_PER_IT*2
+#define MAXFLOPS_ITERS 1000000000
 
 #ifdef AVX_512_12
   #include "512_12.h"
@@ -10,6 +12,8 @@
   #include "256_10.h"
 #elif defined AVX_256_8
   #include "256_8.h"
+#elif defined AVX_256_5 || defined AVX_256_5_NOFMA
+  #include "256_5.h" 
 #endif
 
 #ifdef AVX_512_12
@@ -25,7 +29,7 @@
                                     fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j]);
     }
   }
-#elif defined AVX_256_10 || defined AVX_256_8
+#else
   #define BYTES_IN_VECT 32
   #define TYPE __m256
   

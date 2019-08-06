@@ -1,7 +1,6 @@
 #ifndef __256_10__
 #define __256_10__
 
-#define MAXFLOPS_ITERS 1000000000
 #define OP_PER_IT 10
 
 #include "Arch.h"

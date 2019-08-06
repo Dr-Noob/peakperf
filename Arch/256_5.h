@@ -1,20 +1,17 @@
-#ifndef __256_8__
-#define __256_8__
+#ifndef __256_5__
+#define __256_5__
 
-#define OP_PER_IT 8
+#define OP_PER_IT 5
 
 #include "Arch.h"
 
 /***
 
-SIZE=2*(4/0.5)
+SIZE=2*(5/1)
 
 2   -> We have to add two operands in a add instruction
 4   -> 4 latency
 0.5 -> FMA CPI
-
-Used by:
--Skylake
 
 ***/
 
