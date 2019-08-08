@@ -49,6 +49,7 @@ All of them are optional, so you can run the microbenchmark without arguments:
 [noob@drnoob FLOPS]$ ./haswell
 Benchmarking FLOPS by Dr-Noob(github.com/Dr-Noob/FLOPS).
    Test name: Haswell - 256 bits
+         CPU: Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz
   Iterations: 1000000000
        GFLOP: 1280.00
      Threads: 8
@@ -70,21 +71,51 @@ Average performance:      511.38 +- 0.01 GFLOP/s
 To achieve the best results, you should run this test with the computer working under minimum load. If you're using Linux, a good way to do this is by issuing `systemctl isolate multi-user.target`.
 
 ## Is my CPU behaving as it should?
-To know it, run this benchmark and compare the results with the theoretical peak performance of your CPU. This can be calculated as:
+#### 1. The formula
+
+To know if you are reaching the peak performance of your CPU, run this benchmark and compare the experimental results with the theoretical peak performance of your CPU. This can be calculated as:
 
 ```
 N_CORES*FREQUENCY*2(FMA)*2(Two FMA Units)*(SIZE_OF_VECTOR/32)
 ```
 
-The size of vector will be 256 if you are using AVX, or 512 if you are using AVX512. For example, for a i7-4790K, we have:
+The size of vector will be 256 if you are using AVX, or 512 if you are using AVX512. You have to take into account if you have 1 or 2 units, or if you have FMA or not. For example, for a i7-4790K, we have:
 
 ```
 4*3.997*10^9*2*2*(256/32) = 511.61 GFLOP/S
 ```
 
-And, as you can see in the previous test, we got 511.38 GFLOP/S, which tell us test is working good and CPU is behaving exactly as we expected.
+And, as you can see in the previous test, we got 511.38 GFLOP/S, which tell us test is working good and CPU is behaving exactly as we expected. But, why did I chosse 3.997 GHz as the frequency?
 
-## How it works
+#### 2. About the frequency to use in the formula
+
+While running this microbenchmark, your CPU will be executing AVX code, so the frequency of your CPU running this code is neither your base nor your turbo frequency. Please, have a look at [this document](http://www.dolbeau.name/dolbeau/publications/peak.pdf) (on section IV.B) for more information.
+
+The vendor of your processor may have published this frequency but this happens rarely. The most effective way I know to get this frequency is to to actually measure your CPU frequency on real time while running AVX code. You can use the script [freq.sh](https://github.com/Dr-Noob/FLOPS/freq.sh) to achieve this:
+1. Run the microbenchmark in background (`output/microbench -r 4 -w 0 > /dev/null &`)
+2. Run the script (`./freq.sh`) which will fetch your CPU frequency in real time. In my case, I get:
+
+```
+Every 0,2s: grep 'MHz' /proc/cpuinfo
+
+cpu MHz         : 3997.629
+cpu MHz         : 3997.629
+cpu MHz         : 3997.630
+cpu MHz         : 3997.630
+cpu MHz         : 3997.630
+cpu MHz         : 3997.630
+cpu MHz         : 3997.629
+cpu MHz         : 3997.630
+```
+
+As you can see, i7-4790K's frequency while running AVX code is ~3997.630 MHz, which equals to 3.997 GHz. However, you may see that your frequency fluctuates too much, so that it's impossible to estimate the frequency of your CPU. This may happen due to reasons:
+1. The microbenchmark is not working correctly. You may contact me to try to fix the problem.
+2. Your CPU is not able to keep a stable frequency. This often happens if it's to hot, so the CPU is forced to low the frequency to not to melt itself.
+
+#### 3. What if I do not get the expected results?
+You should contact me to fix the problem!
+
+## How this microbenchmark works
 This test will run vectorized instructions(eg AVX, AVX512) with FMA (if available) in a loop(10^9 times, by default) in parallel, so this will try to achieve the best performance in the current CPU.
 
 ## Tests done so far
