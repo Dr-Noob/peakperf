@@ -133,21 +133,21 @@ Here follows a table where I'll be updating results using different processors u
 The following table acts as a summary of all supported microarchitectures with their characteristics:
 
 
-| Microarchitecture    | FMA                | AVX512             | Slots    | FPUs  | Latency |
-|:--------------------:|:------------------:|:------------------:|:--------:|:-----:|:-------:|
-| Sandy Bridge         | :x:                | :x:                |   5      |     1 |       5 |
-| Ivy Bridge           | :x:                | :x:                |   5      |     1 |       5 |
-| Haswell              | :heavy_check_mark: | :x:                |  10      |     2 |       5 |
-| Broadwell            | :heavy_check_mark: | :x:                |   8      |     2 |       4 |
-| Skylake              | :heavy_check_mark: | :x:                |   8      |     2 |       4 |
-| Kaby Lake            | :heavy_check_mark: | :x:                | ???      |   ??? |     ??? |
-| Coffe Lake           | :heavy_check_mark: | :x:                | ???      |   ??? |     ??? |
-| Cannon Lake          | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? |     ??? |
-| Ice Lake             | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? |     ??? |
-| KNL(Knights Landing) | :heavy_check_mark: | :heavy_check_mark: | 12       |     2 |       6 |
-| Ryzen ZEN            | :heavy_check_mark: | :x:                | ???      |   ??? |     ??? |
-| Ryzen ZEN+           | :heavy_check_mark: | :x:                | ???      |   ??? |     ??? |
+| Microarchitecture    | FMA                | AVX512             | Slots    | FPUs        | Latency      | Tested            |
+|:--------------------:|:------------------:|:------------------:|:--------:|:-----------:|:------------:|:-----------------:|
+| Sandy Bridge         | :x:                | :x:                |   5      |     1 (ADD) |       3 (ADD)|:x:                |
+| Ivy Bridge           | :x:                | :x:                |   5      |     1 (ADD) |       3 (ADD)|:x:                |
+| Haswell              | :heavy_check_mark: | :x:                |  10      |     2 (FMA) |       5 (FMA)|:heavy_check_mark: |
+| Broadwell            | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:x:                |
+| Skylake              | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:x:                |
+| Kaby Lake            | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
+| Coffe Lake           | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
+| Cannon Lake          | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
+| Ice Lake             | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
+| KNL(Knights Landing) | :heavy_check_mark: | :heavy_check_mark: | 12       |     2 (FMA) |       6 (FMA)|:x:                |
+| Ryzen ZEN            | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
+| Ryzen ZEN+           | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
 
-This data have been retrieved thanks to [Agner Fog's data](https://www.agner.org/optimize/instruction_tables.pdf) and thanks to [Wikichip](https://en.wikichip.org/wiki/WikiChip). Cells marked with an asterisk (\*) indicates that such data has been obtanied via experimentation because I did not found such information on the web (may be oudated). Cells containing ??? means I don't know this data yet and hence, the results for this microarchitecture may not be optimal (hope this can be improved in the future, when I can have the opportunity to run tests on such microarchitecture).
+This data have been retrieved thanks to [Agner Fog's data](https://www.agner.org/optimize/instruction_tables.pdf),[Wikichip](https://en.wikichip.org/wiki/WikiChip) and [Intel's Intrisics Guide](https://software.intel.com/sites/landingpage/IntrinsicsGuide). Cells marked with an asterisk (\*) indicates that such data has been obtanied via experimentation because I did not found such information on the web (may be oudated). Cells containing ??? means I don't know this data yet and hence, the results for this microarchitecture may not be optimal (hope this can be improved in the future, when I can have the opportunity to run tests on such microarchitecture).
 
 _NOTE:_ "Slots" column is calculated by means of `FPUs x Latency`.

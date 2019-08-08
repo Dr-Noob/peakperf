@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
   struct timeval t0,t1;
   
   /*** NEEDED TO COMPUTE SD ***/
-  double gflops = (double)((long)n_threads*MAXFLOPS_ITERS*OP_PER_IT*(BYTES_IN_VECT/4)*2)/1000000000;
+  double gflops = (double)((long)n_threads*MAXFLOPS_ITERS*OP_PER_IT*(BYTES_IN_VECT/4)*FMA_AVAILABLE)/1000000000;
   double e_time = 0;
   double mean = 0;
   double sd = 0;

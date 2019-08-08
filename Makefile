@@ -3,8 +3,8 @@ CXX=gcc
 SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
 CXXFLAGS_GENERIC=-std=c99 -O2 $(SANITY_FLAGS)
 CXXFLAGS_LINK=-lm -fopenmp
-CXXFLAGS_SANDY_BRIDGE    = -DTEST_NAME="\"Sandy Bridge - 256 bits (No FMA) \"" -DAVX_256_5_NOFMA -march=sandybridge    $(CXXFLAGS_GENERIC)
-CXXFLAGS_IVY_BRIDGE      = -DTEST_NAME="\"Ivy Bridge - 256 bits (No FMA)\""    -DAVX_256_5_NOFMA -march=ivybridge      $(CXXFLAGS_GENERIC)
+CXXFLAGS_SANDY_BRIDGE    = -DTEST_NAME="\"Sandy Bridge - 256 bits (No FMA) \"" -DAVX_256_3_NOFMA -march=sandybridge    $(CXXFLAGS_GENERIC)
+CXXFLAGS_IVY_BRIDGE      = -DTEST_NAME="\"Ivy Bridge - 256 bits (No FMA)\""    -DAVX_256_3_NOFMA -march=ivybridge      $(CXXFLAGS_GENERIC)
 CXXFLAGS_HASWELL         = -DTEST_NAME="\"Haswell - 256 bits\""                -DAVX_256_10      -march=haswell        $(CXXFLAGS_GENERIC)
 CXXFLAGS_SKYLAKE         = -DTEST_NAME="\"Skylake - 256 bits\""                -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_BROADWELL       = -DTEST_NAME="\"Broadwell - 256 bits\""              -DAVX_256_8       -march=broadwell      $(CXXFLAGS_GENERIC)
@@ -21,11 +21,11 @@ CXXFLAGS_ZEN_PLUS        = -DTEST_NAME="\"ZEN+ - 256 bits\""                   -
 ARCH_DIR=Arch
 MAIN=main.c getarg.c cpufetch.c
 
-SANDY_BRIDGE=$(ARCH_DIR)/256_5_nofma.c
-SANDY_BRIDGE_HEADERS=$(ARCH_DIR)/256_5.h $(ARCH_DIR)/Arch.h
+SANDY_BRIDGE=$(ARCH_DIR)/256_3_nofma.c
+SANDY_BRIDGE_HEADERS=$(ARCH_DIR)/256_3_nofma.h $(ARCH_DIR)/Arch.h
 
-IVY_BRIDGE=$(ARCH_DIR)/256_5_nofma.c
-IVY_BRIDGE_HEADERS=$(ARCH_DIR)/256_5.h $(ARCH_DIR)/Arch.h
+IVY_BRIDGE=$(ARCH_DIR)/256_3_nofma.c
+IVY_BRIDGE_HEADERS=$(ARCH_DIR)/256_3_nofma.h $(ARCH_DIR)/Arch.h
 
 HASWELL=$(ARCH_DIR)/256_10.c
 HASWELL_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
