@@ -119,14 +119,16 @@ You should contact me to fix the problem!
 This test will run vectorized instructions(eg AVX, AVX512) with FMA (if available) in a loop(10^9 times, by default) in parallel, so this will try to achieve the best performance in the current CPU.
 
 ## Tests done so far
-Here follows a table where I'll be updating results using different processors using this benchmark:
+Here follows a table where I'll be updating results using different processors using this benchmark.
 
-| CPU                       | Peak performance | Results                  | Loss    |
-|:-------------------------:|:----------------:|:------------------------:|:-------:|
-| Intel i7-4790K (Haswell)  | `511.61 GFLOP/S` | `511.38 +- 0.01 GFLOP/S` | `~0.23` |
-| Intel i7-5500U (Broadwell)| `185.53 GFLOP/S` | `185.23 +- 0.05 GFLOP/S` | `~0.30` |
-| Intel i5-6400 (Skylake)   | `396.67 GFLOP/S` | `396.61 +- 0.01 GFLOP/S` | `~0.06` |
-| AMD Ryzen 2600 (Zen+)     | `357.60 GFLOP/S` | `355.84 +- 0.04 GFLOP/S` | `~1.10` |
+| CPU                          | AVX Freq    | PP (Formula)     | PP (Experimental)        | Loss    |
+|:----------------------------:|:-----------:|:----------------:|:------------------------:|:-------:|
+| Intel i7-4790K (Haswell)     | `3.997 GHz` | `511.61 GFLOP/S` | `511.43 +- 0.01 GFLOP/S` | `0.03%` |
+| Intel i7-5500U (Broadwell)   | `2.895 GHz` | `185.28 GFLOP/S` | `183.03 +- 0.28 GFLOP/S` | `1.21%` |
+| Intel i7-8700  (Coffe Lake)  | `4.300 GHz` | `825.60 GFLOP/S` | `823.83 +- 0.01 GFLOP/S` | `0.21%` |
+
+_NOTE_: On some machines, I'm not root or even the person running the microbenchmark, in which case, the possible overhead (because of not running the microbenchmark in a adequate environment) may deteriorate the results.
+
 
 ## Microarchitecture table
 
@@ -138,10 +140,10 @@ The following table acts as a summary of all supported microarchitectures with t
 | Sandy Bridge         | :x:                | :x:                |   5      |     1 (ADD) |       3 (ADD)|:x:                |
 | Ivy Bridge           | :x:                | :x:                |   5      |     1 (ADD) |       3 (ADD)|:x:                |
 | Haswell              | :heavy_check_mark: | :x:                |  10      |     2 (FMA) |       5 (FMA)|:heavy_check_mark: |
-| Broadwell            | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:x:                |
+| Broadwell            | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:heavy_check_mark: |
 | Skylake              | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:x:                |
 | Kaby Lake            | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
-| Coffe Lake           | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
+| Coffe Lake           | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:heavy_check_mark: |
 | Cannon Lake          | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
 | Ice Lake             | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
 | KNL(Knights Landing) | :heavy_check_mark: | :heavy_check_mark: | 12       |     2 (FMA) |       6 (FMA)|:x:                |
