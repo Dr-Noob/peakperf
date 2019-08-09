@@ -12,6 +12,8 @@
   #include "256_10.h"
 #elif defined AVX_256_8
   #include "256_8.h"
+#elif defined AVX_256_5
+  #include "256_5.h"  
 #elif defined AVX_256_3_NOFMA
   #include "256_3_nofma.h"
 #endif

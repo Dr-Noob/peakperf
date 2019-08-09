@@ -15,8 +15,8 @@ CXXFLAGS_CANNON_LAKE_512 = -DTEST_NAME="\"Cannon Lake - 512 bits\""            -
 CXXFLAGS_ICE_LAKE_256    = -DTEST_NAME="\"Ice Lake - 256 bits\""               -DAVX_256_10      -march=icelake-client $(CXXFLAGS_GENERIC)
 CXXFLAGS_ICE_LAKE_512    = -DTEST_NAME="\"Ice Lake - 512 bits\""               -DAVX_256_10      -march=icelake-server $(CXXFLAGS_GENERIC)
 CXXFLAGS_KNL             = -DTEST_NAME="\"KNL - 512 bits\""                    -DAVX_512_12      -march=knl            $(CXXFLAGS_GENERIC)
-CXXFLAGS_ZEN             = -DTEST_NAME="\"ZEN  - 256 bits\""                   -DAVX_256_10      -march=znver1         $(CXXFLAGS_GENERIC)
-CXXFLAGS_ZEN_PLUS        = -DTEST_NAME="\"ZEN+ - 256 bits\""                   -DAVX_256_10      -march=znver1         $(CXXFLAGS_GENERIC)
+CXXFLAGS_ZEN             = -DTEST_NAME="\"ZEN  - 256 bits\""                   -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
+CXXFLAGS_ZEN_PLUS        = -DTEST_NAME="\"ZEN+ - 256 bits\""                   -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
 
 ARCH_DIR=Arch
 MAIN=main.c getarg.c cpufetch.c
@@ -57,11 +57,11 @@ ICE_LAKE_512_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
 KNL=$(ARCH_DIR)/512_12.c
 KNL_HEADERS=$(ARCH_DIR)/512_12.h $(ARCH_DIR)/Arch.h
 
-ZEN=$(ARCH_DIR)/256_10.c
-ZEN_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
+ZEN=$(ARCH_DIR)/256_5.c
+ZEN_HEADERS=$(ARCH_DIR)/256_5.h $(ARCH_DIR)/Arch.h
 
-ZEN_PLUS=$(ARCH_DIR)/256_10.c
-ZEN_PLUS_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
+ZEN_PLUS=$(ARCH_DIR)/256_5.c
+ZEN_PLUS_HEADERS=$(ARCH_DIR)/256_5.h $(ARCH_DIR)/Arch.h
 
 OUTPUT_DIR=output
 $(shell mkdir -p $(OUTPUT_DIR))

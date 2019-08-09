@@ -134,11 +134,10 @@ _NOTE_: On some machines, I'm not root or even the person running the microbench
 
 The following table acts as a summary of all supported microarchitectures with their characteristics:
 
-
 | Microarchitecture    | FMA                | AVX512             | Slots    | FPUs        | Latency      | Tested            |
 |:--------------------:|:------------------:|:------------------:|:--------:|:-----------:|:------------:|:-----------------:|
-| Sandy Bridge         | :x:                | :x:                |   5      |     1 (ADD) |       3 (ADD)|:x:                |
-| Ivy Bridge           | :x:                | :x:                |   5      |     1 (ADD) |       3 (ADD)|:x:                |
+| Sandy Bridge         | :x:                | :x:                |   3      |     1 (ADD) |       3 (ADD)|:x:                |
+| Ivy Bridge           | :x:                | :x:                |   3      |     1 (ADD) |       3 (ADD)|:x:                |
 | Haswell              | :heavy_check_mark: | :x:                |  10      |     2 (FMA) |       5 (FMA)|:heavy_check_mark: |
 | Broadwell            | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:heavy_check_mark: |
 | Skylake              | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:x:                |
@@ -147,8 +146,8 @@ The following table acts as a summary of all supported microarchitectures with t
 | Cannon Lake          | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
 | Ice Lake             | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
 | KNL(Knights Landing) | :heavy_check_mark: | :heavy_check_mark: | 12       |     2 (FMA) |       6 (FMA)|:x:                |
-| Ryzen ZEN            | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
-| Ryzen ZEN+           | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
+| Ryzen ZEN            | :heavy_check_mark: | :x:                | 5        |     1 (FMA) |       5 (FMA)|:x:                |
+| Ryzen ZEN+           | :heavy_check_mark: | :x:                | 5        |     1 (FMA) |       5 (FMA)|:x:                |
 
 This data have been retrieved thanks to [Agner Fog's data](https://www.agner.org/optimize/instruction_tables.pdf),[Wikichip](https://en.wikichip.org/wiki/WikiChip) and [Intel's Intrisics Guide](https://software.intel.com/sites/landingpage/IntrinsicsGuide). Cells marked with an asterisk (\*) indicates that such data has been obtanied via experimentation because I did not found such information on the web (may be oudated). Cells containing ??? means I don't know this data yet and hence, the results for this microarchitecture may not be optimal (hope this can be improved in the future, when I can have the opportunity to run tests on such microarchitecture).
 
