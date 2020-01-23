@@ -12,13 +12,15 @@
   #include "256_10.h"
 #elif defined AVX_256_8
   #include "256_8.h"
+#elif defined AVX_512_8
+  #include "512_8.h"  
 #elif defined AVX_256_5
   #include "256_5.h"  
 #elif defined AVX_256_3_NOFMA
   #include "256_3_nofma.h"
 #endif
 
-#ifdef AVX_512_12
+#if defined(AVX_512_12) || defined(AVX_512_8)
   #define BYTES_IN_VECT 64
   #define TYPE __m512
 

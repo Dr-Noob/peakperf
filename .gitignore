@@ -1,14 +1,1 @@
-output/sandy_bridge
-output/ivy_bridge
-output/haswell
-output/skylake
-output/broadwell
-output/kaby_lake
-output/coffe_lake
-output/cannon_lake_256
-output/cannon_lake_512
-output/ice_lake_256
-output/ice_lake_512
-output/knl
-output/zen
-output/zen_plus
+output/
