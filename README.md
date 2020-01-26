@@ -11,7 +11,8 @@ To achieve this, there are different executables for each specific CPU microarch
 | Ivy Bridge           | `ivy_bridge`      |
 | Haswell              | `haswell`         |
 | Broadwell            | `broadwell`       |
-| Skylake              | `skylake`         |
+| Skylake              | `skylake_256`     |
+| Cascade Lake(AVX512) | `skylake_512`     |
 | Kaby Lake            | `kaby_lake`       |
 | Coffe Lake           | `coffe_lake`      |
 | Cannon Lake(AVX2)    | `cannon_lake_256` |
@@ -121,16 +122,24 @@ This test will run vectorized instructions(eg AVX, AVX512) with FMA (if availabl
 ## Tests done so far
 Here follows a table where I'll be updating results using different processors using this benchmark.
 
-| CPU                            | AVX Freq    | PP (Formula)     | PP (Experimental)        | Loss    |
-|:------------------------------:|:-----------:|:----------------:|:------------------------:|:-------:|
-| Intel i5-2400  (Sandy Bridge ) | `3.192 GHz` | `102.14 GFLOP/S` | `100.64 +- 0.00 GFLOP/S` | `1.46%` |
-| Intel i7-4790K (Haswell)       | `3.997 GHz` | `511.61 GFLOP/S` | `511.43 +- 0.01 GFLOP/S` | `0.03%` |
-| Intel i7-5500U (Broadwell)     | `2.895 GHz` | `185.28 GFLOP/S` | `183.03 +- 0.28 GFLOP/S` | `1.21%` |
-| Intel i7-8700 (Coffe Lake)     | `4.300 GHz` | `825.60 GFLOP/S` | `823.83 +- 0.01 GFLOP/S` | `0.21%` |
-| AMD Ryzen 5 2600 (Zen+)        | `3.724 GHz` | `357.50 GFLOP/S` | `357.08 +- 0.03 GFLOP/S` | `0.11%` |
+| CPU (Desktop CPUs)             | AVX Freq     | PP (Formula)      | PP (Experimental)        | Loss    |
+|:------------------------------:|:------------:|:-----------------:|:------------------------:|:-------:|
+| Intel i5-2400  (Sandy Bridge ) | `3.192 GHz`  | `102.14 GFLOP/S`  | `100.64 +- 0.00 GFLOP/S` | `1.46%` |
+| Intel i7-4790K (Haswell)       | `3.997 GHz`  | `511.61 GFLOP/S`  | `511.43 +- 0.01 GFLOP/S` | `0.03%` |
+| Intel i7-5500U (Broadwell)     | `2.895 GHz`  | `185.28 GFLOP/S`  | `183.03 +- 0.28 GFLOP/S` | `1.21%` |
+| Intel i7-8700 (Coffe Lake)     | `4.300 GHz`  | `825.60 GFLOP/S`  | `823.83 +- 0.01 GFLOP/S` | `0.21%` |
+| AMD Ryzen 5 2600 (Zen+)        | `3.724 GHz`  | `357.50 GFLOP/S`  | `357.08 +- 0.03 GFLOP/S` | `0.11%` |
 
-_NOTE_: On some machines, I'm not root or even the person running the microbenchmark, in which case, the possible overhead (because of not running the microbenchmark in a adequate environment) may deteriorate the results.
+| CPU (HPC / Server CPUs)           | AVX Freq     | PP (Formula)      | PP (Experimental)          | Loss     |
+|:---------------------------------:|:------------:|:-----------------:|:--------------------------:|:--------:|
+| Intel Xeon Phi KNL 7250 (KNL)     | `~1.498 GHz` | `6519.29 GFLOP/S` | `5356.49 +- 21.30 GFLOP/s` | `27.70%` |
+| 2x Xeon E5-2650 v2 (Ivy Bridge)   | `2.999 GHz`  | `383.87 GFLOP/S`  | `377.66 +- 0.02 GFLOP/s`   | `1.64%`  |
+| 2x Xeon E5-2698 v4 (Broadwell)    | `2.599 GHz`  | `3326.72 GFLOP/S` | `3269.87 +- 14.42 GFLOP/s` | `1.73%`  |
+| 2x Xeon Gold 6238 (Cascade Lake)  | `2.099 GHz`  | `5910.78 GFLOP/S` | `5851.60 +- 2.69 GFLOP/s`  | `1.01%`  |
 
+_NOTE 1_: On some machines, I'm not root or even the person running the microbenchmark, in which case, the possible overhead (because of not running the microbenchmark in a adequate environment) may deteriorate the results.
+
+_NOTE 2_: KNL performance should be investigated to understand the cause of the performance loss.
 
 ## Microarchitecture table
 
@@ -139,20 +148,20 @@ The following table acts as a summary of all supported microarchitectures with t
 | Microarchitecture    | FMA                | AVX512             | Slots    | FPUs        | Latency      | Tested            |
 |:--------------------:|:------------------:|:------------------:|:--------:|:-----------:|:------------:|:-----------------:|
 | Sandy Bridge         | :x:                | :x:                |   3      |     1 (ADD) |       3 (ADD)|:heavy_check_mark: |
-| Ivy Bridge           | :x:                | :x:                |   3      |     1 (ADD) |       3 (ADD)|:x:                |
+| Ivy Bridge           | :x:                | :x:                |   3      |     1 (ADD) |       3 (ADD)|:heavy_check_mark: |
 | Haswell              | :heavy_check_mark: | :x:                |  10      |     2 (FMA) |       5 (FMA)|:heavy_check_mark: |
 | Broadwell            | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:heavy_check_mark: |
-| Skylake              | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:x:                |
+| Skylake              | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:heavy_check_mark: |
 | Kaby Lake            | :heavy_check_mark: | :x:                | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
 | Coffe Lake           | :heavy_check_mark: | :x:                | 10*      |    2* (FMA) |     10* (FMA)|:heavy_check_mark: |
 | Cannon Lake          | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
 | Ice Lake             | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
-| KNL(Knights Landing) | :heavy_check_mark: | :heavy_check_mark: | 12       |     2 (FMA) |       6 (FMA)|:x:                |
+| KNL(Knights Landing) | :heavy_check_mark: | :heavy_check_mark: | 12       |     2 (FMA) |       6 (FMA)|:heavy_check_mark: |
 | Ryzen ZEN            | :heavy_check_mark: | :x:                | 5        |     1 (FMA) |       5 (FMA)|:x:                |
 | Ryzen ZEN+           | :heavy_check_mark: | :x:                | 5        |     1 (FMA) |       5 (FMA)|:heavy_check_mark: |
 
 This data have been retrieved thanks to [Agner Fog's data](https://www.agner.org/optimize/instruction_tables.pdf),[Wikichip](https://en.wikichip.org/wiki/WikiChip) and [Intel's Intrisics Guide](https://software.intel.com/sites/landingpage/IntrinsicsGuide).
-- Cells marked with an asterisk (\*) indicates that such data has been obtanied via experimentation because I did not found such information on the web (may be oudated). 
+- Cells marked with an asterisk (\*) indicates that such data has been obtanied via experimentation because I did not found such information on the web (may be oudated).
 - Cells containing ??? means I don't know this data yet and hence, the results for this microarchitecture may not be optimal (hope this can be improved in the future, when I can have the opportunity to run tests on such microarchitecture).
 
 _NOTE:_ "Slots" column is calculated by means of `FPUs x Latency`.
