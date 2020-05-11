@@ -128,6 +128,7 @@ Here follows a table where I'll be updating results using different processors u
 | Intel i7-4790K (Haswell)       | `3.997 GHz`  | `511.61 GFLOP/S`  | `511.43 +- 0.01 GFLOP/S` | `0.03%` |
 | Intel i7-5500U (Broadwell)     | `2.895 GHz`  | `185.28 GFLOP/S`  | `183.03 +- 0.28 GFLOP/S` | `1.21%` |
 | Intel i7-8700 (Coffe Lake)     | `4.300 GHz`  | `825.60 GFLOP/S`  | `823.83 +- 0.01 GFLOP/S` | `0.21%` |
+| Intel i9-9900K (Coffe Lake)    | `3.600 GHz`  | `921.60 GFLOP/S`  | `918.72 +- 1.13 GFLOP/S` | `0.31%` |
 | AMD Ryzen 5 2600 (Zen+)        | `3.724 GHz`  | `357.50 GFLOP/S`  | `357.08 +- 0.03 GFLOP/S` | `0.11%` |
 
 | CPU (HPC / Server CPUs)           | AVX Freq     | PP (Formula)      | PP (Experimental)          | Loss     |
