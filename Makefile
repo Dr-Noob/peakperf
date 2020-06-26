@@ -9,7 +9,7 @@ CXXFLAGS_HASWELL         = -DTEST_NAME="\"Haswell - 256 bits\""                -
 CXXFLAGS_SKYLAKE_256     = -DTEST_NAME="\"Skylake - 256 bits\""                -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_SKYLAKE_512     = -DTEST_NAME="\"Skylake - 512 bits\""                -DAVX_512_8       -march=skylake-avx512 $(CXXFLAGS_GENERIC)
 CXXFLAGS_BROADWELL       = -DTEST_NAME="\"Broadwell - 256 bits\""              -DAVX_256_8       -march=broadwell      $(CXXFLAGS_GENERIC)
-CXXFLAGS_KABY_LAKE       = -DTEST_NAME="\"Kaby Lake - 256 bits\""              -DAVX_256_10      -march=skylake        $(CXXFLAGS_GENERIC)
+CXXFLAGS_KABY_LAKE       = -DTEST_NAME="\"Kaby Lake - 256 bits\""              -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_COFFE_LAKE      = -DTEST_NAME="\"Coffe Lake - 256 bits\""             -DAVX_256_10      -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_CANNON_LAKE_256 = -DTEST_NAME="\"Cannon Lake - 256 bits\""            -DAVX_256_10      -march=cannonlake     $(CXXFLAGS_GENERIC)
 CXXFLAGS_CANNON_LAKE_512 = -DTEST_NAME="\"Cannon Lake - 512 bits\""            -DAVX_256_10      -march=cannonlake     $(CXXFLAGS_GENERIC)
@@ -40,8 +40,8 @@ SKYLAKE_512_HEADERS=$(ARCH_DIR)/512_8.h $(ARCH_DIR)/Arch.h
 BROADWELL=$(ARCH_DIR)/256_8.c
 BROADWELL_HEADERS=$(ARCH_DIR)/256_8.h $(ARCH_DIR)/Arch.h
 
-KABY_LAKE=$(ARCH_DIR)/256_10.c
-KABY_LAKE_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
+KABY_LAKE=$(ARCH_DIR)/256_8.c
+KABY_LAKE_HEADERS=$(ARCH_DIR)/256_8.h $(ARCH_DIR)/Arch.h
 
 COFFE_LAKE=$(ARCH_DIR)/256_10.c
 COFFE_LAKE_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
@@ -113,7 +113,7 @@ $(OUTPUT_KABY_LAKE): Makefile $(MAIN) $(KABY_LAKE) $(KABY_LAKE_HEADERS)
 	$(CXX) $(CXXFLAGS_KABY_LAKE) $(MAIN) $(KABY_LAKE) $(CXXFLAGS_LINK) -o $@
 	
 $(OUTPUT_COFFE_LAKE): Makefile $(MAIN) $(COFFE_LAKE) $(COFFE_LAKE_HEADERS)
-	$(CXX) $(CXXFLAGS_COFFE_LAKE) $(MAIN) $(COFFE_LAKE) $(CXXFLAGS_LINK) -o $@
+	$(CXX) $(CXXFLAGS_HASWELL) $(MAIN) $(COFFE_LAKE) $(CXXFLAGS_LINK) -o $@
 	
 $(OUTPUT_CANNON_LAKE_256): Makefile $(MAIN) $(CANNON_LAKE_256) $(CANNON_LAKE_256_HEADERS)
 	$(CXX) $(CXXFLAGS_CANNON_LAKE_256) $(MAIN) $(CANNON_LAKE_256) $(CXXFLAGS_LINK) -o $@
