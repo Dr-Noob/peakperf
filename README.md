@@ -15,10 +15,9 @@ To achieve this, there are different executables for each specific CPU microarch
 | Cascade Lake(AVX512) | `skylake_512`     |
 | Kaby Lake            | `kaby_lake`       |
 | Coffe Lake           | `coffe_lake`      |
-| Cannon Lake(AVX2)    | `cannon_lake_256` |
-| Cannon Lake(AVX512)  | `cannon_lake_512` |
-| Ice Lake(AVX2)       | `ice_lake_256`    |
-| Ice Lake(AVX512)     | `ice_lake_512`    |
+| Cannon Lake (AVX2)   | `cannon_lake_256` |
+| Cannon Lake (AVX512) | `cannon_lake_512` |
+| Ice Lake (Client)    | `ice_lake_256`    |
 | KNL(Knights Landing) | `knl`             |
 
 ##### AMD
@@ -130,6 +129,7 @@ Here follows a table where I'll be updating results using different processors u
 | Intel i5-8250U (Kaby Lake)     | `2.700 GHz`  | `345.60 GFLOP/S`  | `343.57 +- 1.38 GFLOP/S` | `0.59%` |
 | Intel i7-8700 (Coffe Lake)     | `4.300 GHz`  | `825.60 GFLOP/S`  | `823.83 +- 0.01 GFLOP/S` | `0.21%` |
 | Intel i9-9900K (Coffe Lake)    | `3.600 GHz`  | `921.60 GFLOP/S`  | `918.72 +- 1.13 GFLOP/S` | `0.31%` |
+| Intel i5-1035G1 (Ice Lake)     | `2.990 GHz`  | `382.72 GFLOP/S`  | `382.22 +- 0.18 GFLOP/S` | `0.13%` |
 | AMD Ryzen 5 2600 (Zen+)        | `3.724 GHz`  | `357.50 GFLOP/S`  | `357.08 +- 0.03 GFLOP/S` | `0.11%` |
 
 | CPU (HPC / Server CPUs)           | AVX Freq     | PP (Formula)      | PP (Experimental)          | Loss     |
@@ -147,23 +147,24 @@ _NOTE 2_: KNL performance should be investigated to understand the cause of the 
 
 The following table acts as a summary of all supported microarchitectures with their characteristics:
 
-| Microarchitecture    | FMA                | AVX512             | Slots    | FPUs        | Latency      | Tested            |
-|:--------------------:|:------------------:|:------------------:|:--------:|:-----------:|:------------:|:-----------------:|
-| Sandy Bridge         | :x:                | :x:                |   3      |     1 (ADD) |       3 (ADD)|:heavy_check_mark: |
-| Ivy Bridge           | :x:                | :x:                |   3      |     1 (ADD) |       3 (ADD)|:heavy_check_mark: |
-| Haswell              | :heavy_check_mark: | :x:                |  10      |     2 (FMA) |       5 (FMA)|:heavy_check_mark: |
-| Broadwell            | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:heavy_check_mark: |
-| Skylake              | :heavy_check_mark: | :x:                |   8      |     2 (FMA) |       4 (FMA)|:heavy_check_mark: |
-| Kaby Lake            | :heavy_check_mark: | :x:                |  8*      |    2* (FMA) |      4* (FMA)|:heavy_check_mark: |
-| Coffe Lake           | :heavy_check_mark: | :x:                | 10*      |    2* (FMA) |     10* (FMA)|:heavy_check_mark: |
-| Cannon Lake          | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
-| Ice Lake             | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA) |     ??? (FMA)|:x:                |
-| KNL(Knights Landing) | :heavy_check_mark: | :heavy_check_mark: | 12       |     2 (FMA) |       6 (FMA)|:heavy_check_mark: |
-| Ryzen ZEN            | :heavy_check_mark: | :x:                | 5        |     1 (FMA) |       5 (FMA)|:x:                |
-| Ryzen ZEN+           | :heavy_check_mark: | :x:                | 5        |     1 (FMA) |       5 (FMA)|:heavy_check_mark: |
+| Microarchitecture     | FMA                | AVX512             | Slots    | FPUs               | Latency      | Tested            |
+|:---------------------:|:------------------:|:------------------:|:--------:|:------------------:|:------------:|:-----------------:|
+| Sandy Bridge          | :x:                | :x:                |   3      |     1 (ADD AVX2)   |       3 (ADD)|:heavy_check_mark: |
+| Ivy Bridge            | :x:                | :x:                |   3      |     1 (ADD AVX2)   |       3 (ADD)|:heavy_check_mark: |
+| Haswell               | :heavy_check_mark: | :x:                |  10      |     2 (FMA AVX2)   |       5 (FMA)|:heavy_check_mark: |
+| Broadwell             | :heavy_check_mark: | :x:                |   8      |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark: |
+| Skylake               | :heavy_check_mark: | :x:                |   8      |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark: |
+| Kaby Lake             | :heavy_check_mark: | :x:                |  8*      |    2* (FMA AVX2)   |      4* (FMA)|:heavy_check_mark: |
+| Coffe Lake            | :heavy_check_mark: | :x:                | 10*      |    2* (FMA AVX2)   |      5* (FMA)|:heavy_check_mark: |
+| Cannon Lake           | :heavy_check_mark: | :heavy_check_mark: | ???      |   ??? (FMA AVX512) |     ??? (FMA)|:x:                |
+| Ice Lake              | :heavy_check_mark: | :heavy_check_mark: | 8        |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark: |
+| KNL (Knights Landing) | :heavy_check_mark: | :heavy_check_mark: | 12       |     2 (FMA AVX512) |       6 (FMA)|:heavy_check_mark: |
+| Ryzen ZEN             | :heavy_check_mark: | :x:                | 5        |     1 (FMA AVX2)   |       5 (FMA)|:x:                |
+| Ryzen ZEN+            | :heavy_check_mark: | :x:                | 5        |     1 (FMA AVX2)   |       5 (FMA)|:heavy_check_mark: |
 
 This data have been retrieved thanks to [Agner Fog's data](https://www.agner.org/optimize/instruction_tables.pdf),[Wikichip](https://en.wikichip.org/wiki/WikiChip) and [Intel's Intrisics Guide](https://software.intel.com/sites/landingpage/IntrinsicsGuide).
 - Cells marked with an asterisk (\*) indicates that such data has been obtanied via experimentation because I did not found such information on the web (may be oudated).
 - Cells containing ??? means I don't know this data yet and hence, the results for this microarchitecture may not be optimal (hope this can be improved in the future, when I can have the opportunity to run tests on such microarchitecture).
+- **Ice Lake:** While it has AVX512 instructions, it only has 1 AVX512 VPU (at least in client Ice Lake), while it has 2 VPUs for AVX2. Because AVX512 runs in lower freqeuncy, the performance obtained with AVX2 (using 2 VPUs) is better than with AVX512 (using 1 VPU). Thus, peak performance in Ice Lake is obtained using AVX2, although it supports AVX512 instruction set.
 
 _NOTE:_ "Slots" column is calculated by means of `FPUs x Latency`.

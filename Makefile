@@ -13,7 +13,7 @@ CXXFLAGS_KABY_LAKE       = -DTEST_NAME="\"Kaby Lake - 256 bits\""              -
 CXXFLAGS_COFFE_LAKE      = -DTEST_NAME="\"Coffe Lake - 256 bits\""             -DAVX_256_10      -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_CANNON_LAKE_256 = -DTEST_NAME="\"Cannon Lake - 256 bits\""            -DAVX_256_10      -march=cannonlake     $(CXXFLAGS_GENERIC)
 CXXFLAGS_CANNON_LAKE_512 = -DTEST_NAME="\"Cannon Lake - 512 bits\""            -DAVX_256_10      -march=cannonlake     $(CXXFLAGS_GENERIC)
-CXXFLAGS_ICE_LAKE_256    = -DTEST_NAME="\"Ice Lake - 256 bits\""               -DAVX_256_10      -march=icelake-client $(CXXFLAGS_GENERIC)
+CXXFLAGS_ICE_LAKE_256    = -DTEST_NAME="\"Ice Lake - 256 bits\""               -DAVX_256_8       -march=icelake-client $(CXXFLAGS_GENERIC)
 CXXFLAGS_ICE_LAKE_512    = -DTEST_NAME="\"Ice Lake - 512 bits\""               -DAVX_256_10      -march=icelake-server $(CXXFLAGS_GENERIC)
 CXXFLAGS_KNL             = -DTEST_NAME="\"KNL - 512 bits\""                    -DAVX_512_12      -march=knl            $(CXXFLAGS_GENERIC)
 CXXFLAGS_ZEN             = -DTEST_NAME="\"ZEN  - 256 bits\""                   -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
@@ -52,8 +52,8 @@ CANNON_LAKE_256_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
 CANNON_LAKE_512=$(ARCH_DIR)/256_10.c
 CANNON_LAKE_512_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
 
-ICE_LAKE_256=$(ARCH_DIR)/256_10.c
-ICE_LAKE_256_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
+ICE_LAKE_256=$(ARCH_DIR)/256_8.c
+ICE_LAKE_256_HEADERS=$(ARCH_DIR)/256_8.h $(ARCH_DIR)/Arch.h
 
 ICE_LAKE_512=$(ARCH_DIR)/256_10.c
 ICE_LAKE_512_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
