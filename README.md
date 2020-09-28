@@ -134,14 +134,14 @@ Here follows a table where I'll be updating results using different processors u
 
 | CPU (HPC / Server CPUs)           | AVX Freq     | PP (Formula)      | PP (Experimental)          | Loss     |
 |:---------------------------------:|:------------:|:-----------------:|:--------------------------:|:--------:|
-| Intel Xeon Phi KNL 7250 (KNL)     | `~1.498 GHz` | `6519.29 GFLOP/S` | `5356.49 +- 21.30 GFLOP/s` | `27.70%` |
+| Intel Xeon Phi KNL 7250 (KNL)     | `1.499 GHz`  | `5991.69 GFLOP/S` | `5390.84 +- 7.83 GFLOP/s`  | `3.72%` |
 | 2x Xeon E5-2650 v2 (Ivy Bridge)   | `2.999 GHz`  | `383.87 GFLOP/S`  | `377.66 +- 0.02 GFLOP/s`   | `1.64%`  |
 | 2x Xeon E5-2698 v4 (Broadwell)    | `2.599 GHz`  | `3326.72 GFLOP/S` | `3269.87 +- 14.42 GFLOP/s` | `1.73%`  |
 | 2x Xeon Gold 6238 (Cascade Lake)  | `2.099 GHz`  | `5910.78 GFLOP/S` | `5851.60 +- 2.69 GFLOP/s`  | `1.01%`  |
 
 _NOTE 1_: On some machines, I'm not root or even the person running the microbenchmark, in which case, the possible overhead (because of not running the microbenchmark in a adequate environment) may deteriorate the results.
 
-_NOTE 2_: KNL performance should be investigated to understand the cause of the performance loss.
+_NOTE 2_: KNL performance is computed as PP * (6/7) (see [explanation](https://sites.utexas.edu/jdm4372/2018/01/22/a-peculiar-throughput-limitation-on-intels-xeon-phi-x200-knights-landing/)).
 
 ## Microarchitecture table
 
