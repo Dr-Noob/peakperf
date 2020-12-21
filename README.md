@@ -132,12 +132,13 @@ Here follows a table where I'll be updating results using different processors u
 | Intel i5-1035G1 (Ice Lake)     | `2.990 GHz`  | `382.72 GFLOP/S`  | `382.22 +- 0.18 GFLOP/S` | `0.13%` |
 | AMD Ryzen 5 2600 (Zen+)        | `3.724 GHz`  | `357.50 GFLOP/S`  | `357.08 +- 0.03 GFLOP/S` | `0.11%` |
 
-| CPU (HPC / Server CPUs)           | AVX Freq     | PP (Formula)      | PP (Experimental)          | Loss     |
-|:---------------------------------:|:------------:|:-----------------:|:--------------------------:|:--------:|
-| Intel Xeon Phi KNL 7250 (KNL)     | `1.499 GHz`  | `5991.69 GFLOP/S` | `5390.84 +- 7.83 GFLOP/s`  | `3.72%` |
-| 2x Xeon E5-2650 v2 (Ivy Bridge)   | `2.999 GHz`  | `383.87 GFLOP/S`  | `377.66 +- 0.02 GFLOP/s`   | `1.64%`  |
-| 2x Xeon E5-2698 v4 (Broadwell)    | `2.599 GHz`  | `3326.72 GFLOP/S` | `3269.87 +- 14.42 GFLOP/s` | `1.73%`  |
-| 2x Xeon Gold 6238 (Cascade Lake)  | `2.099 GHz`  | `5910.78 GFLOP/S` | `5851.60 +- 2.69 GFLOP/s`  | `1.01%`  |
+| CPU (HPC / Server CPUs)            | AVX Freq     | PP (Formula)      | PP (Experimental)          | Loss     |
+|:----------------------------------:|:------------:|:-----------------:|:--------------------------:|:--------:|
+| Intel Xeon Phi KNL 7250 (KNL)      | `1.499 GHz`  | `5991.69 GFLOP/S` | `5390.84 +- 7.83 GFLOP/s`  | `3.72%` |
+| 2x Xeon E5-2650 v2 (Ivy Bridge)    | `2.999 GHz`  | `383.87 GFLOP/S`  | `377.66 +- 0.02 GFLOP/s`   | `1.64%`  |
+| 2x Xeon E5-2698 v4 (Broadwell)     | `2.599 GHz`  | `3326.72 GFLOP/S` | `3269.87 +- 14.42 GFLOP/s` | `1.73%`  |
+| 2x Xeon Gold 6238 (Cascade Lake)   | `2.099 GHz`  | `5910.78 GFLOP/S` | `5851.60 +- 2.69 GFLOP/s`  | `1.01%`  |
+| 2x Xeon Gold 6226R (Cascade Lake)  | `2.499 GHz`  | `5117.95 GFLOP/S` | `5088.06 +- 0.33 GFLOP/s`  | `0.58%`  |
 
 _NOTE 1_: On some machines, I'm not root or even the person running the microbenchmark, in which case, the possible overhead (because of not running the microbenchmark in a adequate environment) may deteriorate the results.
 
