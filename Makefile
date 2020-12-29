@@ -20,7 +20,8 @@ CXXFLAGS_ZEN             = -DTEST_NAME="\"ZEN  - 256 bits\""                   -
 CXXFLAGS_ZEN_PLUS        = -DTEST_NAME="\"ZEN+ - 256 bits\""                   -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
 
 ARCH_DIR=Arch
-MAIN=main.c getarg.c cpufetch.c
+CPUFETCH_DIR=cpufetch
+MAIN=main.c getarg.c $(CPUFETCH_DIR)/cpu.c $(CPUFETCH_DIR)/cpuid.c $(CPUFETCH_DIR)/uarch.c
 
 SANDY_BRIDGE=$(ARCH_DIR)/256_3_nofma.c
 SANDY_BRIDGE_HEADERS=$(ARCH_DIR)/256_3_nofma.h $(ARCH_DIR)/Arch.h

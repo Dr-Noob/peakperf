@@ -4,9 +4,11 @@
 #include <omp.h>
 #include <math.h>
 #include <sys/time.h>
-#include "cpufetch.h"
+
 #include "getarg.h"
 #include "Arch/Arch.h"
+#include "cpufetch/cpu.h"
+#include "cpufetch/uarch.h"
 
 #define RED   "\x1b[31;1m"
 #define BOLD  "\x1b[1m"
@@ -45,7 +47,9 @@ int main(int argc, char* argv[]) {
   double sd = 0;
   double sum = 0;
   double gflops_list[nTrials];
-  char* cpu_name = getString_CPUName();
+  struct cpu* cpu = get_cpu_info();
+  char* cpu_name = get_str_cpu_name(cpu);
+  char* uarch_name = get_str_uarch(cpu);
 
   omp_set_num_threads(n_threads);
   
@@ -61,6 +65,7 @@ int main(int argc, char* argv[]) {
   printf("\n" BOLD "Benchmarking FLOPS by Dr-Noob(github.com/Dr-Noob/FLOPS)." RESET "\n");
   printf("   Test name: %s\n",TEST_NAME);
   printf("         CPU: %s\n",cpu_name);
+  printf("   Microarch: %s\n",uarch_name);
   printf("  Iterations: %d\n",MAXFLOPS_ITERS);
   printf("       GFLOP: %.2f\n",gflops);
   printf("     Threads: %d\n\n", n_threads);

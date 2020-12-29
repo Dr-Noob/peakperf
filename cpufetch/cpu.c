@@ -5,22 +5,71 @@
 
 #include <stdio.h>
 #include <string.h>
-#define MASK 0xFF
 #include <stdlib.h>
 
+#include "cpuid.h"
+#include "uarch.h"
 
-void cpuid(unsigned int *eax, unsigned int *ebx,
-                         unsigned int *ecx, unsigned int *edx)
-{
-        __asm__ volatile("cpuid"
-            : "=a" (*eax),
-              "=b" (*ebx),
-              "=c" (*ecx),
-              "=d" (*edx)
-            : "0" (*eax), "2" (*ecx));
+#define CPU_VENDOR_INTEL_STRING "GenuineIntel"
+#define CPU_VENDOR_AMD_STRING   "AuthenticAMD"
+#define MASK 0xFF
+
+typedef int32_t VENDOR;
+
+enum {
+  CPU_VENDOR_UNKNOWN,
+  CPU_VENDOR_INTEL,
+  CPU_VENDOR_AMD,
+};
+
+struct cpu {
+  VENDOR cpu_vendor;  
+  char* cpu_name; 
+  struct uarch* uarch;
+};
+
+void get_name_cpuid(char* name, uint32_t reg1, uint32_t reg2, uint32_t reg3) {
+  uint32_t c = 0;
+  
+  name[c++] = reg1       & MASK;
+  name[c++] = (reg1>>8)  & MASK;
+  name[c++] = (reg1>>16) & MASK;
+  name[c++] = (reg1>>24) & MASK;
+
+  name[c++] = reg2       & MASK;
+  name[c++] = (reg2>>8)  & MASK;
+  name[c++] = (reg2>>16) & MASK;
+  name[c++] = (reg2>>24) & MASK;
+
+  name[c++] = reg3       & MASK;
+  name[c++] = (reg3>>8)  & MASK;
+  name[c++] = (reg3>>16) & MASK;
+  name[c++] = (reg3>>24) & MASK;
 }
 
-char* getString_CPUName() {
+VENDOR cpu_vendor() {
+  uint32_t eax = 0;
+  uint32_t ebx = 0;
+  uint32_t ecx = 0;
+  uint32_t edx = 0;
+
+  cpuid(&eax, &ebx, &ecx, &edx);
+  
+  char name[13];
+  memset(name,0,13);
+  get_name_cpuid(name, ebx, edx, ecx);
+  
+  if(strcmp(CPU_VENDOR_INTEL_STRING,name) == 0)
+    return CPU_VENDOR_INTEL;
+  else if (strcmp(CPU_VENDOR_AMD_STRING,name) == 0)
+    return CPU_VENDOR_AMD;  
+  else {
+    printf("Unknown CPU vendor: %s", name);
+    return CPU_VENDOR_UNKNOWN;
+  }    
+}
+
+char* cpu_name() {
   unsigned eax = 0;
   unsigned ebx = 0;
   unsigned ecx = 0;
@@ -37,7 +86,6 @@ char* getString_CPUName() {
     sprintf(none,"Unknown");
     return none;
   }
-
 
   //We can, fetch name
   eax = 0x80000002;
@@ -109,4 +157,30 @@ char* getString_CPUName() {
   char* name_withoutblank = malloc(sizeof(char)*64);
   strcpy(name_withoutblank,name+i);
   return name_withoutblank;
+}
+
+bool is_cpu_intel(struct cpu* cpu) {
+  return cpu->cpu_vendor == CPU_VENDOR_INTEL;    
+}
+
+bool is_cpu_amd(struct cpu* cpu) {
+  return cpu->cpu_vendor == CPU_VENDOR_AMD;  
+}
+
+char* get_str_uarch(struct cpu* cpu) {
+  return cpu->uarch->uarch_str;
+}
+
+struct cpu* get_cpu_info() {
+  struct cpu* cpu = malloc(sizeof(struct cpu));
+  
+  cpu->cpu_name = cpu_name();
+  cpu->cpu_vendor = cpu_vendor();
+  cpu->uarch = get_uarch(cpu);
+  
+  return cpu;
+}
+
+char* get_str_cpu_name(struct cpu* cpu) {
+  return cpu->cpu_name;    
 }
