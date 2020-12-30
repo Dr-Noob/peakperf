@@ -82,7 +82,10 @@ void (*get_compute_function(struct cpu* cpu))(TYPE [][SIZE], TYPE, int) {
 
 #define MAXFLOPS_ITERS 1000000000
 
-void compute(struct cpu* cpu, int n_threads);
-double get_gflops(struct cpu* cpu, int n_threads);
+struct benchmark;
+
+struct benchmark* init_benchmark(struct cpu* cpu, int n_threads);
+void compute(struct benchmark* bench);
+double get_gflops(struct benchmark* bench);
 
 #endif

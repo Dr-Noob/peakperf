@@ -40,7 +40,8 @@ int main(int argc, char* argv[]) {
   
   /*** NEEDED TO COMPUTE SD ***/
   struct cpu* cpu = get_cpu_info();
-  double gflops = get_gflops(cpu, n_threads);
+  struct benchmark* bench = init_benchmark(cpu, n_threads);
+  double gflops = get_gflops(bench);
   double e_time = 0;
   double mean = 0;
   double sd = 0;
@@ -60,7 +61,7 @@ int main(int argc, char* argv[]) {
   for (int trial = 0; trial < nTrials+nWarmupTrials; trial++) {
     /*** COMPUTE TAKES PLACE HERE ***/
     gettimeofday(&t0, 0);
-    compute(cpu, n_threads);
+    compute(bench);
     gettimeofday(&t1, 0);
 
     /*** NOW CALCULATE TIME AND PERFORMANCE ***/
