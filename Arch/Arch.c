@@ -10,7 +10,13 @@
 struct benchmark {
   int n_threads;
   double gflops;
+  char* name;
   void(*compute_function)(TYPE *farr_ptr, TYPE, int);
+};
+
+static char *bench_name[] = {
+  [UARCH_SANDY_BRIDGE]   = "Sandy Bridge - 256 bits",
+  [UARCH_KABY_LAKE]      = "Kaby Lake - 256 bits",
 };
 
 struct benchmark* init_benchmark(struct cpu* cpu, int n_threads) {    
@@ -29,10 +35,12 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads) {
     case UARCH_SANDY_BRIDGE:
       bench->compute_function = compute_256_10;
       bench->gflops = get_gflops_256_10(n_threads);
+      bench->name = bench_name[UARCH_SANDY_BRIDGE];
       break;
     case UARCH_KABY_LAKE:
       bench->compute_function = compute_256_8;
       bench->gflops = get_gflops_256_8(n_threads);
+      bench->name = bench_name[UARCH_KABY_LAKE];
       break;
     default:
       printf("ERROR: No valid uarch found!\n");
@@ -53,4 +61,8 @@ void compute(struct benchmark* bench) {
 
 double get_gflops(struct benchmark* bench) {
   return bench->gflops;    
+}
+
+char* get_benchmark_name(struct benchmark* bench) {
+  return bench->name;    
 }

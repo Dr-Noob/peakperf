@@ -2,7 +2,6 @@
 
 #define OP_PER_IT 8
 #define FMA_AVAILABLE 2
-#define SIZE OP_PER_IT*2
 
 TYPE farr_256_8[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
 

@@ -41,6 +41,9 @@ int main(int argc, char* argv[]) {
   /*** NEEDED TO COMPUTE SD ***/
   struct cpu* cpu = get_cpu_info();
   struct benchmark* bench = init_benchmark(cpu, n_threads);
+  if(bench == NULL) {
+    return EXIT_FAILURE;    
+  }
   double gflops = get_gflops(bench);
   double e_time = 0;
   double mean = 0;
@@ -49,10 +52,12 @@ int main(int argc, char* argv[]) {
   double gflops_list[nTrials];
   char* cpu_name = get_str_cpu_name(cpu);
   char* uarch_name = get_str_uarch(cpu);  
+  char* bench_name = get_benchmark_name(bench);
 
   printf("\n" BOLD "Benchmarking FLOPS by Dr-Noob(github.com/Dr-Noob/FLOPS)." RESET "\n");
-  printf("         CPU: %s\n",cpu_name);
+  printf("         CPU: %s\n",cpu_name);  
   printf("   Microarch: %s\n",uarch_name);
+  printf("   Test name: %s\n",bench_name);
   printf("  Iterations: %d\n",MAXFLOPS_ITERS);
   printf("       GFLOP: %.2f\n",gflops);
   printf("     Threads: %d\n\n", n_threads);

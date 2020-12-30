@@ -1,12 +1,6 @@
 #ifndef __256_8__
 #define __256_8__
 
-#ifdef BUILDING_OBJECT
-  #define OP_PER_IT 8
-  #define FMA_AVAILABLE 2
-  #define SIZE OP_PER_IT*2
-#endif
-
 #include "Arch.h"
 
 double get_gflops_256_8(int n_threads);

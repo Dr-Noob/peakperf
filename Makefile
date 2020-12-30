@@ -3,8 +3,8 @@ CXX=gcc
 SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
 CXXFLAGS_GENERIC=-std=c99 -O2 $(SANITY_FLAGS)
 CXXFLAGS_LINK=-lm -fopenmp
-CXXFLAGS_HASWELL         = -DTEST_NAME="\"Haswell - 256 bits\""     -DBUILDING_OBJECT           -DAVX_256_10      -march=haswell        $(CXXFLAGS_GENERIC)
-CXXFLAGS_KABY_LAKE       = -DTEST_NAME="\"Kaby Lake - 256 bits\""   -DBUILDING_OBJECT           -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
+CXXFLAGS_HASWELL         = -DAVX_256_10 -march=haswell $(CXXFLAGS_GENERIC)
+CXXFLAGS_KABY_LAKE       = -DAVX_256_8  -march=skylake $(CXXFLAGS_GENERIC)
 
 ARCH_DIR=Arch
 CPUFETCH_DIR=cpufetch
@@ -22,7 +22,7 @@ $(shell mkdir -p $(OUTPUT_DIR))
 OUTPUT_HASWELL=$(OUTPUT_DIR)/comp_haswell.o
 OUTPUT_KABY_LAKE=$(OUTPUT_DIR)/comp_kaby_lake.o
 
-peakperf: main.c $(OUTPUT_HASWELL) $(OUTPUT_KABY_LAKE)
+peakperf: $(MAIN) $(OUTPUT_HASWELL) $(OUTPUT_KABY_LAKE)
 	$(CXX) $(CXXFLAGS_GENERIC) -mavx $(CXXFLAGS_LINK) $(MAIN) $(OUTPUT_HASWELL) $(OUTPUT_KABY_LAKE) -o $@
 
 $(OUTPUT_HASWELL): Makefile $(HASWELL) $(HASWELL_HEADERS)
