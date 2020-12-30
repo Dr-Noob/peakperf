@@ -10,5 +10,6 @@ struct cpu* get_cpu_info();
 bool is_cpu_intel(struct cpu* cpu);
 bool is_cpu_amd(struct cpu* cpu);
 char* get_str_cpu_name(struct cpu* cpu);
+struct uarch* get_uarch_struct(struct cpu* cpu);
 
 #endif

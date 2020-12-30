@@ -1,10 +1,9 @@
 #ifndef __ARCH__
 #define __ARCH__
 
+#include <stdio.h>
 #include <immintrin.h>
-
-#define SIZE OP_PER_IT*2
-#define MAXFLOPS_ITERS 1000000000
+#include "../cpufetch/uarch.h"
 
 #ifdef AVX_512_12
   #include "512_12.h"
@@ -20,6 +19,19 @@
   #include "256_3_nofma.h"
 #endif
 
+#ifdef BUILDING_OBJECT
+#include <omp.h>
+#define SIZE OP_PER_IT*2
+#endif
+
+#if defined(AVX_512_12) || defined(AVX_512_8)
+  #define BYTES_IN_VECT 64
+  #define TYPE __m512
+#elif defined(BUILDING_OBJECT)
+  #define BYTES_IN_VECT 32
+  #define TYPE __m256  
+#endif
+
 #if defined(AVX_512_12) || defined(AVX_512_8)
   #define BYTES_IN_VECT 64
   #define TYPE __m512
@@ -33,7 +45,7 @@
                                     fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j]);
     }
   }
-#else
+#elif defined(BUILDING_OBJECT)
   #define BYTES_IN_VECT 32
   #define TYPE __m256
   
@@ -46,6 +58,28 @@
   }
 #endif
 
-void compute(TYPE farr[][SIZE], TYPE mult, int index);
+#ifdef BUILDING_OBJECT
+/*
+void (*get_compute_function(struct cpu* cpu))(TYPE [][SIZE], TYPE, int) {
+  struct uarch* uarch_struct = get_uarch_struct(cpu);
+  MICROARCH u = uarch_struct->uarch;
+  
+  switch(u) {
+    case UARCH_SANDY_BRIDGE:
+      printf("UARCH_SANDY_BRIDGE");
+      break;
+    case UARCH_KABY_LAKE:
+      printf("UARCH_KABY_LAKE");
+      break;
+  }
+  
+  return NULL;
+}*/
+#endif
+
+
+#define MAXFLOPS_ITERS 1000000000
+
+void compute(struct cpu* cpu, int n_threads);
 
 #endif

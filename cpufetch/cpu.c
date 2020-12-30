@@ -184,3 +184,7 @@ struct cpu* get_cpu_info() {
 char* get_str_cpu_name(struct cpu* cpu) {
   return cpu->cpu_name;    
 }
+
+struct uarch* get_uarch_struct(struct cpu* cpu) {
+  return cpu->uarch;    
+}
