@@ -39,13 +39,13 @@ int main(int argc, char* argv[]) {
   struct timeval t0,t1;
   
   /*** NEEDED TO COMPUTE SD ***/
-  double gflops = 1024.0;
+  struct cpu* cpu = get_cpu_info();
+  double gflops = get_gflops(cpu, n_threads);
   double e_time = 0;
   double mean = 0;
   double sd = 0;
   double sum = 0;
   double gflops_list[nTrials];
-  struct cpu* cpu = get_cpu_info();
   char* cpu_name = get_str_cpu_name(cpu);
   char* uarch_name = get_str_uarch(cpu);  
 

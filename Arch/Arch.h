@@ -5,6 +5,8 @@
 #include <immintrin.h>
 #include "../cpufetch/uarch.h"
 
+#define MAX_NUMBER_THREADS 512
+
 #ifdef AVX_512_12
   #include "512_12.h"
 #elif defined AVX_256_10
@@ -81,5 +83,6 @@ void (*get_compute_function(struct cpu* cpu))(TYPE [][SIZE], TYPE, int) {
 #define MAXFLOPS_ITERS 1000000000
 
 void compute(struct cpu* cpu, int n_threads);
+double get_gflops(struct cpu* cpu, int n_threads);
 
 #endif

@@ -3,7 +3,11 @@
 #define OP_PER_IT 10
 #define FMA_AVAILABLE 2
 
-TYPE farr_256_10[8][SIZE] __attribute__((aligned(64)));
+TYPE farr_256_10[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
+
+double get_gflops_256_10(int n_threads) {
+  return (double)((long)n_threads*MAXFLOPS_ITERS*OP_PER_IT*(BYTES_IN_VECT/4)*FMA_AVAILABLE)/1000000000;        
+}
 
 void compute_256_10(TYPE *farr, TYPE mult, int index) {
   farr = farr_256_10[index];

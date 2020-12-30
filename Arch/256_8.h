@@ -9,6 +9,7 @@
 
 #include "Arch.h"
 
+double get_gflops_256_8(int n_threads);
 void compute_256_8(TYPE *farr_ptr, TYPE mult, int index);
 
 #endif

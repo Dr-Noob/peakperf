@@ -16,13 +16,9 @@ HASWELL_HEADERS=$(ARCH_DIR)/256_10.h $(ARCH_DIR)/Arch.h
 KABY_LAKE=$(ARCH_DIR)/256_8.c
 KABY_LAKE_HEADERS=$(ARCH_DIR)/256_8.h $(ARCH_DIR)/Arch.h
 
-ARCH=$(ARCH_DIR)/Arch.c
-ARCH_HEADERS=$(ARCH_DIR)/Arch.h
-
 OUTPUT_DIR=output
 $(shell mkdir -p $(OUTPUT_DIR))
 
-OUTPUT_ARCH=$(OUTPUT_DIR)/arch.o
 OUTPUT_HASWELL=$(OUTPUT_DIR)/comp_haswell.o
 OUTPUT_KABY_LAKE=$(OUTPUT_DIR)/comp_kaby_lake.o
 
@@ -34,9 +30,6 @@ $(OUTPUT_HASWELL): Makefile $(HASWELL) $(HASWELL_HEADERS)
 	
 $(OUTPUT_KABY_LAKE): Makefile $(KABY_LAKE) $(KABY_LAKE_HEADERS)
 	$(CXX) $(CXXFLAGS_KABY_LAKE) $(KABY_LAKE) -c -o $@
-	
-$(OUTPUT_ARCH): Makefile $(ARCH) $(ARCH_HEADERS)
-	$(CXX) $(ARCH) -DBUILDING_ARCH -c -o $@	
 	
 clean:
 	@rm $(OUTPUT_DIR)/*
