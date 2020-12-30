@@ -1,9 +1,9 @@
 #ifndef __512_8__
 #define __512_8__
 
-#define OP_PER_IT 8
-#define FMA_AVAILABLE 2
-
 #include "Arch.h"
+
+double get_gflops_512_8(int n_threads);
+void compute_512_8(TYPE *farr_ptr, TYPE mult, int index);
 
 #endif
