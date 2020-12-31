@@ -1,8 +1,6 @@
 #include "512_12.h"
-
 #define OP_PER_IT B_512_12_OP_IT
-
-TYPE farr_512_12[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
+#include "data.h"
 
 void compute_512_12(TYPE *farr, TYPE mult, int index) {
   farr = farr_512_12[index];

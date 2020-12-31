@@ -1,8 +1,6 @@
 #include "256_5.h"
-
 #define OP_PER_IT B_256_5_OP_IT
-
-TYPE farr_256_5[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
+#include "data.h"
 
 void compute_256_5(TYPE *farr, TYPE mult, int index) {
   farr = farr_256_5[index];
