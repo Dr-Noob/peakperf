@@ -3,7 +3,7 @@
 
 TYPE farr_ice_lake_256[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
 
-void compute_ice_lake(TYPE *farr, TYPE mult, int index) {
+void compute_ice_lake_256(TYPE *farr, TYPE mult, int index) {
   farr = farr_ice_lake_256[index];
   
   for(long i=0; i<MAXFLOPS_ITERS; i++) {

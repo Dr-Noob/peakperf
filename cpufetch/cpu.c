@@ -26,7 +26,47 @@ struct cpu {
   VENDOR cpu_vendor;  
   char* cpu_name; 
   struct uarch* uarch;
+  bool avx;
+  bool avx512;
 };
+
+void fill_features_cpuid(struct cpu* cpu) {
+  uint32_t eax = 0;
+  uint32_t ebx = 0;
+  uint32_t ecx = 0;
+  uint32_t edx = 0;
+
+  
+  cpuid(&eax, &ebx, &ecx, &edx);
+  uint32_t maxLevels = eax;
+  
+  if (maxLevels >= 0x00000001){
+    eax = 0x00000001;
+    cpuid(&eax, &ebx, &ecx, &edx);
+    cpu->avx = (ecx & ((int)1 << 28)) != 0;
+  }
+  else {
+    cpu->avx = false;    
+    printf("ERROR: Could not determine CPU features\n");
+  }
+  
+  if (maxLevels >= 0x00000007){
+    eax = 0x00000007;
+    ecx = 0x00000000;
+    cpuid(&eax, &ebx, &ecx, &edx);
+    cpu->avx512       = (((ebx & ((int)1 << 16)) != 0)  ||
+                         ((ebx & ((int)1 << 28)) != 0)  ||
+                         ((ebx & ((int)1 << 26)) != 0)  ||
+                         ((ebx & ((int)1 << 27)) != 0)  ||
+                         ((ebx & ((int)1 << 31)) != 0)  ||
+                         ((ebx & ((int)1 << 30)) != 0)  ||
+                         ((ebx & ((int)1 << 17)) != 0)  ||
+                         ((ebx & ((int)1 << 21)) != 0));
+  }
+  else {
+    cpu->avx512 = false;    
+  }  
+}
 
 void get_name_cpuid(char* name, uint32_t reg1, uint32_t reg2, uint32_t reg3) {
   uint32_t c = 0;
@@ -167,6 +207,14 @@ bool is_cpu_amd(struct cpu* cpu) {
   return cpu->cpu_vendor == CPU_VENDOR_AMD;  
 }
 
+bool cpu_has_avx(struct cpu* cpu) {
+  return cpu->avx;    
+}
+
+bool cpu_has_avx512(struct cpu* cpu) {
+  return cpu->avx512;    
+}
+
 char* get_str_uarch(struct cpu* cpu) {
   return cpu->uarch->uarch_str;
 }
@@ -177,6 +225,7 @@ struct cpu* get_cpu_info() {
   cpu->cpu_name = cpu_name();
   cpu->cpu_vendor = cpu_vendor();
   cpu->uarch = get_uarch(cpu);
+  fill_features_cpuid(cpu);
   
   return cpu;
 }
