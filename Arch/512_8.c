@@ -1,13 +1,8 @@
 #include "512_8.h"
 
-#define OP_PER_IT 8
-#define FMA_AVAILABLE 2
+#define OP_PER_IT B_512_8_OP_IT
 
 TYPE farr_512_8[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
-
-double get_gflops_512_8(int n_threads) {
-  return (double)((long)n_threads*MAXFLOPS_ITERS*OP_PER_IT*(BYTES_IN_VECT/4)*FMA_AVAILABLE)/1000000000;        
-}
 
 void compute_512_8(TYPE *farr, TYPE mult, int index) {
   farr = farr_512_8[index];    
