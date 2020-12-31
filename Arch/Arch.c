@@ -101,18 +101,69 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads) {
   switch(u) {
     case UARCH_SANDY_BRIDGE:
       bench->compute_function = compute_sandy_bridge;
-      bench->gflops = compute_gflops(n_threads, BENCH_256_10);
-      bench->name = bench_name[UARCH_SANDY_BRIDGE];
+      bench->gflops = compute_gflops(n_threads, BENCH_256_3_NOFMA);
+      break;  
+    case UARCH_IVY_BRIDGE:
+      bench->compute_function = compute_ivy_bridge;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_3_NOFMA);
       break;
+    case UARCH_HASWELL:
+      bench->compute_function = compute_haswell;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_10);
+      break;  
+    case UARCH_SKYLAKE_256:
+      bench->compute_function = compute_skylake_256;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_8);
+      break;  
+    case UARCH_SKYLAKE_512:
+      bench->compute_function = compute_skylake_512;
+      bench->gflops = compute_gflops(n_threads, BENCH_512_8);
+      break;  
+    case UARCH_BROADWELL:
+      bench->compute_function = compute_broadwell;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_8);
+      break;  
     case UARCH_KABY_LAKE:
       bench->compute_function = compute_kaby_lake;
       bench->gflops = compute_gflops(n_threads, BENCH_256_8);
-      bench->name = bench_name[UARCH_KABY_LAKE];
+      break;  
+    case UARCH_COFFE_LAKE:
+      bench->compute_function = compute_coffe_lake;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_8);
+      break;  
+    case UARCH_CANNON_LAKE_256:
+      bench->compute_function = compute_cannon_lake_256;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_8);
+      break;  
+    case UARCH_CANNON_LAKE_512:
+      bench->compute_function = compute_cannon_lake_512;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_8);
+      break;        
+    case UARCH_ICE_LAKE_256:
+      bench->compute_function = compute_ice_lake_256;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_8);
+      break; 
+    case UARCH_ICE_LAKE_512:
+      bench->compute_function = compute_ice_lake_512;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_10);
+      break;       
+    case UARCH_KNIGHTS_LANDING:
+      bench->compute_function = compute_knl;
+      bench->gflops = compute_gflops(n_threads, BENCH_512_12);
       break;
+    case UARCH_ZEN:
+      bench->compute_function = compute_zen;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_5);
+      break;
+    case UARCH_ZEN_PLUS:
+      bench->compute_function = compute_zen_plus;
+      bench->gflops = compute_gflops(n_threads, BENCH_256_5);
+      break;    
     default:
       printf("ERROR: No valid uarch found!\n");
       return NULL;
   }
+  bench->name = bench_name[UARCH_SANDY_BRIDGE];
   
   if(bench->gflops < 0.0) return NULL;
   return bench;
