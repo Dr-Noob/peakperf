@@ -1,9 +1,10 @@
-#include "256_5.h"
+#include "zen.h"
 #define OP_PER_IT B_256_5_OP_IT
-#include "data.h"
 
-void compute_256_5(TYPE *farr, TYPE mult, int index) {
-  farr = farr_256_5[index];
+TYPE farr_zen[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
+
+void compute_zen(TYPE *farr, TYPE mult, int index) {
+  farr = farr_zen[index];
     
   for(long i=0; i<MAXFLOPS_ITERS; i++) {
     farr[0]  = _mm256_fmadd_ps(mult, farr[0], farr[1]);

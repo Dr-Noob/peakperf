@@ -4,8 +4,22 @@
 #define TYPE __m256
 
 #include "Arch.h"
-#include "256_8.h"
-#include "256_10.h"
+
+#include "sandy_bridge.h"  
+#include "ivy_bridge.h"
+#include "haswell.h" 
+#include "skylake_256.h"
+#include "skylake_512.h"
+#include "broadwell.h"
+#include "kaby_lake.h"
+#include "coffe_lake.h"
+#include "cannon_lake_256.h"  
+#include "cannon_lake_512.h"
+#include "ice_lake_256.h"
+#include "ice_lake_512.h"
+#include "knl.h"
+#include "zen.h"
+#include "zen_plus.h"
 
 struct benchmark {
   int n_threads;
@@ -86,12 +100,12 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads) {
   
   switch(u) {
     case UARCH_SANDY_BRIDGE:
-      bench->compute_function = compute_256_10;
+      bench->compute_function = compute_sandy_bridge;
       bench->gflops = compute_gflops(n_threads, BENCH_256_10);
       bench->name = bench_name[UARCH_SANDY_BRIDGE];
       break;
     case UARCH_KABY_LAKE:
-      bench->compute_function = compute_256_8;
+      bench->compute_function = compute_kaby_lake;
       bench->gflops = compute_gflops(n_threads, BENCH_256_8);
       bench->name = bench_name[UARCH_KABY_LAKE];
       break;

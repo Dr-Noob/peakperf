@@ -1,9 +1,10 @@
-#include "512_8.h"
+#include "skylake_512.h"
 #define OP_PER_IT B_512_8_OP_IT
-#include "data.h"
 
-void compute_512_8(TYPE *farr, TYPE mult, int index) {
-  farr = farr_512_8[index];    
+TYPE farr_skylake_512[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
+
+void compute_skylake_512(TYPE *farr, TYPE mult, int index) {
+  farr = farr_skylake_512[index];    
   
   for(long i=0; i<MAXFLOPS_ITERS; i++) {
     farr[0]  = _mm512_fmadd_ps(mult, farr[0], farr[1]);

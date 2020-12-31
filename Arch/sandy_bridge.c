@@ -1,9 +1,10 @@
-#include "256_3_nofma.h"
+#include "sandy_bridge.h"
 #define OP_PER_IT B_256_3_NOFMA_OP_IT
-#include "data.h"
 
-void compute_256_3_nofma(TYPE *farr, TYPE mult, int index) {
-  farr = farr_256_3_nofma[index];
+TYPE farr_sandy_bridge[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
+
+void compute_sandy_bridge(TYPE *farr, TYPE mult, int index) {
+  farr = farr_sandy_bridge[index];
   
   for(long i=0; i<MAXFLOPS_ITERS; i++) {
     farr[0]  = _mm256_add_ps(farr[0], farr[1]);
