@@ -37,9 +37,22 @@ enum {
   BENCH_512_12,
 };
 
+static char* bench_name_skylake_avx2       = "Skylake (AVX2)";
+static char* bench_name_skylake_avx512     = "Skylake (AVX512)";
+static char* bench_name_coffe_lake_avx2   = "Coffe Lake (AVX2)";
+static char* bench_name_coffe_lake_avx512 = "Coffe Lake (AVX512)";
+static char* bench_name_ice_lake_avx2      = "Ice Lake (AVX2)";
+static char* bench_name_ice_lake_avx512    = "Ice Lake (AVX512)";
+
 static char *bench_name[] = {
-  [UARCH_SANDY_BRIDGE]   = "Sandy Bridge - 256 bits",
-  [UARCH_KABY_LAKE]      = "Kaby Lake - 256 bits",
+  [UARCH_SANDY_BRIDGE]    = "Sandy Bridge (AVX)",
+  [UARCH_IVY_BRIDGE]      = "Ivy Bridge (AVX)",
+  [UARCH_HASWELL]         = "Haswell (AVX2)",
+  [UARCH_BROADWELL]       = "Broadwell (AVX2)",
+  [UARCH_KABY_LAKE]       = "Kaby Lake (AVX2)",
+  [UARCH_KNIGHTS_LANDING] = "Knights Landing (AVX512)",
+  [UARCH_ZEN]             = "Zen (AVX2)",
+  [UARCH_ZEN_PLUS]        = "Zen+ (AVX2)",
 };
 
 double compute_gflops(int n_threads, char bench) {
@@ -84,6 +97,28 @@ double compute_gflops(int n_threads, char bench) {
   }
   
   return (double)((long)n_threads*MAXFLOPS_ITERS*op_per_it*(bytes_in_vect/4)*fma_available)/1000000000;        
+}
+
+char* get_bench_name(MICROARCH u, struct cpu* cpu) {
+  switch(u) {
+    case UARCH_SKYLAKE:
+      if(cpu_has_avx512(cpu))
+        return bench_name_skylake_avx512;
+      return bench_name_skylake_avx2;        
+      break;
+    case UARCH_COFFE_LAKE:
+      if(cpu_has_avx512(cpu))
+        return bench_name_coffe_lake_avx512;
+      return bench_name_coffe_lake_avx2;
+      break;
+    case UARCH_ICE_LAKE:
+      if(cpu_has_avx512(cpu))
+        return bench_name_ice_lake_avx512;
+      return bench_name_ice_lake_avx2;
+      break;
+    default:
+      return bench_name[u];      
+  }
 }
 
 struct benchmark* init_benchmark(struct cpu* cpu, int n_threads) {    
@@ -161,7 +196,7 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads) {
       printf("ERROR: No valid uarch found!\n");
       return NULL;
   }
-  bench->name = bench_name[UARCH_SANDY_BRIDGE]; // avx512?
+  bench->name = get_bench_name(u, cpu);
   
   if(bench->gflops < 0.0) return NULL;
   return bench;
