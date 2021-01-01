@@ -2,50 +2,63 @@
 #define __ARCH__
 
 #include <immintrin.h>
+#include "../cpufetch/uarch.h"
 
-#define SIZE OP_PER_IT*2
 #define MAXFLOPS_ITERS 1000000000
+#define MAX_NUMBER_THREADS 512
 
-#ifdef AVX_512_12
-  #include "512_12.h"
-#elif defined AVX_256_10
-  #include "256_10.h"
-#elif defined AVX_256_8
-  #include "256_8.h"
-#elif defined AVX_512_8
-  #include "512_8.h"  
-#elif defined AVX_256_5
-  #include "256_5.h"  
-#elif defined AVX_256_3_NOFMA
-  #include "256_3_nofma.h"
-#endif
+/* 
+ * Values for each benchmark:
+ * =============================
+ * > FMA_AV: 
+ *   - FMA not available: 1
+ *   - FMA available: 2
+ * > OP_IT:
+ *   - Operations per iteration
+ * > BYTES (bytes in vector):
+ *   - AVX / AVX2 : 32 bytes
+ *   - AVX512 : 64 bytes
+ */
+//      AVX_256_3_NOFMA      //
+#define B_256_3_NOFMA_FMA_AV 1
+#define B_256_3_NOFMA_OP_IT  3
+#define B_256_3_NOFMA_BYTES  32
+//      AVX_256_5            //
+#define B_256_5_FMA_AV       2
+#define B_256_5_OP_IT        5
+#define B_256_5_BYTES        32
+//      AVX_256_8            //
+#define B_256_8_FMA_AV       2
+#define B_256_8_OP_IT        8
+#define B_256_8_BYTES        32
+//      AVX_256_10           //
+#define B_256_10_FMA_AV      2
+#define B_256_10_OP_IT       10
+#define B_256_10_BYTES       32
+//      AVX_512_8            //
+#define B_512_8_FMA_AV       2
+#define B_512_8_OP_IT        8
+#define B_512_8_BYTES        64
+//      AVX_512_12           //
+#define B_512_12_FMA_AV      2
+#define B_512_12_OP_IT       12
+#define B_512_12_BYTES       64
 
 #if defined(AVX_512_12) || defined(AVX_512_8)
   #define BYTES_IN_VECT 64
   #define TYPE __m512
-
-  static void initialize(int n_threads, TYPE mult, TYPE farr[][SIZE], float *fa) {
-    mult = _mm512_set1_ps(0.1f);
-
-    for(int i=0;i<n_threads;i++) {
-      for(int j=0;j<SIZE;j++)
-        farr[i][j] = _mm512_set_ps (fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],
-                                    fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j]);
-    }
-  }
-#else
+  #define SIZE OP_PER_IT*2
+#elif defined(AVX_256_10) || defined(AVX_256_8) || defined(AVX_256_5) || defined(AVX_256_3_NOFMA) 
   #define BYTES_IN_VECT 32
   #define TYPE __m256
-  
-  static void initialize(int n_threads, TYPE mult, TYPE farr[][SIZE], float *fa) {
-    mult = _mm256_set1_ps(0.1f);
-    
-    for(int i=0;i<n_threads;i++)
-      for(int j=0;j<SIZE;j++)
-        farr[i][j] = _mm256_set_ps (fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j],fa[i*SIZE+j]);
-  }
+  #define SIZE OP_PER_IT*2
 #endif
 
-void compute(TYPE farr[][SIZE], TYPE mult, int index);
+struct benchmark;
+
+struct benchmark* init_benchmark(struct cpu* cpu, int n_threads);
+void compute(struct benchmark* bench);
+double get_gflops(struct benchmark* bench);
+char* get_benchmark_name(struct benchmark* bench);
 
 #endif

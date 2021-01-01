@@ -1,4 +1,3 @@
-#include <immintrin.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <omp.h>
@@ -6,9 +5,9 @@
 #include <sys/time.h>
 
 #include "getarg.h"
-#include "Arch/Arch.h"
 #include "cpufetch/cpu.h"
 #include "cpufetch/uarch.h"
+#include "Arch/Arch.h"
 
 #define RED   "\x1b[31;1m"
 #define BOLD  "\x1b[1m"
@@ -36,36 +35,29 @@ int main(int argc, char* argv[]) {
   int nWarmupTrials = get_warmup_trials();
   int n_threads = get_n_threads();
   if(n_threads == INVALID_N_THREADS) n_threads = omp_get_max_threads();
-  
-  int flops_array_size = SIZE*n_threads;
+
   struct timeval t0,t1;
   
   /*** NEEDED TO COMPUTE SD ***/
-  double gflops = (double)((long)n_threads*MAXFLOPS_ITERS*OP_PER_IT*(BYTES_IN_VECT/4)*FMA_AVAILABLE)/1000000000;
+  struct cpu* cpu = get_cpu_info();
+  struct benchmark* bench = init_benchmark(cpu, n_threads);
+  if(bench == NULL) {
+    return EXIT_FAILURE;    
+  }
+  double gflops = get_gflops(bench);
   double e_time = 0;
   double mean = 0;
   double sd = 0;
   double sum = 0;
   double gflops_list[nTrials];
-  struct cpu* cpu = get_cpu_info();
   char* cpu_name = get_str_cpu_name(cpu);
-  char* uarch_name = get_str_uarch(cpu);
-
-  omp_set_num_threads(n_threads);
-  
-  /*** PREPARE DATA ***/
-  TYPE mult = {0};
-  TYPE farr[n_threads][SIZE] __attribute__((aligned(64)));
-  float fa[flops_array_size];
-  for(int i=0; i<flops_array_size; i++)
-    fa[i] = (float)i + 0.1f;
-
-  initialize(n_threads, mult, farr, fa);
+  char* uarch_name = get_str_uarch(cpu);  
+  char* bench_name = get_benchmark_name(bench);
 
   printf("\n" BOLD "Benchmarking FLOPS by Dr-Noob(github.com/Dr-Noob/FLOPS)." RESET "\n");
-  printf("   Test name: %s\n",TEST_NAME);
-  printf("         CPU: %s\n",cpu_name);
+  printf("         CPU: %s\n",cpu_name);  
   printf("   Microarch: %s\n",uarch_name);
+  printf("   Test name: %s\n",bench_name);
   printf("  Iterations: %d\n",MAXFLOPS_ITERS);
   printf("       GFLOP: %.2f\n",gflops);
   printf("     Threads: %d\n\n", n_threads);
@@ -74,9 +66,7 @@ int main(int argc, char* argv[]) {
   for (int trial = 0; trial < nTrials+nWarmupTrials; trial++) {
     /*** COMPUTE TAKES PLACE HERE ***/
     gettimeofday(&t0, 0);
-    #pragma omp parallel for
-    for(int t=0; t<n_threads; t++)
-      compute(farr, mult, t);
+    compute(bench);
     gettimeofday(&t1, 0);
 
     /*** NOW CALCULATE TIME AND PERFORMANCE ***/
