@@ -105,17 +105,16 @@ char* get_bench_name(MICROARCH u, struct cpu* cpu) {
       if(cpu_has_avx512(cpu))
         return bench_name_skylake_avx512;
       return bench_name_skylake_avx2;        
-      break;
     case UARCH_COFFE_LAKE:
       if(cpu_has_avx512(cpu))
         return bench_name_coffe_lake_avx512;
       return bench_name_coffe_lake_avx2;
-      break;
     case UARCH_ICE_LAKE:
       if(cpu_has_avx512(cpu))
         return bench_name_ice_lake_avx512;
       return bench_name_ice_lake_avx2;
-      break;
+    case UARCH_CASCADE_LAKE:
+      return bench_name_skylake_avx512;  
     default:
       return bench_name[u];      
   }
@@ -157,7 +156,11 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads) {
         bench->compute_function = compute_skylake_256;
         bench->gflops = compute_gflops(n_threads, BENCH_256_8);          
       }
-      break;  
+      break;
+    case UARCH_CASCADE_LAKE:
+      bench->compute_function = compute_skylake_512;
+      bench->gflops = compute_gflops(n_threads, BENCH_512_8);
+      break;
     case UARCH_BROADWELL:
       bench->compute_function = compute_broadwell;
       bench->gflops = compute_gflops(n_threads, BENCH_256_8);
@@ -193,7 +196,7 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads) {
       bench->gflops = compute_gflops(n_threads, BENCH_256_5);
       break;    
     default:
-      printf("ERROR: No valid uarch found!\n");
+      printf("ERROR: No valid uarch found! (uarch: %d)\n", u);
       return NULL;
   }
   bench->name = get_bench_name(u, cpu);
