@@ -1,4 +1,4 @@
-# FLOPS MicroBenchmark
+# peakperf
 
 This microbenchmark's goal is to achieve as much FLOP per second as possible, in simple precision (SP), trying to stay close to the theoretical peak performance, on x86 architectures.
 
