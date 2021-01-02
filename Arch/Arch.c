@@ -70,13 +70,26 @@ static char *bench_types_str[] = {
 };
 
 bench_type parse_benchmark(char* str) {
-  int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]); 
+  int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
   for(bench_type t = 0; t < len; t++) {
     if(strcmp(str, bench_types_str[t]) == 0) {
       return t;    
     }
   }
   return BENCH_TYPE_INVALID;    
+}
+
+void print_bench_types() {
+  int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
+  long unsigned int longest = 0;
+  for(bench_type t = 0; t < len; t++) {
+    if(strlen(bench_name[t]) > longest) longest = strlen(bench_name[t]);
+  }
+  
+  printf("Available benchmark types:\n");  
+  for(bench_type t = 0; t < len; t++) {
+    printf(" - %s %*s(Keyword: %s)\n", bench_name[t], (int) (strlen(bench_name[t]) - longest), "", bench_types_str[t]);
+  }
 }
 
 double compute_gflops(int n_threads, char bench) {

@@ -18,12 +18,14 @@
 #define ARG_CHAR_WARMUP     'w'
 #define ARG_CHAR_THREADS    't'
 #define ARG_CHAR_BENCHMARK  'b'
+#define ARG_CHAR_LISTBENCHS 'l'
 
 #define DEFAULT_N_TRIALS      10
 #define DEFAULT_WARMUP_TRIALS  2
 
 struct args_struct {
   bool help_flag;
+  bool list_benchmarks_flag;
   int n_trials;
   int n_warmup_trials;
   int n_threads;
@@ -80,16 +82,21 @@ bool parseArgs(int argc, char* argv[]) {
   bool n_threads_set = false;
     
   args.help_flag = false;
+  args.list_benchmarks_flag = false;
   args.n_trials = DEFAULT_N_TRIALS;
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
   args.n_threads = INVALID_N_THREADS;
   args.bench = BENCH_TYPE_INVALID;
 
-  while ((opt = getopt(argc, argv, "hr:w:t:b:")) != -1) {
+  while ((opt = getopt(argc, argv, "hlr:w:t:b:")) != -1) {
     switch (opt) {
     case 'h':
       args.help_flag  = true;
       break;
+      
+    case 'l':
+      args.list_benchmarks_flag  = true;
+      break;  
     
     case 'r':
       args.n_trials = getarg_int(optarg);
@@ -158,6 +165,10 @@ bool parseArgs(int argc, char* argv[]) {
 
 bool showHelp() {
   return args.help_flag;
+}
+
+bool list_benchmarks() {
+  return args.list_benchmarks_flag;
 }
 
 int get_n_trials() {

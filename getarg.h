@@ -9,6 +9,7 @@
 bool parseArgs(int argc, char* argv[]);
 
 bool showHelp();
+bool list_benchmarks();
 int get_n_trials();
 int get_warmup_trials();
 int get_n_threads();

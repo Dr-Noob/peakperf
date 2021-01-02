@@ -79,5 +79,6 @@ void compute(struct benchmark* bench);
 double get_gflops(struct benchmark* bench);
 char* get_benchmark_name(struct benchmark* bench);
 bench_type parse_benchmark(char* str);
+void print_bench_types();
 
 #endif

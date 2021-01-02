@@ -16,9 +16,11 @@
 #define RESET "\x1b[0m"
 
 void printHelp(char *argv[]) {
-  printf("Usage: %s [-h] [-r n_trials] [-w warmup_trials] [-t n_threads] \n\
+  printf("Usage: %s [-h] [-l] [-b bench_type] [-r n_trials] [-w warmup_trials] [-t n_threads] \n\
     Options: \n\
       -h      Print this help and exit\n\
+      -l      List the avaiable benchmark types\n\
+      -b      Select a specific benchmark to run\n\
       -r      Set the number of trials of the benchmark\n\
       -w      Set the number of warmup trials\n\
       -t      Set the number of threads to use\n",
@@ -31,6 +33,10 @@ int main(int argc, char* argv[]) {
   if(showHelp()) {
     printHelp(argv);
     return EXIT_SUCCESS;
+  }
+  if(list_benchmarks()) {
+    print_bench_types();
+    return EXIT_SUCCESS;    
   }
   int nTrials = get_n_trials();
   int nWarmupTrials = get_warmup_trials();
