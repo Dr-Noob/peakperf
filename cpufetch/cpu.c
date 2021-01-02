@@ -27,6 +27,8 @@ struct cpu {
   char* cpu_name; 
   struct uarch* uarch;
   bool avx;
+  bool avx2;
+  bool fma;
   bool avx512;
 };
 
@@ -44,9 +46,11 @@ void fill_features_cpuid(struct cpu* cpu) {
     eax = 0x00000001;
     cpuid(&eax, &ebx, &ecx, &edx);
     cpu->avx = (ecx & ((int)1 << 28)) != 0;
+    cpu->fma = (ecx & ((int)1 << 12)) != 0;
   }
   else {
     cpu->avx = false;    
+    cpu->fma = false;    
     printf("ERROR: Could not determine CPU features\n");
   }
   
@@ -54,6 +58,7 @@ void fill_features_cpuid(struct cpu* cpu) {
     eax = 0x00000007;
     ecx = 0x00000000;
     cpuid(&eax, &ebx, &ecx, &edx);
+    cpu->avx2         = (ebx & ((int)1 <<  5)) != 0;
     cpu->avx512       = (((ebx & ((int)1 << 16)) != 0)  ||
                          ((ebx & ((int)1 << 28)) != 0)  ||
                          ((ebx & ((int)1 << 26)) != 0)  ||
@@ -64,6 +69,7 @@ void fill_features_cpuid(struct cpu* cpu) {
                          ((ebx & ((int)1 << 21)) != 0));
   }
   else {
+    cpu->avx2 = false; 
     cpu->avx512 = false;    
   }  
 }
@@ -209,6 +215,14 @@ bool is_cpu_amd(struct cpu* cpu) {
 
 bool cpu_has_avx(struct cpu* cpu) {
   return cpu->avx;    
+}
+
+bool cpu_has_avx2(struct cpu* cpu) {
+  return cpu->avx2;    
+}
+
+bool cpu_has_fma(struct cpu* cpu) {
+  return cpu->fma;    
 }
 
 bool cpu_has_avx512(struct cpu* cpu) {

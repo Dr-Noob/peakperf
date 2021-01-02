@@ -34,18 +34,21 @@ int main(int argc, char* argv[]) {
     printHelp(argv);
     return EXIT_SUCCESS;
   }
+  
+  struct cpu* cpu = get_cpu_info();
+  
   if(list_benchmarks()) {
-    print_bench_types();
+    print_bench_types(cpu);
     return EXIT_SUCCESS;    
   }
+  
   int nTrials = get_n_trials();
   int nWarmupTrials = get_warmup_trials();
   int n_threads = get_n_threads();
   if(n_threads == INVALID_N_THREADS) n_threads = omp_get_max_threads();
 
   struct timeval t0;
-  struct timeval t1;
-  struct cpu* cpu = get_cpu_info();
+  struct timeval t1;  
   struct benchmark* bench = init_benchmark(cpu, n_threads, get_benchmark_type());
   if(bench == NULL) {
     return EXIT_FAILURE;    
