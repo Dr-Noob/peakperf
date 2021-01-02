@@ -13,10 +13,11 @@
 #define UNDERFLOW         -2
 #define INVALID_ARG       -3
 
-#define ARG_CHAR_HELP     'h'
-#define ARG_CHAR_TRIALS   'r'
-#define ARG_CHAR_WARMUP   'w'
-#define ARG_CHAR_THREADS  't'
+#define ARG_CHAR_HELP       'h'
+#define ARG_CHAR_TRIALS     'r'
+#define ARG_CHAR_WARMUP     'w'
+#define ARG_CHAR_THREADS    't'
+#define ARG_CHAR_BENCHMARK  'b'
 
 #define DEFAULT_N_TRIALS      10
 #define DEFAULT_WARMUP_TRIALS  2
@@ -26,6 +27,7 @@ struct args_struct {
   int n_trials;
   int n_warmup_trials;
   int n_threads;
+  bench_type bench;
 };
 
 int errn = 0;
@@ -81,8 +83,9 @@ bool parseArgs(int argc, char* argv[]) {
   args.n_trials = DEFAULT_N_TRIALS;
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
   args.n_threads = INVALID_N_THREADS;
+  args.bench = BENCH_TYPE_INVALID;
 
-  while ((opt = getopt(argc, argv, "hr:w:t:")) != -1) {
+  while ((opt = getopt(argc, argv, "hr:w:t:b:")) != -1) {
     switch (opt) {
     case 'h':
       args.help_flag  = true;
@@ -118,6 +121,15 @@ bool parseArgs(int argc, char* argv[]) {
         return false;
       }
       break;
+      
+    case 'b':
+      args.bench = parse_benchmark(optarg);
+      if(args.bench == BENCH_TYPE_INVALID) {
+        printf("ERROR: Option -b: Invalid benchmark\n");
+        args.help_flag  = true;   
+        return false;
+      }
+      break;  
       
     default:
       printf("WARNING: Invalid options\n");
@@ -158,5 +170,9 @@ int get_warmup_trials() {
 
 int get_n_threads() {
   return args.n_threads;    
+}
+
+bench_type get_benchmark_type() {
+  return args.bench;    
 }
 

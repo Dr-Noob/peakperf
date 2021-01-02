@@ -4,6 +4,24 @@
 #include <immintrin.h>
 #include "../cpufetch/uarch.h"
 
+typedef unsigned char bench_type;
+
+enum bench_types {
+  BENCH_TYPE_SANDY_BRIDGE,
+  BENCH_TYPE_IVY_BRIDGE,
+  BENCH_TYPE_HASWELL,
+  BENCH_TYPE_BROADWELL,
+  BENCH_TYPE_SKYLAKE_256,
+  BENCH_TYPE_SKYLAKE_512,
+  BENCH_TYPE_KABY_LAKE,
+  BENCH_TYPE_COFFE_LAKE,
+  BENCH_TYPE_ICE_LAKE,
+  BENCH_TYPE_KNIGHTS_LANDING,
+  BENCH_TYPE_ZEN,
+  BENCH_TYPE_ZEN_PLUS,
+  BENCH_TYPE_INVALID,
+};
+
 #define MAXFLOPS_ITERS 1000000000
 #define MAX_NUMBER_THREADS 512
 
@@ -56,9 +74,10 @@
 
 struct benchmark;
 
-struct benchmark* init_benchmark(struct cpu* cpu, int n_threads);
+struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benchmark_type);
 void compute(struct benchmark* bench);
 double get_gflops(struct benchmark* bench);
 char* get_benchmark_name(struct benchmark* bench);
+bench_type parse_benchmark(char* str);
 
 #endif

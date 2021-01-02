@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <omp.h>
 #include <math.h>
+#include <string.h>
 #include <sys/time.h>
 
 #include "getarg.h"
@@ -36,14 +37,14 @@ int main(int argc, char* argv[]) {
   int n_threads = get_n_threads();
   if(n_threads == INVALID_N_THREADS) n_threads = omp_get_max_threads();
 
-  struct timeval t0,t1;
-  
-  /*** NEEDED TO COMPUTE SD ***/
+  struct timeval t0;
+  struct timeval t1;
   struct cpu* cpu = get_cpu_info();
-  struct benchmark* bench = init_benchmark(cpu, n_threads);
+  struct benchmark* bench = init_benchmark(cpu, n_threads, get_benchmark_type());
   if(bench == NULL) {
     return EXIT_FAILURE;    
   }
+  
   double gflops = get_gflops(bench);
   double e_time = 0;
   double mean = 0;
@@ -53,41 +54,44 @@ int main(int argc, char* argv[]) {
   char* cpu_name = get_str_cpu_name(cpu);
   char* uarch_name = get_str_uarch(cpu);  
   char* bench_name = get_benchmark_name(bench);
+  int line_length = 13 + strlen(cpu_name);
 
-  printf("\n" BOLD "Benchmarking FLOPS by Dr-Noob(github.com/Dr-Noob/FLOPS)." RESET "\n");
-  printf("         CPU: %s\n",cpu_name);  
-  printf("   Microarch: %s\n",uarch_name);
-  printf("   Test name: %s\n",bench_name);
-  printf("  Iterations: %d\n",MAXFLOPS_ITERS);
-  printf("       GFLOP: %.2f\n",gflops);
-  printf("     Threads: %d\n\n", n_threads);
+  putchar('\n');
+  for(int i=0; i < line_length; i++) putchar('-');
+  printf("\n" BOLD "    peakperf (https://github.com/Dr-Noob/peakperf)" RESET "\n");
+  for(int i=0; i < line_length; i++) putchar('-');
+  putchar('\n');
+  printf("        CPU: %s\n", cpu_name);  
+  printf("  Microarch: %s\n", uarch_name);
+  printf("  Benchmark: %s\n", bench_name);
+  printf(" Iterations: %d\n", MAXFLOPS_ITERS);
+  printf("      GFLOP: %.2f\n", gflops);
+  printf("    Threads: %d\n\n", n_threads);
 
-  printf(BOLD "%6s %8s %8s" RESET "\n","Nº","Time(s)","GFLOP/S");
+  printf(BOLD "%6s %8s %8s" RESET "\n","Nº","Time(s)","GFLOP/s");
   for (int trial = 0; trial < nTrials+nWarmupTrials; trial++) {
-    /*** COMPUTE TAKES PLACE HERE ***/
     gettimeofday(&t0, 0);
     compute(bench);
     gettimeofday(&t1, 0);
 
-    /*** NOW CALCULATE TIME AND PERFORMANCE ***/
     e_time = (double)((t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec)/1000000;
-    if ( trial >= nWarmupTrials) {
+    if (trial >= nWarmupTrials) {
       mean += gflops/e_time;
       gflops_list[trial-nWarmupTrials] = gflops/e_time;
       printf("%5d %8.5f %8.2f\n",trial+1, e_time, gflops/e_time);
     }
-    else
+    else {
       printf("%5d %8.5f %8.2f *\n",trial+1, e_time, gflops/e_time);
+    }
   }
 
-  /*** CALCULATE STANDARD DEVIATION ***/
   mean=mean/(double)nTrials;
   for(int i=0;i<nTrials;i++)
     sum += (gflops_list[i] - mean)*(gflops_list[i] - mean);
   sd=sqrt(sum/nTrials);
 
-  printf("-------------------------------------------------\n");
-  printf(BOLD "Average performance:      " RESET GREEN "%.2f +- %.2f GFLOP/s" RESET "\n",mean, sd);
-  printf("-------------------------------------------------\n");
-  if(nWarmupTrials > 0)printf("* - warm-up, not included in average\n\n");
+  for(int i=0; i < line_length; i++) putchar('-');
+  printf("\n" BOLD " Average performance:      " RESET GREEN "%.2f +- %.2f GFLOP/s" RESET "\n",mean, sd);
+  for(int i=0; i < line_length; i++) putchar('-');
+  if(nWarmupTrials > 0)printf("\n* - warm-up, not included in average\n\n");
 }
