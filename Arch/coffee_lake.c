@@ -1,10 +1,10 @@
-#include "coffe_lake.h"
+#include "coffee_lake.h"
 #define OP_PER_IT B_256_8_OP_IT
 
-TYPE farr_coffe_lake[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
+TYPE farr_coffee_lake[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
 
-void compute_coffe_lake(TYPE *farr, TYPE mult, int index) {
-  farr = farr_coffe_lake[index];
+void compute_coffee_lake(TYPE *farr, TYPE mult, int index) {
+  farr = farr_coffee_lake[index];
   
   for(long i=0; i<MAXFLOPS_ITERS; i++) {
     farr[0]  = _mm256_fmadd_ps(mult, farr[0], farr[1]);

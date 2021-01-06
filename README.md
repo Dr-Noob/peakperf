@@ -112,7 +112,7 @@ This tables show results for each microarchitecture suported by peakperf. To see
 | Broadwell       | 2x Xeon E5-2698 v4 | `2.599 GHz`  | `3326.72`    | `3269.87 +- 14.42` | `1.73%` |
 | Skylake         | i5-6400            | `3.099 GHz`  | `396.67`     | `396.61 +- 0.01 `  | `0.06`  |
 | Kaby Lake       | i5-8250U           | `2.700 GHz`  | `345.60`     | `343.57 +- 1.38`   | `0.59%` |
-| Coffe Lake      | i9-9900K           | `3.600 GHz`  | `921.60`     | `918.72 +- 1.13`   | `0.31%` |
+| Coffee Lake     | i9-9900K           | `3.600 GHz`  | `921.60`     | `918.72 +- 1.13`   | `0.31%` |
 | Cascade Lake    | 2x Xeon Gold 6238  | `2.099 GHz`  | `5910.78`    | `5851.60 +- 2.69`  | `1.01%` |
 | Ice Lake        | i5-1035G1          | `2.990 GHz`  | `382.72`     | `382.22 +- 0.18`   | `0.13%` |
 | Knights Landing | Xeon Phi 7250      | `1.499 GHz`  | `5991.69`    | `5390.84 +- 7.83`  | `3.72%` |
@@ -142,7 +142,7 @@ The following table acts as a summary of all supported microarchitectures with t
 | Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
 | Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
 | Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [4] |
-| Coffe Lake      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [5] |
+| Coffee Lake     |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [5] |
 | Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
 | Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 |     2 (FMA AVX512) |       6 (FMA)|:heavy_check_mark:|        [6] |
 | Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 |     1 (FMA AVX2)   |       5 (FMA)|:x:               |        [7] |

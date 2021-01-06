@@ -18,7 +18,7 @@
 #include "skylake_512.h"
 #include "broadwell.h"
 #include "kaby_lake.h"
-#include "coffe_lake.h"
+#include "coffee_lake.h"
 #include "cannon_lake_256.h"  
 #include "cannon_lake_512.h"
 #include "ice_lake_256.h"
@@ -52,7 +52,7 @@ static char *bench_name[] = {
   [BENCH_TYPE_SKYLAKE_256]     = "Skylake (AVX2)",
   [BENCH_TYPE_SKYLAKE_512]     = "Skylake (AVX512)",
   [BENCH_TYPE_KABY_LAKE]       = "Kaby Lake (AVX2)",
-  [BENCH_TYPE_COFFE_LAKE]      = "Coffe Lake (AVX2)",
+  [BENCH_TYPE_COFFEE_LAKE]     = "Coffee Lake (AVX2)",
   [BENCH_TYPE_ICE_LAKE]        = "Ice Lake (AVX2)",
   [BENCH_TYPE_KNIGHTS_LANDING] = "Knights Landing (AVX512)",
   [BENCH_TYPE_ZEN]             = "Zen (AVX2)",
@@ -67,7 +67,7 @@ static char *bench_types_str[] = {
   [BENCH_TYPE_SKYLAKE_256]     = "skylake_256",
   [BENCH_TYPE_SKYLAKE_512]     = "skylake_512",
   [BENCH_TYPE_KABY_LAKE]       = "kaby_lake",
-  [BENCH_TYPE_COFFE_LAKE]      = "coffe_lake",
+  [BENCH_TYPE_COFFEE_LAKE]     = "coffee_lake",
   [BENCH_TYPE_ICE_LAKE]        = "ice_lake",
   [BENCH_TYPE_KNIGHTS_LANDING] = "knights_landing",
   [BENCH_TYPE_ZEN]             = "zen",
@@ -83,7 +83,7 @@ bool is_benchmark_supported(bench_type t, struct cpu* cpu) {
     case BENCH_TYPE_BROADWELL:
     case BENCH_TYPE_SKYLAKE_256:
     case BENCH_TYPE_KABY_LAKE:
-    case BENCH_TYPE_COFFE_LAKE:
+    case BENCH_TYPE_COFFEE_LAKE:
     case BENCH_TYPE_ICE_LAKE:
     case BENCH_TYPE_ZEN:
     case BENCH_TYPE_ZEN_PLUS:    
@@ -206,8 +206,8 @@ bool select_benchmark(struct benchmark* bench) {
       bench->compute_function = compute_kaby_lake;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;  
-    case BENCH_TYPE_COFFE_LAKE:
-      bench->compute_function = compute_coffe_lake;
+    case BENCH_TYPE_COFFEE_LAKE:
+      bench->compute_function = compute_coffee_lake;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;  
     case BENCH_TYPE_ICE_LAKE:
@@ -280,8 +280,8 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benc
       case UARCH_KABY_LAKE:
         bench->benchmark_type = BENCH_TYPE_KABY_LAKE;
         break;  
-      case UARCH_COFFE_LAKE:
-        bench->benchmark_type = BENCH_TYPE_COFFE_LAKE;
+      case UARCH_COFFEE_LAKE:
+        bench->benchmark_type = BENCH_TYPE_COFFEE_LAKE;
         break;  
       case UARCH_ICE_LAKE:
         bench->benchmark_type = BENCH_TYPE_ICE_LAKE;
