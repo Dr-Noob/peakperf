@@ -36,7 +36,7 @@ struct benchmark {
 };
 
 enum {
-  BENCH_256_3_NOFMA,  
+  BENCH_256_6_NOFMA,  
   BENCH_256_5,
   BENCH_256_8,
   BENCH_256_10,
@@ -138,10 +138,10 @@ double compute_gflops(int n_threads, char bench) {
   int bytes_in_vect;
   
   switch(bench) {
-    case BENCH_256_3_NOFMA:
-      fma_available = B_256_3_NOFMA_FMA_AV;
-      op_per_it = B_256_3_NOFMA_OP_IT;
-      bytes_in_vect = B_256_3_NOFMA_BYTES;
+    case BENCH_256_6_NOFMA:
+      fma_available = B_256_6_NOFMA_FMA_AV;
+      op_per_it = B_256_6_NOFMA_OP_IT;
+      bytes_in_vect = B_256_6_NOFMA_BYTES;
       break;
     case BENCH_256_5:
       fma_available = B_256_5_FMA_AV;
@@ -180,11 +180,11 @@ bool select_benchmark(struct benchmark* bench) {
   switch(bench->benchmark_type) {
     case BENCH_TYPE_SANDY_BRIDGE:
       bench->compute_function = compute_sandy_bridge;
-      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_3_NOFMA);
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_6_NOFMA);
       break;  
     case BENCH_TYPE_IVY_BRIDGE:
       bench->compute_function = compute_ivy_bridge;
-      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_3_NOFMA);
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_6_NOFMA);
       break;
     case BENCH_TYPE_HASWELL:
       bench->compute_function = compute_haswell;

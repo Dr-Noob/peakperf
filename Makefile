@@ -3,8 +3,8 @@ CXX=gcc
 SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
 CXXFLAGS_GENERIC=-std=c99 -O2 $(SANITY_FLAGS)
 CXXFLAGS_LINK=-lm -fopenmp
-CXXFLAGS_SANDY_BRIDGE    = -DAVX_256_3_NOFMA -march=sandybridge    $(CXXFLAGS_GENERIC)
-CXXFLAGS_IVY_BRIDGE      = -DAVX_256_3_NOFMA -march=ivybridge      $(CXXFLAGS_GENERIC)
+CXXFLAGS_SANDY_BRIDGE    = -DAVX_256_6_NOFMA -march=sandybridge    $(CXXFLAGS_GENERIC)
+CXXFLAGS_IVY_BRIDGE      = -DAVX_256_6_NOFMA -march=ivybridge      $(CXXFLAGS_GENERIC)
 CXXFLAGS_HASWELL         = -DAVX_256_10      -march=haswell        $(CXXFLAGS_GENERIC)
 CXXFLAGS_SKYLAKE_256     = -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_SKYLAKE_512     = -DAVX_512_8       -march=skylake-avx512 $(CXXFLAGS_GENERIC)
