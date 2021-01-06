@@ -1,5 +1,5 @@
 # peakperf
-Achieve peak performance in x86_64 CPUs.
+Achieve peak performance on x86_64 CPUs.
 
 ## Usage
 Build the microbenchmark with `make` and run peakperf:
@@ -36,7 +36,7 @@ Build the microbenchmark with `make` and run peakperf:
 * - warm-up, not included in average
 ```
 
-To achieve the best performance, you should run this test with the computer working under minimum load (e.g, in non graphics mode). A good way to do this is by issuing `systemctl isolate multi-user.target`. peakperf automatically detects your CPU and runs the best benchmark for your architecture. You can, however, see all available benchmarks in peakperf and select which one you one to run:
+To achieve the best performance, you should run this test with the computer working under minimum load (e.g, in non-graphics mode). A good way to do this is by issuing `systemctl isolate multi-user.target`. peakperf automatically detects your CPU and runs the best benchmark for your architecture. You can, however, see all available benchmarks in peakperf and select which one you one to run:
 
 ```
 [noob@drnoob peakperf]$ ./peakperf -l
@@ -45,9 +45,12 @@ Available benchmark types:
 [noob@drnoob peakperf]$ ./peakperf -b haswell
 ```
 
+## Support
+peakperf only works properly in *Linux*. peakperf under *Windows*/*macOS* has not been tested, so performance may not be optimal.
+
 ## Understanding the microbenchmark
 #### 0. What is "peak performance" anyway?
-Peak performance refers to the maximum performance that a chip (a CPU) can achieve. The more powerful the CPU is, the greater peak performance can achieve. This performance is a theoretical limit, computed by a formula (see next section), measured in floating point operation per seconds (FLOP/s or GFLOP/s, which stands for gigaflops). This value establish a performance limit that the CPU is unable to overcome. However, achieving the peak performance (the maximum performance for a given CPU) is a very hard (but also  interesting) task. To do so, the software must take advantage of the full power of the CPU. peakperf is a microbenchmark that achieves peakperformance on many different x86_64 microarchitectures.
+Peak performance refers to the maximum performance that a chip (a CPU) can achieve. The more powerful the CPU is, the greater the peak performance can achieve. This performance is a theoretical limit, computed using a formula (see next section), measured in floating point operation per seconds (FLOP/s or GFLOP/s, which stands for gigaflops). This value establishes a performance limit that the CPU is unable to overcome. However, achieving the peak performance (the maximum performance for a given CPU) is a very hard (but also interesting) task. To do so, the software must take advantage of the full power of the CPU. peakperf is a microbenchmark that achieves peak performance on many different x86_64 microarchitectures.
 
 #### 1. The formula
 
@@ -131,27 +134,30 @@ _NOTE 3_: KNL performance is computed as PP * (6/7) (see [explanation](https://s
 
 The following table acts as a summary of all supported microarchitectures with their characteristics:
 
-| uArch           | AVX              | FMA              | AVX512             | Slots | FPUs               | Latency      | Tested            |
-|:---------------:|:----------------:|:----------------:|:------------------:|:-----:|:------------------:|:------------:|:-----------------:|
-| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     3 |     1 (ADD AVX2)   |       3 (ADD)|:heavy_check_mark:|
-| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     3 |     1 (ADD AVX2)   |       3 (ADD)|:heavy_check_mark:|
-| Haswell         |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 |     2 (FMA AVX2)   |       5 (FMA)|:heavy_check_mark:|
-| Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|
-| Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|
-| Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |    8* |    2* (FMA AVX2)   |      4* (FMA)|:heavy_check_mark:|
-| Coffe Lake      |:heavy_check_mark:|:heavy_check_mark:| :x:                |   10* |    2* (FMA AVX2)   |      5* (FMA)|:heavy_check_mark:|
-| Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|
-| Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 |     2 (FMA AVX512) |       6 (FMA)|:heavy_check_mark:|
-| Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 |     1 (FMA AVX2)   |       5 (FMA)|:x:               |
-| Ryzen ZEN+      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 |     1 (FMA AVX2)   |       5 (FMA)|:heavy_check_mark:|
+| uArch           | AVX              | FMA              | AVX512             | Slots | FPUs               | Latency      | Tested           | References |
+|:---------------:|:----------------:|:----------------:|:------------------:|:-----:|:------------------:|:------------:|:----------------:|:----------:|
+| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     3 |     1 (ADD AVX2)   |       3 (ADD)|:heavy_check_mark:|        [1] |
+| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     3 |     1 (ADD AVX2)   |       3 (ADD)|:heavy_check_mark:|        [2] |
+| Haswell         |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 |     2 (FMA AVX2)   |       5 (FMA)|:heavy_check_mark:|        [3] |
+| Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
+| Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
+| Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [4] |
+| Coffe Lake      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [5] |
+| Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
+| Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 |     2 (FMA AVX512) |       6 (FMA)|:heavy_check_mark:|        [6] |
+| Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 |     1 (FMA AVX2)   |       5 (FMA)|:x:               |        [7] |
+| Ryzen ZEN+      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 |     1 (FMA AVX2)   |       5 (FMA)|:heavy_check_mark:|        [8] |
 
-This data have been retrieved using:
-- [Agner Fog's data](https://www.agner.org/optimize/instruction_tables.pdf)
-- [Wikichip](https://en.wikichip.org/wiki/WikiChip)
-- [Intel's Intrisics Guide](https://software.intel.com/sites/landingpage/IntrinsicsGuide).
+References:
+- [1] [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [2] [Agner Fog Instruction Tables (Page 213, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [3] [Intel Intrinsics Guide (_mm256_fmadd_ps)](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=256_fmadd_ps&expand=136,2553)
+- [4] [Wikichip](https://en.wikichip.org/wiki/intel/microarchitectures/kaby_lake#Pipeline)
+- [5] [Agner Fog Instruction Tables (Page 299, VFMADD)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [6] [Intel Intrinsics Guide (_mm512_fmadd_ps)](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=512_fmadd_ps&expand=136,2553,2557)
+- [7] [Agner Fog Instruction Tables (Page 99, VFMADD)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [8] [Wikichip](https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B#Pipeline)
 
 _NOTES:_
-- Cells marked with an asterisk (\*) indicates that such data has been obtanied experimentally because I did not find such information on the web (may be oudated).
-- Cells containing ??? means I don't know this data yet and hence, the experimental results for this microarchitecture may not be optimal. I always try to run peakperf on all the CPUs I have access to.
-- Ice Lake: While it has AVX512 instructions, it only has 1 AVX512 VPU (at least in client Ice Lake), while it has 2 VPUs for AVX2. Because AVX512 runs in lower freqeuncy, the performance obtained with AVX2 (using 2 VPUs) is better than with AVX512 (using 1 VPU). Thus, peak performance in Ice Lake is obtained using AVX2, although it supports AVX512 instruction set.
+- Ice Lake supports AVX512 instructions but it only has 1 AVX512 VPU (at least in client Ice Lake), while it has 2 VPUs for AVX2. Because AVX512 runs in lower freqeuncy, the performance obtained with AVX2 (using 2 VPUs) is better than with AVX512 (using 1 VPU). Thus, peak performance in Ice Lake is obtained using AVX2, although it supports AVX512 instruction set.
 - Slots column is calculated with `FPUs x Latency`.
