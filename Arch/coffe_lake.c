@@ -1,5 +1,5 @@
 #include "coffe_lake.h"
-#define OP_PER_IT B_256_10_OP_IT
+#define OP_PER_IT B_256_8_OP_IT
 
 TYPE farr_coffe_lake[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
 
@@ -15,7 +15,5 @@ void compute_coffe_lake(TYPE *farr, TYPE mult, int index) {
     farr[10] = _mm256_fmadd_ps(mult, farr[10], farr[11]);
     farr[12] = _mm256_fmadd_ps(mult, farr[12], farr[13]);
     farr[14] = _mm256_fmadd_ps(mult, farr[14], farr[15]);
-    farr[16] = _mm256_fmadd_ps(mult, farr[16], farr[17]);
-    farr[18] = _mm256_fmadd_ps(mult, farr[18], farr[19]);
   }
 }

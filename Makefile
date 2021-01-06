@@ -10,7 +10,7 @@ CXXFLAGS_SKYLAKE_256     = -DAVX_256_8       -march=skylake        $(CXXFLAGS_GE
 CXXFLAGS_SKYLAKE_512     = -DAVX_512_8       -march=skylake-avx512 $(CXXFLAGS_GENERIC)
 CXXFLAGS_BROADWELL       = -DAVX_256_8       -march=broadwell      $(CXXFLAGS_GENERIC)
 CXXFLAGS_KABY_LAKE       = -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
-CXXFLAGS_COFFE_LAKE      = -DAVX_256_10      -march=skylake        $(CXXFLAGS_GENERIC)
+CXXFLAGS_COFFE_LAKE      = -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_CANNON_LAKE_256 = -DAVX_256_10      -march=cannonlake     $(CXXFLAGS_GENERIC)
 CXXFLAGS_CANNON_LAKE_512 = -DAVX_256_10      -march=cannonlake     $(CXXFLAGS_GENERIC)
 CXXFLAGS_ICE_LAKE_256    = -DAVX_256_8       -march=icelake-client $(CXXFLAGS_GENERIC)
@@ -91,6 +91,9 @@ ALL_OUTS=$(OUT_SANDY_BRIDGE) $(OUT_IVY_BRIDGE) $(OUT_HASWELL) $(OUT_SKYLAKE_256)
 peakperf: $(MAIN) $(ALL_OUTS)
 	$(CXX) $(CXXFLAGS_GENERIC) -mavx $(CXXFLAGS_LINK) $(MAIN) $(ALL_OUTS) -o $@
 
+release: $(MAIN) $(ALL_OUTS)
+	$(CXX) $(CXXFLAGS_GENERIC) -mavx -static $(CXXFLAGS_LINK) $(MAIN) $(ALL_OUTS) -o $@
+
 $(OUT_SANDY_BRIDGE): Makefile $(SANDY_BRIDGE) $(SANDY_BRIDGE_HEADERS)
 	$(CXX) $(CXXFLAGS_SANDY_BRIDGE) $(SANDY_BRIDGE) -c -o $@
 	
@@ -134,7 +137,7 @@ $(OUT_ZEN): Makefile $(ZEN) $(ZEN_HEADERS)
 	$(CXX) $(CXXFLAGS_ZEN) $(ZEN) -c -o $@
 	
 $(OUT_ZEN_PLUS): Makefile $(ZEN_PLUS) $(ZEN_PLUS_HEADERS)
-	$(CXX) $(CXXFLAGS_ZEN_PLUS) $(ZEN_PLUS) -c -o $@	
+	$(CXX) $(CXXFLAGS_ZEN_PLUS) $(ZEN_PLUS) -c -o $@			
 	
 clean:
 	@rm peakperf $(ALL_OUTS)	
