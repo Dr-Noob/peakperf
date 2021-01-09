@@ -136,19 +136,19 @@ _NOTE 4_: Sandy Bridge and Ivy Bridge have ADD and MUL VPUs that can be used in 
 
 The following table acts as a summary of all supported microarchitectures with their characteristics:
 
-| uArch           | AVX              | FMA              | AVX512             | Slots | FPUs              | Latency         | Tested           | References |
-|:---------------:|:----------------:|:----------------:|:------------------:|:-----:|:-----------------:|:---------------:|:----------------:|:----------:|
-| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     3 | 2 (ADD + MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|        [1] |
-| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     3 | 2 (ADD + MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|        [2] |
-| Haswell         |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)      | 5 (FMA)         |:heavy_check_mark:|        [3] |
-| Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [3] |
-| Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [3] |
-| Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [4] |
-| Coffee Lake     |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [5] |
-| Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [3] |
-| Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)    | 6 (FMA)         |:heavy_check_mark:|        [6] |
-| Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)      | 5 (FMA)         |:x:               |        [7] |
-| Ryzen ZEN+      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)      | 5 (FMA)         |:heavy_check_mark:|        [8] |
+| uArch           | AVX              | FMA              | AVX512             | Slots | FPUs            | Latency         | Tested           | Refs |
+|:---------------:|:----------------:|:----------------:|:------------------:|:-----:|:---------------:|:---------------:|:----------------:|:----:|
+| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     3 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [1] |
+| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     3 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [2] |
+| Haswell         |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [3] |
+| Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
+| Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
+| Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [4] |
+| Coffee Lake     |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [5] |
+| Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
+| Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)  | 6 (FMA)         |:heavy_check_mark:|  [6] |
+| Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
+| Ryzen ZEN+      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [8] |
 
 References:
 - [1] [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
