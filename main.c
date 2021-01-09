@@ -15,10 +15,13 @@
 #define GREEN "\x1b[42m"
 #define RESET "\x1b[0m"
 
+static const char* VERSION = "1.0";
+
 void printHelp(char *argv[]) {
-  printf("Usage: %s [-h] [-l] [-b bench_type] [-r n_trials] [-w warmup_trials] [-t n_threads] \n\
+  printf("Usage: %s [-h] [-v] [-l] [-b bench_type] [-r n_trials] [-w warmup_trials] [-t n_threads] \n\
     Options: \n\
-      -h      Print this help and exit\n\
+      -h      Prints this help and exit\n\
+      -v      Prints peakperf version and exit\n\
       -l      List the avaiable benchmark types\n\
       -b      Select a specific benchmark to run\n\
       -r      Set the number of trials of the benchmark\n\
@@ -27,11 +30,20 @@ void printHelp(char *argv[]) {
       argv[0]);
 }
 
+void print_version() {
+  printf("peakperf v%s\n", VERSION);
+}
+
 int main(int argc, char* argv[]) {
   if(!parseArgs(argc, argv)) return EXIT_FAILURE;
   
   if(showHelp()) {
     printHelp(argv);
+    return EXIT_SUCCESS;
+  }
+  
+  if(showVersion()) {
+    print_version();
     return EXIT_SUCCESS;
   }
   

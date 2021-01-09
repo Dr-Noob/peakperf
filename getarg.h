@@ -8,6 +8,7 @@
 
 bool parseArgs(int argc, char* argv[]);
 
+bool showVersion();
 bool showHelp();
 bool list_benchmarks();
 int get_n_trials();
