@@ -107,7 +107,7 @@ This tables show results for each microarchitecture suported by peakperf. To see
 | uArch           | CPU                | AVX Freq     | PP (Formula) | PP (Experimental)  | Loss    |
 |:---------------:|:------------------:|:------------:|:------------:|:------------------:|:-------:|
 | Sandy Bridge    | i5-2400            | `3.192 GHz`  | `102.14`     | `100.64 +- 0.00`   | `1.46%` |
-| Ivy Bridge      | 2x Xeon E5-2650 v2 | `2.999 GHz`  | `383.87`     | `377.66 +- 0.02`   | `1.64%` |
+| Ivy Bridge      | 2x Xeon E5-2650 v2 | `2.999 GHz`  | `767.74`     | `744.24 +- 3.85`   | `3.15%` |
 | Haswell         | i7-4790K           | `3.997 GHz`  | `511.61`     | `511.43 +- 0.01`   | `0.03%` |
 | Broadwell       | 2x Xeon E5-2698 v4 | `2.599 GHz`  | `3326.72`    | `3269.87 +- 14.42` | `1.73%` |
 | Skylake         | i5-6400            | `3.099 GHz`  | `396.67`     | `396.61 +- 0.01 `  | `0.06`  |
@@ -130,23 +130,25 @@ _NOTE 2_: On some machines, I'm not root or even the person running the microben
 
 _NOTE 3_: KNL performance is computed as PP * (6/7) (see [explanation](https://sites.utexas.edu/jdm4372/2018/01/22/a-peculiar-throughput-limitation-on-intels-xeon-phi-x200-knights-landing/)).
 
+_NOTE 4_: Sandy Bridge and Ivy Bridge have ADD and MUL VPUs that can be used in parallel. Therefore, Xeon E5-2650 v2 formula is computed as `FREQ * CORES * 2 * 2 * 8`. However, i5-2400 peak performance is computed as the half. The explanation for this is that ADD and MUL VPUs can only be used if CPU supports hyperthreading. If CPU do not support hyperthreading, one core is unable to fill both VPUs fast enough.
+
 ## Microarchitecture table
 
 The following table acts as a summary of all supported microarchitectures with their characteristics:
 
-| uArch           | AVX              | FMA              | AVX512             | Slots | FPUs               | Latency      | Tested           | References |
-|:---------------:|:----------------:|:----------------:|:------------------:|:-----:|:------------------:|:------------:|:----------------:|:----------:|
-| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     3 |     1 (ADD AVX2)   |       3 (ADD)|:heavy_check_mark:|        [1] |
-| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     3 |     1 (ADD AVX2)   |       3 (ADD)|:heavy_check_mark:|        [2] |
-| Haswell         |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 |     2 (FMA AVX2)   |       5 (FMA)|:heavy_check_mark:|        [3] |
-| Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
-| Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
-| Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [4] |
-| Coffee Lake     |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [5] |
-| Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 |     2 (FMA AVX2)   |       4 (FMA)|:heavy_check_mark:|        [3] |
-| Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 |     2 (FMA AVX512) |       6 (FMA)|:heavy_check_mark:|        [6] |
-| Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 |     1 (FMA AVX2)   |       5 (FMA)|:x:               |        [7] |
-| Ryzen ZEN+      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 |     1 (FMA AVX2)   |       5 (FMA)|:heavy_check_mark:|        [8] |
+| uArch           | AVX              | FMA              | AVX512             | Slots | FPUs              | Latency         | Tested           | References |
+|:---------------:|:----------------:|:----------------:|:------------------:|:-----:|:-----------------:|:---------------:|:----------------:|:----------:|
+| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     3 | 2 (ADD + MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|        [1] |
+| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     3 | 2 (ADD + MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|        [2] |
+| Haswell         |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)      | 5 (FMA)         |:heavy_check_mark:|        [3] |
+| Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [3] |
+| Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [3] |
+| Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [4] |
+| Coffee Lake     |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [5] |
+| Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)      | 4 (FMA)         |:heavy_check_mark:|        [3] |
+| Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)    | 6 (FMA)         |:heavy_check_mark:|        [6] |
+| Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)      | 5 (FMA)         |:x:               |        [7] |
+| Ryzen ZEN+      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)      | 5 (FMA)         |:heavy_check_mark:|        [8] |
 
 References:
 - [1] [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
