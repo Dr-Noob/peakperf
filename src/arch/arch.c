@@ -48,8 +48,9 @@ static char *bench_name[] = {
   [BENCH_TYPE_BROADWELL]       = "Broadwell (AVX2)",
   [BENCH_TYPE_SKYLAKE_256]     = "Skylake (AVX2)",
   [BENCH_TYPE_SKYLAKE_512]     = "Skylake (AVX512)",
-  [BENCH_TYPE_KABY_LAKE]       = "Kaby Lake (AVX2)",
+  [BENCH_TYPE_KABY_LAKE]       = "Kaby Lake (AVX2)",  
   [BENCH_TYPE_COFFEE_LAKE]     = "Coffee Lake (AVX2)",
+  [BENCH_TYPE_COMET_LAKE]      = "Comet Lake (AVX2)",
   [BENCH_TYPE_ICE_LAKE]        = "Ice Lake (AVX2)",
   [BENCH_TYPE_KNIGHTS_LANDING] = "Knights Landing (AVX512)",
   [BENCH_TYPE_ZEN]             = "Zen (AVX2)",
@@ -66,6 +67,7 @@ static char *bench_types_str[] = {
   [BENCH_TYPE_SKYLAKE_512]     = "skylake_512",
   [BENCH_TYPE_KABY_LAKE]       = "kaby_lake",
   [BENCH_TYPE_COFFEE_LAKE]     = "coffee_lake",
+  [BENCH_TYPE_COMET_LAKE]      = "comet_lake",
   [BENCH_TYPE_ICE_LAKE]        = "ice_lake",
   [BENCH_TYPE_KNIGHTS_LANDING] = "knights_landing",
   [BENCH_TYPE_ZEN]             = "zen",
@@ -83,6 +85,7 @@ bool is_benchmark_supported(bench_type t, struct cpu* cpu) {
     case BENCH_TYPE_SKYLAKE_256:
     case BENCH_TYPE_KABY_LAKE:
     case BENCH_TYPE_COFFEE_LAKE:
+    case BENCH_TYPE_COMET_LAKE:
     case BENCH_TYPE_ICE_LAKE:
     case BENCH_TYPE_ZEN:
     case BENCH_TYPE_ZEN_PLUS:
@@ -187,6 +190,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Broadwell       -> broadwell
  * - Kaby Lake       -> skylake_256
  * - Coffee Lake     -> skylake_256
+ * - Comet Lake      -> skylake_256
  * - Ice Lake        -> ice_lake
  * - Knights Landing -> knl
  * - Zen             -> zen
@@ -226,7 +230,11 @@ bool select_benchmark(struct benchmark* bench) {
     case BENCH_TYPE_COFFEE_LAKE:
       bench->compute_function = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
-      break;  
+      break;
+    case BENCH_TYPE_COMET_LAKE:
+      bench->compute_function = compute_skylake_256;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
+      break;    
     case BENCH_TYPE_ICE_LAKE:
       bench->compute_function = compute_ice_lake;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);        
@@ -303,7 +311,10 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benc
         break;  
       case UARCH_COFFEE_LAKE:
         bench->benchmark_type = BENCH_TYPE_COFFEE_LAKE;
-        break;  
+        break;
+      case UARCH_COMET_LAKE:
+        bench->benchmark_type = BENCH_TYPE_COMET_LAKE;
+        break;    
       case UARCH_ICE_LAKE:
         bench->benchmark_type = BENCH_TYPE_ICE_LAKE;
         break;
