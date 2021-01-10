@@ -8,7 +8,7 @@
 #include "getarg.h"
 #include "cpufetch/cpu.h"
 #include "cpufetch/uarch.h"
-#include "Arch/Arch.h"
+#include "arch/arch.h"
 
 #define RED   "\x1b[31;1m"
 #define BOLD  "\x1b[1m"

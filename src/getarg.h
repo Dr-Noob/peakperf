@@ -2,7 +2,7 @@
 #define __GETARG__
 
 #include <stdbool.h>
-#include "Arch/Arch.h"
+#include "arch/arch.h"
 
 #define INVALID_N_THREADS -1
 

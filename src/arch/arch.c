@@ -9,7 +9,7 @@
 
 #define TYPE __m256
 
-#include "Arch.h"
+#include "arch.h"
 
 #include "sandy_bridge.h"  
 #include "ivy_bridge.h"

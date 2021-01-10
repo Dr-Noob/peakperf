@@ -14,39 +14,40 @@ CXXFLAGS_KNL             = -DAVX_512_12      -march=knl            $(CXXFLAGS_GE
 CXXFLAGS_ZEN             = -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
 CXXFLAGS_ZEN2            = -DAVX_256_10      -march=znver2         $(CXXFLAGS_GENERIC)
 
-ARCH_DIR=Arch
-CPUFETCH_DIR=cpufetch
-MAIN=main.c getarg.c $(CPUFETCH_DIR)/cpu.c $(CPUFETCH_DIR)/cpuid.c $(CPUFETCH_DIR)/uarch.c $(ARCH_DIR)/Arch.c
+SRC_DIR=src
+ARCH_DIR=$(SRC_DIR)/arch
+CPUFETCH_DIR=$(SRC_DIR)/cpufetch
+MAIN=$(SRC_DIR)/main.c $(SRC_DIR)/getarg.c $(CPUFETCH_DIR)/cpu.c $(CPUFETCH_DIR)/cpuid.c $(CPUFETCH_DIR)/uarch.c $(ARCH_DIR)/arch.c
 
 SANDY_BRIDGE=$(ARCH_DIR)/sandy_bridge.c
-SANDY_BRIDGE_HEADERS=$(ARCH_DIR)/sandy_bridge.h $(ARCH_DIR)/Arch.h
+SANDY_BRIDGE_HEADERS=$(ARCH_DIR)/sandy_bridge.h $(ARCH_DIR)/arch.h
 
 IVY_BRIDGE=$(ARCH_DIR)/ivy_bridge.c
-IVY_BRIDGE_HEADERS=$(ARCH_DIR)/ivy_bridge.h $(ARCH_DIR)/Arch.h
+IVY_BRIDGE_HEADERS=$(ARCH_DIR)/ivy_bridge.h $(ARCH_DIR)/arch.h
 
 HASWELL=$(ARCH_DIR)/haswell.c
-HASWELL_HEADERS=$(ARCH_DIR)/haswell.h $(ARCH_DIR)/Arch.h
+HASWELL_HEADERS=$(ARCH_DIR)/haswell.h $(ARCH_DIR)/arch.h
 
 SKYLAKE_256=$(ARCH_DIR)/skylake_256.c
-SKYLAKE_256_HEADERS=$(ARCH_DIR)/skylake_256.h $(ARCH_DIR)/Arch.h
+SKYLAKE_256_HEADERS=$(ARCH_DIR)/skylake_256.h $(ARCH_DIR)/arch.h
 
 SKYLAKE_512=$(ARCH_DIR)/skylake_512.c
-SKYLAKE_512_HEADERS=$(ARCH_DIR)/skylake_512.h $(ARCH_DIR)/Arch.h
+SKYLAKE_512_HEADERS=$(ARCH_DIR)/skylake_512.h $(ARCH_DIR)/arch.h
 
 BROADWELL=$(ARCH_DIR)/broadwell.c
-BROADWELL_HEADERS=$(ARCH_DIR)/broadwell.h $(ARCH_DIR)/Arch.h
+BROADWELL_HEADERS=$(ARCH_DIR)/broadwell.h $(ARCH_DIR)/arch.h
 
 ICE_LAKE=$(ARCH_DIR)/ice_lake.c
-ICE_LAKE_HEADERS=$(ARCH_DIR)/ice_lake.h $(ARCH_DIR)/Arch.h
+ICE_LAKE_HEADERS=$(ARCH_DIR)/ice_lake.h $(ARCH_DIR)/arch.h
 
 KNL=$(ARCH_DIR)/knl.c
-KNL_HEADERS=$(ARCH_DIR)/knl.h $(ARCH_DIR)/Arch.h
+KNL_HEADERS=$(ARCH_DIR)/knl.h $(ARCH_DIR)/arch.h
 
 ZEN=$(ARCH_DIR)/zen.c
-ZEN_HEADERS=$(ARCH_DIR)/zen.h $(ARCH_DIR)/Arch.h
+ZEN_HEADERS=$(ARCH_DIR)/zen.h $(ARCH_DIR)/arch.h
 
 ZEN2=$(ARCH_DIR)/zen2.c
-ZEN2_HEADERS=$(ARCH_DIR)/zen2.h $(ARCH_DIR)/Arch.h
+ZEN2_HEADERS=$(ARCH_DIR)/zen2.h $(ARCH_DIR)/arch.h
 
 OUTPUT_DIR=output
 $(shell mkdir -p $(OUTPUT_DIR))
@@ -98,4 +99,4 @@ $(OUT_ZEN2): Makefile $(ZEN2) $(ZEN2_HEADERS)
 	$(CXX) $(CXXFLAGS_ZEN2) $(ZEN2) -c -o $@	
 	
 clean:
-	@rm peakperf $(ALL_OUTS)	
+	@rm -r peakperf $(OUTPUT_DIR) 
