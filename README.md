@@ -123,6 +123,7 @@ This tables show results for each microarchitecture suported by peakperf. To see
 |:-----:|:----------------:|:------------:|:------------:|:------------------:|:-------:|
 | Zen   | -                | -            | -            | -                  | -       |
 | Zen+  | AMD Ryzen 5 2600 | `3.724 GHz`  | `357.50`     | `357.08 +- 0.03`   | `0.11%` |
+| Zen 2 | -                | -            | -            | -                  | -       |
 
 _NOTE 1_: Performance measured on simple precision and GFLOP/s (gigaflops per second).
 
@@ -138,8 +139,8 @@ The following table acts as a summary of all supported microarchitectures with t
 
 | uArch           | AVX              | FMA              | AVX512             | Slots | FPUs            | Latency         | Tested           | Refs |
 |:---------------:|:----------------:|:----------------:|:------------------:|:-----:|:---------------:|:---------------:|:----------------:|:----:|
-| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     3 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [1] |
-| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     3 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [2] |
+| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     6 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [1] |
+| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     6 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [2] |
 | Haswell         |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [3] |
 | Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
 | Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
@@ -149,6 +150,7 @@ The following table acts as a summary of all supported microarchitectures with t
 | Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)  | 6 (FMA)         |:heavy_check_mark:|  [6] |
 | Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
 | Ryzen ZEN+      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [8] |
+| Ryzen ZEN 2     |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:x:               |  [9] |
 
 References:
 - [1] [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
@@ -159,6 +161,7 @@ References:
 - [6] [Intel Intrinsics Guide (_mm512_fmadd_ps)](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=512_fmadd_ps&expand=136,2553,2557)
 - [7] [Agner Fog Instruction Tables (Page 99, VFMADD)](https://www.agner.org/optimize/instruction_tables.pdf)
 - [8] [Wikichip](https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B#Pipeline)
+- [7] [Agner Fog Instruction Tables (Page 111, VFMADD132PS)](https://www.agner.org/optimize/instruction_tables.pdf)
 
 _NOTES:_
 - Ice Lake supports AVX512 instructions but it only has 1 AVX512 VPU (at least in client Ice Lake), while it has 2 VPUs for AVX2. Because AVX512 runs in lower freqeuncy, the performance obtained with AVX2 (using 2 VPUs) is better than with AVX512 (using 1 VPU). Thus, peak performance in Ice Lake is obtained using AVX2, although it supports AVX512 instruction set.

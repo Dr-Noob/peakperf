@@ -26,6 +26,7 @@
 #include "knl.h"
 #include "zen.h"
 #include "zen_plus.h"
+#include "zen2.h"
 
 struct benchmark {
   int n_threads;
@@ -57,6 +58,7 @@ static char *bench_name[] = {
   [BENCH_TYPE_KNIGHTS_LANDING] = "Knights Landing (AVX512)",
   [BENCH_TYPE_ZEN]             = "Zen (AVX2)",
   [BENCH_TYPE_ZEN_PLUS]        = "Zen+ (AVX2)",
+  [BENCH_TYPE_ZEN2]            = "Zen 2 (AVX2)",
 };
 
 static char *bench_types_str[] = {
@@ -72,6 +74,7 @@ static char *bench_types_str[] = {
   [BENCH_TYPE_KNIGHTS_LANDING] = "knights_landing",
   [BENCH_TYPE_ZEN]             = "zen",
   [BENCH_TYPE_ZEN_PLUS]        = "zen_plus",
+  [BENCH_TYPE_ZEN2]            = "zen2",
 };
 
 bool is_benchmark_supported(bench_type t, struct cpu* cpu) {
@@ -86,7 +89,8 @@ bool is_benchmark_supported(bench_type t, struct cpu* cpu) {
     case BENCH_TYPE_COFFEE_LAKE:
     case BENCH_TYPE_ICE_LAKE:
     case BENCH_TYPE_ZEN:
-    case BENCH_TYPE_ZEN_PLUS:    
+    case BENCH_TYPE_ZEN_PLUS:
+    case BENCH_TYPE_ZEN2:    
       return cpu_has_avx2(cpu) && cpu_has_fma(cpu);
     case BENCH_TYPE_SKYLAKE_512:
     case BENCH_TYPE_KNIGHTS_LANDING:    
@@ -225,7 +229,11 @@ bool select_benchmark(struct benchmark* bench) {
     case BENCH_TYPE_ZEN_PLUS:
       bench->compute_function = compute_zen_plus;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
-      break;    
+      break; 
+    case BENCH_TYPE_ZEN2:
+      bench->compute_function = compute_zen2;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_10);
+      break; 
     default:
       printf("ERROR: No valid benchmark! (bench: %d)\n", bench->benchmark_type);
       return false;
@@ -294,7 +302,10 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benc
         break;  
       case UARCH_ZEN_PLUS:
         bench->benchmark_type = BENCH_TYPE_ZEN_PLUS;
-        break;  
+        break;
+      case UARCH_ZEN2:
+        bench->benchmark_type = BENCH_TYPE_ZEN2;
+        break;    
       default:
         printf("ERROR: No valid uarch found! (uarch: %d)\n", u);
         return NULL;
