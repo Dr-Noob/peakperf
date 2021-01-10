@@ -12,7 +12,7 @@ CXXFLAGS_BROADWELL       = -DAVX_256_8       -march=broadwell      $(CXXFLAGS_GE
 CXXFLAGS_ICE_LAKE        = -DAVX_256_8       -march=icelake-client $(CXXFLAGS_GENERIC)
 CXXFLAGS_KNL             = -DAVX_512_12      -march=knl            $(CXXFLAGS_GENERIC)
 CXXFLAGS_ZEN             = -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
-CXXFLAGS_ZEN2            = -DAVX_256_10      -march=znver2         $(CXXFLAGS_GENERIC)
+CXXFLAGS_ZEN2            = -DAVX_256_10      -march=znver1         $(CXXFLAGS_GENERIC)
 
 SRC_DIR=src
 ARCH_DIR=$(SRC_DIR)/arch
