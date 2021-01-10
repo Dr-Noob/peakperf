@@ -1,8 +1,22 @@
 # peakperf
-Achieve peak performance on x86_64 CPUs.
+Benchmark to achieve peak performance on x86_64 CPUs.
 
-## Usage
-Build the microbenchmark with `make` and run peakperf:
+## Instalation
+There is a peakperf package available in Arch Linux ([peakperf-git](https://aur.archlinux.org/packages/peakperf-git)).
+
+If you are in another distro, you can build `peakperf` from source:
+
+### Building from source
+Build the microbenchmark with `make`:
+
+```
+git clone https://github.com/Dr-Noob/peakperf
+cd peakperf
+make
+./peakperf
+```
+
+## Usage:
 
 ```
 [noob@drnoob peakperf]$ ./peakperf
@@ -46,7 +60,7 @@ Available benchmark types:
 ```
 
 ## Support
-peakperf only works properly in *Linux*. peakperf under *Windows*/*macOS* has not been tested, so performance may not be optimal.
+peakperf only works properly in *Linux*. peakperf under *Windows* / *macOS* has not been tested, so performance may not be optimal. Windows port is planned to be implemented in the future (see [Issue #1](https://github.com/Dr-Noob/peakperf/issues/1))
 
 ## Understanding the microbenchmark
 #### 0. What is "peak performance" anyway?
@@ -58,11 +72,11 @@ Peak performance refers to the maximum performance that a chip (a CPU) can achie
 N_CORES * FREQUENCY * FMA * UNITS * (SIZE_OF_VECTOR/32)
 ```
 
-- N_CORES: The number of physical cores. In our example, it is *4*
-- FREQUENCY: The freqeuncy of the CPU measured in GHz. To measure this frequency is a bit tricky, see next section for more details. In our example, it is *3.997*.
-- FMA: If CPU supports FMA, the peak performance is multipled by 2. If not, it is multiplied by 1. In our example, it is *2*.
-- UNITS: CPUs can provide 1 or 2 functional units per core. Modern Intel CPUs usually provide 2, while AMD CPUs usually provide 1. In our example, it is *2*
-- SIZE_OF_VECTOR: If CPU supports AVX, the size is 256 (because AVX is 256 bits long). If CPU supports AVX512, the size is 512. In our example, the size is *256*.
+- N_CORES: The number of physical cores. In our example, it is **4**
+- FREQUENCY: The freqeuncy of the CPU measured in GHz. To measure this frequency is a bit tricky, see next section for more details. In our example, it is **3.997**.
+- FMA: If CPU supports FMA, the peak performance is multipled by 2. If not, it is multiplied by 1. In our example, it is **2**.
+- UNITS: CPUs can provide 1 or 2 functional units per core. Modern Intel CPUs usually provide 2, while AMD CPUs usually provide 1. In our example, it is **2**.
+- SIZE_OF_VECTOR: If CPU supports AVX, the size is 256 (because AVX is 256 bits long). If CPU supports AVX512, the size is 512. In our example, the size is **256**.
 
 For the example of a i7-4790K, we have:
 
@@ -164,5 +178,6 @@ References:
 - [7] [Agner Fog Instruction Tables (Page 111, VFMADD132PS)](https://www.agner.org/optimize/instruction_tables.pdf)
 
 _NOTES:_
+- Older microarchitectures may be added in the future. If I have not added olds architecture is because I can't test peakperf on them since I have not access to this hardware.
 - Ice Lake supports AVX512 instructions but it only has 1 AVX512 VPU (at least in client Ice Lake), while it has 2 VPUs for AVX2. Because AVX512 runs in lower freqeuncy, the performance obtained with AVX2 (using 2 VPUs) is better than with AVX512 (using 1 VPU). Thus, peak performance in Ice Lake is obtained using AVX2, although it supports AVX512 instruction set.
 - Slots column is calculated with `FPUs x Latency`.
