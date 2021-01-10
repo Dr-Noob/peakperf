@@ -120,15 +120,16 @@ This tables show results for each microarchitecture suported by peakperf. To see
 #### Intel
 | uArch           | CPU                | AVX Freq     | PP (Formula) | PP (Experimental)  | Loss    |
 |:---------------:|:------------------:|:------------:|:------------:|:------------------:|:-------:|
-| Sandy Bridge    | i5-2400            | `3.192 GHz`  | `102.14`     | `100.64 +- 0.00`   | `1.46%` |
-| Ivy Bridge      | 2x Xeon E5-2650 v2 | `2.999 GHz`  | `767.74`     | `744.24 +- 3.85`   | `3.15%` |
-| Haswell         | i7-4790K           | `3.997 GHz`  | `511.61`     | `511.43 +- 0.01`   | `0.03%` |
+| Sandy Bridge    | i5-2400            | `3.192 GHz`  |  `102.14`    |  `100.64 +- 0.00`  | `1.46%` |
+| Ivy Bridge      | 2x Xeon E5-2650 v2 | `2.999 GHz`  |  `767.74`    |  `744.24 +- 3.85`  | `3.15%` |
+| Haswell         | i7-4790K           | `3.997 GHz`  |  `511.61`    |  `511.43 +- 0.01`  | `0.03%` |
 | Broadwell       | 2x Xeon E5-2698 v4 | `2.599 GHz`  | `3326.72`    | `3269.87 +- 14.42` | `1.73%` |
-| Skylake         | i5-6400            | `3.099 GHz`  | `396.67`     | `396.61 +- 0.01 `  | `0.06`  |
-| Kaby Lake       | i5-8250U           | `2.700 GHz`  | `345.60`     | `343.57 +- 1.38`   | `0.59%` |
-| Coffee Lake     | i9-9900K           | `3.600 GHz`  | `921.60`     | `918.72 +- 1.13`   | `0.31%` |
+| Skylake         | i5-6400            | `3.099 GHz`  |  `396.67`    |  `396.61 +- 0.01 ` | `0.06`  |
+| Kaby Lake       | i5-8250U           | `2.700 GHz`  |  `345.60`    |  `343.57 +- 1.38`  | `0.59%` |
+| Coffee Lake     | i9-9900K           | `3.600 GHz`  |  `921.60`    |  `918.72 +- 1.13`  | `0.31%` |
+| Comet Lake      | i5-10400           | `3.999 GHz`  |  `768.80`    |  `766.97 +- 0.25`  | `0.23%` |
 | Cascade Lake    | 2x Xeon Gold 6238  | `2.099 GHz`  | `5910.78`    | `5851.60 +- 2.69`  | `1.01%` |
-| Ice Lake        | i5-1035G1          | `2.990 GHz`  | `382.72`     | `382.22 +- 0.18`   | `0.13%` |
+| Ice Lake        | i5-1035G1          | `2.990 GHz`  |  `382.72`    |  `382.22 +- 0.18`  | `0.13%` |
 | Knights Landing | Xeon Phi 7250      | `1.499 GHz`  | `5991.69`    | `5390.84 +- 7.83`  | `3.72%` |
 
 
@@ -160,6 +161,7 @@ The following table acts as a summary of all supported microarchitectures with t
 | Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
 | Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [4] |
 | Coffee Lake     |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [5] |
+| Comet Lake      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [10] |
 | Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
 | Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)  | 6 (FMA)         |:heavy_check_mark:|  [6] |
 | Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
@@ -167,15 +169,16 @@ The following table acts as a summary of all supported microarchitectures with t
 | Ryzen ZEN 2     |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:x:               |  [9] |
 
 References:
-- [1] [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
-- [2] [Agner Fog Instruction Tables (Page 213, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
-- [3] [Intel Intrinsics Guide (_mm256_fmadd_ps)](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=256_fmadd_ps&expand=136,2553)
-- [4] [Wikichip](https://en.wikichip.org/wiki/intel/microarchitectures/kaby_lake#Pipeline)
-- [5] [Agner Fog Instruction Tables (Page 299, VFMADD)](https://www.agner.org/optimize/instruction_tables.pdf)
-- [6] [Intel Intrinsics Guide (_mm512_fmadd_ps)](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=512_fmadd_ps&expand=136,2553,2557)
-- [7] [Agner Fog Instruction Tables (Page 99, VFMADD)](https://www.agner.org/optimize/instruction_tables.pdf)
-- [8] [Wikichip](https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B#Pipeline)
-- [7] [Agner Fog Instruction Tables (Page 111, VFMADD132PS)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [1]  [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [2]  [Agner Fog Instruction Tables (Page 213, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [3]  [Intel Intrinsics Guide (_mm256_fmadd_ps)](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=256_fmadd_ps&expand=136,2553)
+- [4]  [Wikichip](https://en.wikichip.org/wiki/intel/microarchitectures/kaby_lake#Pipeline)
+- [5]  [Agner Fog Instruction Tables (Page 299, VFMADD)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [6]  [Intel Intrinsics Guide (_mm512_fmadd_ps)](https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=512_fmadd_ps&expand=136,2553,2557)
+- [7]  [Agner Fog Instruction Tables (Page 99, VFMADD)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [8]  [Wikichip](https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B#Pipeline)
+- [9]  [Agner Fog Instruction Tables (Page 111, VFMADD132PS)](https://www.agner.org/optimize/instruction_tables.pdf)
+- [10] [Wikichip](https://en.wikichip.org/wiki/intel/microarchitectures/comet_lake)
 
 _NOTES:_
 - Older microarchitectures may be added in the future. If I have not added olds architecture is because I can't test peakperf on them since I have not access to this hardware.
