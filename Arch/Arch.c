@@ -17,14 +17,11 @@
 #include "skylake_256.h"
 #include "skylake_512.h"
 #include "broadwell.h"
-#include "kaby_lake.h"
-#include "coffee_lake.h"
 #include "cannon_lake_256.h"  
 #include "cannon_lake_512.h"
 #include "ice_lake.h"
 #include "knl.h"
 #include "zen.h"
-#include "zen_plus.h"
 #include "zen2.h"
 
 struct benchmark {
@@ -179,6 +176,23 @@ double compute_gflops(int n_threads, char bench) {
   return (double)((long)n_threads*MAXFLOPS_ITERS*op_per_it*(bytes_in_vect/4)*fma_available)/1000000000;        
 }
 
+/*
+ * Mapping between architecture and benchmark:
+ * 
+ * - Sandy Bridge    -> sandy_bridge
+ * - Ivy Bridge      -> ivy_bridge
+ * - Haswell         -> haswell
+ * - Skylake (256)   -> skylake_256
+ * - Skylake (512)   -> skylake_512
+ * - Broadwell       -> broadwell
+ * - Kaby Lake       -> skylake_256
+ * - Coffee Lake     -> skylake_256
+ * - Ice Lake        -> ice_lake
+ * - Knights Landing -> knl
+ * - Zen             -> zen
+ * - Zen+            -> zen
+ * - Zen 2           -> zen2
+ */
 bool select_benchmark(struct benchmark* bench) {
   switch(bench->benchmark_type) {
     case BENCH_TYPE_SANDY_BRIDGE:
@@ -206,11 +220,11 @@ bool select_benchmark(struct benchmark* bench) {
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;  
     case BENCH_TYPE_KABY_LAKE:
-      bench->compute_function = compute_kaby_lake;
+      bench->compute_function = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;  
     case BENCH_TYPE_COFFEE_LAKE:
-      bench->compute_function = compute_coffee_lake;
+      bench->compute_function = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;  
     case BENCH_TYPE_ICE_LAKE:
@@ -226,7 +240,7 @@ bool select_benchmark(struct benchmark* bench) {
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
       break;
     case BENCH_TYPE_ZEN_PLUS:
-      bench->compute_function = compute_zen_plus;
+      bench->compute_function = compute_zen;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
       break; 
     case BENCH_TYPE_ZEN2:

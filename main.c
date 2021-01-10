@@ -15,7 +15,7 @@
 #define GREEN "\x1b[42m"
 #define RESET "\x1b[0m"
 
-static const char* VERSION = "1.01";
+static const char* VERSION = "1.02";
 
 void printHelp(char *argv[]) {
   printf("Usage: %s [-h] [-v] [-l] [-b bench_type] [-r n_trials] [-w warmup_trials] [-t n_threads] \n\

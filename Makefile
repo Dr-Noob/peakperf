@@ -9,12 +9,9 @@ CXXFLAGS_HASWELL         = -DAVX_256_10      -march=haswell        $(CXXFLAGS_GE
 CXXFLAGS_SKYLAKE_256     = -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_SKYLAKE_512     = -DAVX_512_8       -march=skylake-avx512 $(CXXFLAGS_GENERIC)
 CXXFLAGS_BROADWELL       = -DAVX_256_8       -march=broadwell      $(CXXFLAGS_GENERIC)
-CXXFLAGS_KABY_LAKE       = -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
-CXXFLAGS_COFFEE_LAKE     = -DAVX_256_8       -march=skylake        $(CXXFLAGS_GENERIC)
 CXXFLAGS_ICE_LAKE        = -DAVX_256_8       -march=icelake-client $(CXXFLAGS_GENERIC)
 CXXFLAGS_KNL             = -DAVX_512_12      -march=knl            $(CXXFLAGS_GENERIC)
 CXXFLAGS_ZEN             = -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
-CXXFLAGS_ZEN_PLUS        = -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
 CXXFLAGS_ZEN2            = -DAVX_256_10      -march=znver2         $(CXXFLAGS_GENERIC)
 
 ARCH_DIR=Arch
@@ -39,12 +36,6 @@ SKYLAKE_512_HEADERS=$(ARCH_DIR)/skylake_512.h $(ARCH_DIR)/Arch.h
 BROADWELL=$(ARCH_DIR)/broadwell.c
 BROADWELL_HEADERS=$(ARCH_DIR)/broadwell.h $(ARCH_DIR)/Arch.h
 
-KABY_LAKE=$(ARCH_DIR)/kaby_lake.c
-KABY_LAKE_HEADERS=$(ARCH_DIR)/kaby_lake.h $(ARCH_DIR)/Arch.h
-
-COFFEE_LAKE=$(ARCH_DIR)/coffee_lake.c
-COFFEE_LAKE_HEADERS=$(ARCH_DIR)/coffee_lake.h $(ARCH_DIR)/Arch.h
-
 ICE_LAKE=$(ARCH_DIR)/ice_lake.c
 ICE_LAKE_HEADERS=$(ARCH_DIR)/ice_lake.h $(ARCH_DIR)/Arch.h
 
@@ -53,9 +44,6 @@ KNL_HEADERS=$(ARCH_DIR)/knl.h $(ARCH_DIR)/Arch.h
 
 ZEN=$(ARCH_DIR)/zen.c
 ZEN_HEADERS=$(ARCH_DIR)/zen.h $(ARCH_DIR)/Arch.h
-
-ZEN_PLUS=$(ARCH_DIR)/zen_plus.c
-ZEN_PLUS_HEADERS=$(ARCH_DIR)/zen_plus.h $(ARCH_DIR)/Arch.h
 
 ZEN2=$(ARCH_DIR)/zen2.c
 ZEN2_HEADERS=$(ARCH_DIR)/zen2.h $(ARCH_DIR)/Arch.h
@@ -69,21 +57,15 @@ OUT_HASWELL=$(OUTPUT_DIR)/haswell.o
 OUT_SKYLAKE_256=$(OUTPUT_DIR)/skylake_256.o
 OUT_SKYLAKE_512=$(OUTPUT_DIR)/skylake_512.o
 OUT_BROADWELL=$(OUTPUT_DIR)/broadwell.o
-OUT_KABY_LAKE=$(OUTPUT_DIR)/kaby_lake.o
-OUT_COFFEE_LAKE=$(OUTPUT_DIR)/coffee_lake.o
 OUT_ICE_LAKE=$(OUTPUT_DIR)/ice_lake.o
 OUT_KNL=$(OUTPUT_DIR)/knl.o
 OUT_ZEN=$(OUTPUT_DIR)/zen.o
-OUT_ZEN_PLUS=$(OUTPUT_DIR)/zen_plus.o
 OUT_ZEN2=$(OUTPUT_DIR)/zen2.o
 
-ALL_OUTS=$(OUT_SANDY_BRIDGE) $(OUT_IVY_BRIDGE) $(OUT_HASWELL) $(OUT_SKYLAKE_256) $(OUT_SKYLAKE_512) $(OUT_BROADWELL) $(OUT_KABY_LAKE) $(OUT_COFFEE_LAKE) $(OUT_ICE_LAKE) $(OUT_KNL) $(OUT_ZEN) $(OUT_ZEN_PLUS) $(OUT_ZEN2)
+ALL_OUTS=$(OUT_SANDY_BRIDGE) $(OUT_IVY_BRIDGE) $(OUT_HASWELL) $(OUT_SKYLAKE_256) $(OUT_SKYLAKE_512) $(OUT_BROADWELL) $(OUT_ICE_LAKE) $(OUT_KNL) $(OUT_ZEN) $(OUT_ZEN2)
 
 peakperf: $(MAIN) $(ALL_OUTS)
-	$(CXX) $(CXXFLAGS_GENERIC) -mavx $(CXXFLAGS_LINK) $(MAIN) $(ALL_OUTS) -o $@
-
-release: $(MAIN) $(ALL_OUTS)
-	$(CXX) $(CXXFLAGS_GENERIC) -mavx -static $(CXXFLAGS_LINK) $(MAIN) $(ALL_OUTS) -o $@
+	$(CXX) $(CXXFLAGS_GENERIC) -mavx $(MAIN) $(ALL_OUTS) $(CXXFLAGS_LINK) -o $@
 
 $(OUT_SANDY_BRIDGE): Makefile $(SANDY_BRIDGE) $(SANDY_BRIDGE_HEADERS)
 	$(CXX) $(CXXFLAGS_SANDY_BRIDGE) $(SANDY_BRIDGE) -c -o $@
@@ -102,13 +84,7 @@ $(OUT_SKYLAKE_512): Makefile $(SKYLAKE_512) $(SKYLAKE_512_HEADERS)
 	
 $(OUT_BROADWELL): Makefile $(BROADWELL) $(BROADWELL_HEADERS)
 	$(CXX) $(CXXFLAGS_BROADWELL) $(BROADWELL) -c -o $@
-	
-$(OUT_KABY_LAKE): Makefile $(KABY_LAKE) $(KABY_LAKE_HEADERS)
-	$(CXX) $(CXXFLAGS_KABY_LAKE) $(KABY_LAKE) -c -o $@
-	
-$(OUT_COFFEE_LAKE): Makefile $(COFFEE_LAKE) $(COFFEE_LAKE_HEADERS)
-	$(CXX) $(CXXFLAGS_COFFEE_LAKE) $(COFFEE_LAKE) -c -o $@
-	
+		
 $(OUT_ICE_LAKE): Makefile $(ICE_LAKE) $(ICE_LAKE_HEADERS)
 	$(CXX) $(CXXFLAGS_ICE_LAKE) $(ICE_LAKE) -c -o $@
 	
@@ -117,10 +93,7 @@ $(OUT_KNL): Makefile $(KNL) $(KNL_HEADERS)
 	
 $(OUT_ZEN): Makefile $(ZEN) $(ZEN_HEADERS)
 	$(CXX) $(CXXFLAGS_ZEN) $(ZEN) -c -o $@
-	
-$(OUT_ZEN_PLUS): Makefile $(ZEN_PLUS) $(ZEN_PLUS_HEADERS)
-	$(CXX) $(CXXFLAGS_ZEN_PLUS) $(ZEN_PLUS) -c -o $@
-	
+		
 $(OUT_ZEN2): Makefile $(ZEN2) $(ZEN2_HEADERS)
 	$(CXX) $(CXXFLAGS_ZEN2) $(ZEN2) -c -o $@	
 	
