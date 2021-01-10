@@ -1,10 +1,10 @@
-#include "ice_lake_256.h"
+#include "ice_lake.h"
 #define OP_PER_IT B_256_8_OP_IT
 
-TYPE farr_ice_lake_256[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
+TYPE farr_ice_lake[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
 
-void compute_ice_lake_256(TYPE *farr, TYPE mult, int index) {
-  farr = farr_ice_lake_256[index];
+void compute_ice_lake(TYPE *farr, TYPE mult, int index) {
+  farr = farr_ice_lake[index];
   
   for(long i=0; i<MAXFLOPS_ITERS; i++) {
     farr[0]  = _mm256_fmadd_ps(mult, farr[0], farr[1]);

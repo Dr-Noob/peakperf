@@ -21,8 +21,7 @@
 #include "coffee_lake.h"
 #include "cannon_lake_256.h"  
 #include "cannon_lake_512.h"
-#include "ice_lake_256.h"
-#include "ice_lake_512.h"
+#include "ice_lake.h"
 #include "knl.h"
 #include "zen.h"
 #include "zen_plus.h"
@@ -215,7 +214,7 @@ bool select_benchmark(struct benchmark* bench) {
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;  
     case BENCH_TYPE_ICE_LAKE:
-      bench->compute_function = compute_ice_lake_256;
+      bench->compute_function = compute_ice_lake;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);        
       break;
     case BENCH_TYPE_KNIGHTS_LANDING:
