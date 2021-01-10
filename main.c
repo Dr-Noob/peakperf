@@ -114,5 +114,7 @@ int main(int argc, char* argv[]) {
   for(int i=0; i < line_length; i++) putchar('-');
   printf("\n" BOLD " Average performance:      " RESET GREEN "%.2f +- %.2f GFLOP/s" RESET "\n",mean, sd);
   for(int i=0; i < line_length; i++) putchar('-');
-  if(nWarmupTrials > 0)printf("\n* - warm-up, not included in average\n\n");
+  if(nWarmupTrials > 0)
+    printf("\n* - warm-up, not included in average");
+  printf("\n\n");
 }
