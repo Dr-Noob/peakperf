@@ -3,7 +3,7 @@
 
 #include <stdint.h>
 
-#include "cpu.h"
+#include "cpufetch.h"
 
 typedef uint32_t MICROARCH;
 

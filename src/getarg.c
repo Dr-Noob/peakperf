@@ -198,3 +198,6 @@ bench_type get_benchmark_type() {
   return args.bench;    
 }
 
+peakperf_mode get_mode() {
+  return PEAKPERF_MODE_CPU;
+}

@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cpu.h"
+#include "cpufetch.h"
 #include "cpuid.h"
 #include "uarch.h"
 
