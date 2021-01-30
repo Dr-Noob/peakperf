@@ -48,7 +48,13 @@ int main(int argc, char* argv[]) {
   int n_trials = get_n_trials();
   int n_warmup_trials = get_warmup_trials();
   device_type device = get_device_type();
-
+  /*
+   * Idea for the future?
+   * device == DEVICE_TYPE_HYBRID
+   *    Nº  Time(s)  TFLOP/s (CPU +  GPU)
+   *     1  2.50984   4.300  (500 + 3800)
+   *     2  2.50898   4.310  (500 + 3810)
+   */
   if(device == DEVICE_TYPE_CPU) {
     int n_threads = get_n_threads();
     bool list_benchs = list_benchmarks();
