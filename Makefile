@@ -1,5 +1,3 @@
-CXX=g++
-
 CUDA_HOME            ?= $(CUDA_PATH)
 CUDA_INC_PATH        ?= $(CUDA_HOME)/include
 CUDA_INC_PATH_COMMON ?= $(CUDA_HOME)/samples/common/inc
@@ -7,6 +5,10 @@ CUDA_INC_PATH_COMMON ?= $(CUDA_HOME)/samples/common/inc
 CUDA_BIN_PATH        ?= $(CUDA_HOME)/bin
 CUDA_LIB_PATH        ?= $(CUDA_HOME)/lib64
 
+CXX=g++
+NVCC=$(CUDA_BIN_PATH)/nvcc
+
+# CPU
 #SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
 CXXFLAGS_GENERIC=-O2 $(SANITY_FLAGS) -fpermissive -w
 CXXFLAGS_LINK=-lm -fopenmp
@@ -22,10 +24,14 @@ CXXFLAGS_KNL             = -DAVX_512_12      -march=knl            $(CXXFLAGS_GE
 CXXFLAGS_ZEN             = -DAVX_256_5       -march=znver1         $(CXXFLAGS_GENERIC)
 CXXFLAGS_ZEN2            = -DAVX_256_10      -march=znver1         $(CXXFLAGS_GENERIC)
 
+# GPU
+NVCCFLAGS_MAXWELL = -arch=sm_52
+
 SRC_DIR=src
 CPU_DIR=$(SRC_DIR)/cpu
 GPU_DIR=$(SRC_DIR)/gpu
 ARCH_DIR=$(CPU_DIR)/arch
+ARCH_GPU_DIR=$(GPU_DIR)/arch
 CPUFETCH_DIR=$(CPU_DIR)/cpufetch
 
 MAIN=$(SRC_DIR)/main.cpp $(SRC_DIR)/getarg.cpp
@@ -62,6 +68,12 @@ ZEN_HEADERS=$(ARCH_DIR)/zen.h $(ARCH_DIR)/arch.h
 ZEN2=$(ARCH_DIR)/zen2.cpp
 ZEN2_HEADERS=$(ARCH_DIR)/zen2.h $(ARCH_DIR)/arch.h
 
+KERNEL=$(ARCH_GPU_DIR)/kernel.cu
+KERNEL_HEADERS=$(ARCH_GPU_DIR)/kernel.h
+
+MAXWELL=$(ARCH_GPU_DIR)/maxwell.cu
+MAXWELL_HEADERS=$(ARCH_GPU_DIR)/maxwell.h
+
 OUTPUT_DIR=output
 $(shell mkdir -p $(OUTPUT_DIR))
 
@@ -75,10 +87,15 @@ OUT_ICE_LAKE=$(OUTPUT_DIR)/ice_lake.o
 OUT_KNL=$(OUTPUT_DIR)/knl.o
 OUT_ZEN=$(OUTPUT_DIR)/zen.o
 OUT_ZEN2=$(OUTPUT_DIR)/zen2.o
+OUT_KERNEL=$(OUTPUT_DIR)/kernel.o
+OUT_MAXWELL=$(OUTPUT_DIR)/maxwell.o
+
 CPU_DEVICE_OUT=$(OUTPUT_DIR)/arch.o $(OUTPUT_DIR)/cpuid.o $(OUTPUT_DIR)/cpu.o $(OUTPUT_DIR)/cpufetch.o $(OUTPUT_DIR)/uarch.o
 GPU_DEVICE_OUT=$(OUTPUT_DIR)/gpu.o
 
-ALL_OUTS=$(OUT_SANDY_BRIDGE) $(OUT_IVY_BRIDGE) $(OUT_HASWELL) $(OUT_SKYLAKE_256) $(OUT_SKYLAKE_512) $(OUT_BROADWELL) $(OUT_ICE_LAKE) $(OUT_KNL) $(OUT_ZEN) $(OUT_ZEN2)
+ALL_CPU_OUTS=$(OUT_SANDY_BRIDGE) $(OUT_IVY_BRIDGE) $(OUT_HASWELL) $(OUT_SKYLAKE_256) $(OUT_SKYLAKE_512) $(OUT_BROADWELL) $(OUT_ICE_LAKE) $(OUT_KNL) $(OUT_ZEN) $(OUT_ZEN2)
+ALL_GPU_OUTS=$(OUT_MAXWELL) $(OUT_KERNEL)
+ALL_OUTS=$(ALL_CPU_OUTS) $(ALL_GPU_OUTS)
 
 peakperf: Makefile $(MAIN) $(ALL_OUTS) $(CPU_DEVICE_OUT) $(GPU_DEVICE_OUT)
 	$(CXX) -mavx $(ALL_OUTS) $(CPU_DEVICE_OUT) $(GPU_DEVICE_OUT) -L$(CUDA_LIB_PATH) $(CXXFLAGS_LINK_CUDA) $(CXXFLAGS_LINK) $(MAIN) -o $@
@@ -112,6 +129,12 @@ $(OUT_ZEN): Makefile $(ZEN) $(ZEN_HEADERS)
 
 $(OUT_ZEN2): Makefile $(ZEN2) $(ZEN2_HEADERS)
 	$(CXX) $(CXXFLAGS_ZEN2) $(ZEN2) -c -o $@
+
+$(OUT_KERNEL): $(KERNEL) $(KERNEL_HEADERS) Makefile
+	$(NVCC) -c $(KERNEL) -o $(OUT_KERNEL)
+
+$(OUT_MAXWELL): $(MAXWELL) $(MAXWELL_HEADERS) Makefile
+	$(NVCC) $(NVCCFLAGS_MAXWELL) -c $(MAXWELL) -o $(OUT_MAXWELL)
 
 $(CPU_DEVICE_OUT): Makefile $(CPU_DEVICE)
 	$(CXX) $(CXXFLAGS_GENERIC) -mavx -mavx512f $(CPU_DEVICE) $(CXXFLAGS_LINK) -c

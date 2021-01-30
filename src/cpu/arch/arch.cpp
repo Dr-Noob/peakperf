@@ -9,13 +9,13 @@
 
 #include "arch.h"
 
-#include "sandy_bridge.h"  
+#include "sandy_bridge.h"
 #include "ivy_bridge.h"
-#include "haswell.h" 
+#include "haswell.h"
 #include "skylake_256.h"
 #include "skylake_512.h"
 #include "broadwell.h"
-#include "cannon_lake_256.h"  
+#include "cannon_lake_256.h"
 #include "cannon_lake_512.h"
 #include "ice_lake.h"
 #include "knl.h"
@@ -32,7 +32,7 @@ struct benchmark {
 };
 
 enum {
-  BENCH_256_6_NOFMA,  
+  BENCH_256_6_NOFMA,
   BENCH_256_5,
   BENCH_256_8,
   BENCH_256_10,
@@ -344,7 +344,6 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benc
 }
 
 void compute(struct benchmark* bench) {
-  // TODO: Benchmark field which tells if benchmark is 256 or 512 bits long
   if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING) {
     __m512 mult = {0};
     __m512 *farr_ptr = NULL;
@@ -364,9 +363,9 @@ void compute(struct benchmark* bench) {
 }
 
 double get_gflops(struct benchmark* bench) {
-  return bench->gflops;    
+  return bench->gflops;
 }
 
 char* get_benchmark_name(struct benchmark* bench) {
-  return bench->name;    
+  return bench->name;
 }
