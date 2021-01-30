@@ -6,7 +6,7 @@
 
 #include <cuda.h>
 #include <cuda_runtime.h>
-#include "helper_cuda.h"
+//#include "helper_cuda.h"
 #include "arch/kernel.h"
 
 int peakperf_gpu(int n_trials, int n_warmup_trials) {
