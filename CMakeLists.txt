@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.10)
+include(CheckLanguage)
 
-project(peakperf CXX CUDA)
-set(PROJECT_NAME "peakperf")
-set(PROJECT_VERSION "1.2")
+project(peakperf CXX)
+
 set(SRC_DIR "src")
 set(CPU_DIR "${SRC_DIR}/cpu")
 set(GPU_DIR "${SRC_DIR}/gpu")
@@ -10,7 +10,20 @@ set(CPUFETCH_DIR "${CPU_DIR}/cpufetch")
 set(ARCH_CPU_DIR "${CPU_DIR}/arch")
 set(ARCH_GPU_DIR "${GPU_DIR}/arch")
 
-set(CMAKE_CUDA_ARCHITECTURES 52)
+add_executable(peakperf ${SRC_DIR}/main.cpp ${SRC_DIR}/getarg.cpp)
+
+set(ENABLE_CPU_DEVICE, true)
+target_compile_definitions(peakperf PUBLIC DEVICE_CPU_ENABLED)
+
+check_language(CUDA)
+if(CMAKE_CUDA_COMPILER)
+  enable_language(CUDA)
+  message(STATUS "Building peakperf with CUDA support")
+  set(ENABLE_GPU_DEVICE, true)
+else()
+  set(ENABLE_GPU_DEVICE, false)
+  message(STATUS "No CUDA support")
+endif()
 
 set(SANITY_FLAGS "-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2")
 set(CMAKE_C_FLAGS "${SANITY_FLAGS} -std=c99 -O2")
@@ -28,8 +41,14 @@ set_source_files_properties(${ARCH_CPU_DIR}/knl.cpp          PROPERTIES COMPILE_
 set_source_files_properties(${ARCH_CPU_DIR}/zen.cpp          PROPERTIES COMPILE_FLAGS "-DAVX_256_5       -march=znver1")
 set_source_files_properties(${ARCH_CPU_DIR}/zen2.cpp         PROPERTIES COMPILE_FLAGS "-DAVX_256_10      -march=znver1")
 
-# architecture specific build -- gpu
-set_source_files_properties(${ARCH_GPU_DIR}/maxwell.cu PROPERTIES COMPILE_FLAGS "-arch=sm_52")
+if(ENABLE_GPU_DEVICE)
+    set(CMAKE_CUDA_ARCHITECTURES 52)
+    set_source_files_properties(${ARCH_GPU_DIR}/maxwell.cu PROPERTIES COMPILE_FLAGS "-arch=sm_52")
+    target_compile_definitions(peakperf PUBLIC DEVICE_GPU_ENABLED)
+    add_library(maxwell      SHARED ${ARCH_GPU_DIR}/maxwell.cu)
+    add_library(gpu_device   SHARED ${GPU_DIR}/gpu.cu ${ARCH_GPU_DIR}/kernel.cu)
+    target_link_libraries(peakperf maxwell gpu_device)
+endif()
 
 add_library(sandy_bridge SHARED ${ARCH_CPU_DIR}/sandy_bridge.cpp)
 add_library(ivy_bridge   SHARED ${ARCH_CPU_DIR}/ivy_bridge.cpp)
@@ -41,10 +60,7 @@ add_library(ice_lake     SHARED ${ARCH_CPU_DIR}/ice_lake.cpp)
 add_library(knl          SHARED ${ARCH_CPU_DIR}/knl.cpp)
 add_library(zen          SHARED ${ARCH_CPU_DIR}/zen.cpp)
 add_library(zen2         SHARED ${ARCH_CPU_DIR}/zen2.cpp)
-add_library(maxwell      SHARED ${ARCH_GPU_DIR}/maxwell.cu)
 
 add_library(cpu_device   SHARED ${CPU_DIR}/cpu.cpp ${CPUFETCH_DIR}/cpufetch.cpp ${CPUFETCH_DIR}/cpuid.cpp ${CPUFETCH_DIR}/uarch.cpp ${ARCH_CPU_DIR}/arch.cpp)
-add_library(gpu_device   SHARED ${GPU_DIR}/gpu.cu ${ARCH_GPU_DIR}/kernel.cu)
 
-add_executable(peakperf ${SRC_DIR}/main.cpp ${SRC_DIR}/getarg.cpp)
-target_link_libraries (peakperf -lm -fopenmp sandy_bridge ivy_bridge haswell skylake_256 skylake_512 broadwell ice_lake knl zen zen2 maxwell cpu_device gpu_device)
+target_link_libraries(peakperf -lm -fopenmp sandy_bridge ivy_bridge haswell skylake_256 skylake_512 broadwell ice_lake knl zen zen2 cpu_device)

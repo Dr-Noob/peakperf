@@ -9,6 +9,11 @@
 #include "cpu/cpu.h"
 #include "gpu/gpu.h"
 
+#define RED   "\x1b[31;1m"
+#define BOLD  "\x1b[1m"
+#define GREEN "\x1b[42m"
+#define RESET "\x1b[0m"
+
 static const char* VERSION = "1.02";
 
 void printHelp(char *argv[]) {
@@ -56,13 +61,23 @@ int main(int argc, char* argv[]) {
    *     2  2.50898   4.310  (500 + 3810)
    */
   if(device == DEVICE_TYPE_CPU) {
-    int n_threads = get_n_threads();
-    bool list_benchs = list_benchmarks();
-    bench_type benchmark_type = get_benchmark_type();
+    #ifdef DEVICE_CPU_ENABLED
+      int n_threads = get_n_threads();
+      bool list_benchs = list_benchmarks();
+      bench_type benchmark_type = get_benchmark_type();
 
-    return peakperf_cpu(n_trials, n_warmup_trials, n_threads, list_benchs, benchmark_type);
+      return peakperf_cpu(n_trials, n_warmup_trials, n_threads, list_benchs, benchmark_type);
+    #else
+      printf(RED "ERROR" RESET " peakperf was not built with CPU support\n");
+      return EXIT_FAILURE;
+    #endif
   }
   else if (device == DEVICE_TYPE_GPU) {
-    return peakperf_gpu(n_trials, n_warmup_trials);
+    #ifdef DEVICE_GPU_ENABLED
+      return peakperf_gpu(n_trials, n_warmup_trials);
+    #else
+      printf(RED "ERROR:" RESET " peakperf was not built with GPU support\n");
+      return EXIT_FAILURE;
+    #endif
   }
 }
