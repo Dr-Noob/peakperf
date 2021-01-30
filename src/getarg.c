@@ -19,11 +19,11 @@
 #define ARG_CHAR_THREADS    't'
 #define ARG_CHAR_BENCHMARK  'b'
 #define ARG_CHAR_LISTBENCHS 'l'
-#define ARG_CHAR_MODE       'm'
+#define ARG_CHAR_DEVICE     'd'
 #define ARG_CHAR_VERSION    'v'
 
-#define ARG_STR_CPU_MODE    "cpu"
-#define ARG_STR_GPU_MODE    "gpu"
+#define ARG_STR_CPU_DEVICE  "cpu"
+#define ARG_STR_GPU_DEVICE  "gpu"
 
 #define DEFAULT_N_TRIALS      10
 #define DEFAULT_WARMUP_TRIALS  2
@@ -36,20 +36,20 @@ struct args_struct {
   int n_warmup_trials;
   int n_threads;
   bench_type bench;
-  bench_mode mode;
+  device_type device;
 };
 
 int errn = 0;
 static struct args_struct args;
 
-bench_mode parse_bench_mode(char* str) {
-  if(strcmp(str, ARG_STR_CPU_MODE) == 0) {
-    return BENCH_MODE_CPU;    
+device_type parse_device_type(char* str) {
+  if(strcmp(str, ARG_STR_CPU_DEVICE) == 0) {
+    return DEVICE_TYPE_CPU;    
   }  
-  if(strcmp(str, ARG_STR_GPU_MODE) == 0) {
-    return BENCH_MODE_GPU;    
+  if(strcmp(str, ARG_STR_GPU_DEVICE) == 0) {
+    return DEVICE_TYPE_GPU;    
   }
-  return BENCH_MODE_INVALID;   
+  return DEVICE_TYPE_INVALID;   
 }
 
 int getarg_int(char* str) {
@@ -105,9 +105,9 @@ bool parseArgs(int argc, char* argv[]) {
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
   args.n_threads = INVALID_N_THREADS;
   args.bench = BENCH_TYPE_INVALID;
-  args.mode = BENCH_MODE_CPU;
+  args.device = DEVICE_TYPE_CPU;
 
-  while ((opt = getopt(argc, argv, "hvlr:w:t:b:m:")) != -1) {
+  while ((opt = getopt(argc, argv, "hvlr:w:t:b:d:")) != -1) {
     switch (opt) {
     case ARG_CHAR_HELP:
       args.help_flag  = true;
@@ -117,10 +117,10 @@ bool parseArgs(int argc, char* argv[]) {
       args.version_flag  = true;
       break;
       
-    case ARG_CHAR_MODE:
-      args.mode  = parse_bench_mode(optarg);
-      if(args.mode == BENCH_MODE_INVALID) {
-        printf("ERROR: Invalid mode: '%s'\n", optarg);
+    case ARG_CHAR_DEVICE:
+      args.device  = parse_device_type(optarg);
+      if(args.device == DEVICE_TYPE_INVALID) {
+        printf("ERROR: Invalid device: '%s'\n", optarg);
       }
       break;  
       
@@ -221,6 +221,6 @@ bench_type get_benchmark_type() {
   return args.bench;    
 }
 
-bench_mode get_benchmark_mode() {
-  return args.mode;
+device_type get_device_type() {
+  return args.device;
 }

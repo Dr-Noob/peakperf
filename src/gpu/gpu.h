@@ -1,5 +1,5 @@
-#ifndef __PEAKPERF_GPU_MODE__
-#define __PEAKPERF_GPU_MODE__
+#ifndef __PEAKPERF_GPU_DEVICE__
+#define __PEAKPERF_GPU_DEVICE__
 
 #include <stdbool.h>
 

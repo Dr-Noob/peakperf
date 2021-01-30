@@ -1,5 +1,5 @@
-#ifndef __PEAKPERF_CPU_MODE__
-#define __PEAKPERF_CPU_MODE__
+#ifndef __PEAKPERF_CPU_DEVICE__
+#define __PEAKPERF_CPU_DEVICE__
 
 #include <stdbool.h>
 #include "arch/arch.h"

@@ -6,12 +6,12 @@
 
 #define INVALID_N_THREADS -1
 
-typedef char bench_mode;
+typedef char device_type;
 
 enum {
-  BENCH_MODE_CPU,
-  BENCH_MODE_GPU,
-  BENCH_MODE_INVALID
+  DEVICE_TYPE_CPU,
+  DEVICE_TYPE_GPU,
+  DEVICE_TYPE_INVALID
 };
 
 bool parseArgs(int argc, char* argv[]);
@@ -23,6 +23,6 @@ int get_n_trials();
 int get_warmup_trials();
 int get_n_threads();
 bench_type get_benchmark_type();
-bench_mode get_benchmark_mode();
+device_type get_device_type();
 
 #endif
