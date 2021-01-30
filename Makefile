@@ -1,8 +1,16 @@
 CXX=gcc
 
+CUDA_HOME            ?= $(CUDA_PATH)
+CUDA_INC_PATH        ?= $(CUDA_HOME)/include
+CUDA_INC_PATH_COMMON ?= $(CUDA_HOME)/samples/common/inc
+
+CUDA_BIN_PATH        ?= $(CUDA_HOME)/bin
+CUDA_LIB_PATH        ?= $(CUDA_HOME)/lib64
+
 SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
 CXXFLAGS_GENERIC=-std=c99 -O2 $(SANITY_FLAGS)
 CXXFLAGS_LINK=-lm -fopenmp
+CXXFLAGS_LINK_CUDA=-lcuda -lcudart -lm
 CXXFLAGS_SANDY_BRIDGE    = -DAVX_256_6_NOFMA -march=sandybridge    $(CXXFLAGS_GENERIC)
 CXXFLAGS_IVY_BRIDGE      = -DAVX_256_6_NOFMA -march=ivybridge      $(CXXFLAGS_GENERIC)
 CXXFLAGS_HASWELL         = -DAVX_256_10      -march=haswell        $(CXXFLAGS_GENERIC)
@@ -16,11 +24,13 @@ CXXFLAGS_ZEN2            = -DAVX_256_10      -march=znver1         $(CXXFLAGS_GE
 
 SRC_DIR=src
 CPU_DIR=$(SRC_DIR)/cpu
+GPU_DIR=$(SRC_DIR)/gpu
 ARCH_DIR=$(CPU_DIR)/arch
 CPUFETCH_DIR=$(CPU_DIR)/cpufetch
 
 MAIN=$(SRC_DIR)/main.c $(SRC_DIR)/getarg.c
 CPU_MODE=$(CPU_DIR)/cpu.c $(CPUFETCH_DIR)/cpufetch.c $(CPUFETCH_DIR)/cpuid.c $(CPUFETCH_DIR)/uarch.c $(ARCH_DIR)/arch.c
+GPU_MODE=$(GPU_DIR)/gpu.c
 
 SANDY_BRIDGE=$(ARCH_DIR)/sandy_bridge.c
 SANDY_BRIDGE_HEADERS=$(ARCH_DIR)/sandy_bridge.h $(ARCH_DIR)/arch.h
@@ -66,11 +76,12 @@ OUT_KNL=$(OUTPUT_DIR)/knl.o
 OUT_ZEN=$(OUTPUT_DIR)/zen.o
 OUT_ZEN2=$(OUTPUT_DIR)/zen2.o
 CPU_MODE_OUT=$(OUTPUT_DIR)/arch.o $(OUTPUT_DIR)/cpuid.o $(OUTPUT_DIR)/cpu.o $(OUTPUT_DIR)/cpufetch.o $(OUTPUT_DIR)/uarch.o
+GPU_MODE_OUT=$(OUTPUT_DIR)/gpu.o
 
 ALL_OUTS=$(OUT_SANDY_BRIDGE) $(OUT_IVY_BRIDGE) $(OUT_HASWELL) $(OUT_SKYLAKE_256) $(OUT_SKYLAKE_512) $(OUT_BROADWELL) $(OUT_ICE_LAKE) $(OUT_KNL) $(OUT_ZEN) $(OUT_ZEN2)
 
-peakperf: Makefile $(MAIN) $(ALL_OUTS) $(CPU_MODE_OUT)
-	$(CXX) $(CXXFLAGS_GENERIC) -mavx $(MAIN) $(ALL_OUTS) $(CPU_MODE_OUT) $(CXXFLAGS_LINK) -o $@
+peakperf: Makefile $(MAIN) $(ALL_OUTS) $(CPU_MODE_OUT) $(GPU_MODE_OUT)
+	$(CXX) -mavx $(ALL_OUTS) $(CPU_MODE_OUT) $(GPU_MODE_OUT) -L$(CUDA_LIB_PATH) $(CXXFLAGS_LINK_CUDA) $(CXXFLAGS_LINK) $(MAIN) -o $@
 
 $(OUT_SANDY_BRIDGE): Makefile $(SANDY_BRIDGE) $(SANDY_BRIDGE_HEADERS)
 	$(CXX) $(CXXFLAGS_SANDY_BRIDGE) $(SANDY_BRIDGE) -c -o $@
@@ -106,5 +117,8 @@ $(CPU_MODE_OUT): Makefile $(CPU_MODE)
 	$(CXX) $(CXXFLAGS_GENERIC) -mavx $(CPU_MODE) $(CXXFLAGS_LINK) -c
 	mv *.o output/
 
+$(GPU_MODE_OUT): Makefile $(GPU_MODE)
+	nvcc -I$(CUDA_INC_PATH) -I$(CUDA_INC_PATH_COMMON) $(GPU_MODE) -L$(CUDA_LIB_PATH) $(CXXFLAGS_LINK_CUDA) -c -o $@
+
 clean:
-	@rm -r peakperf $(OUTPUT_DIR) 
+	@rm -r peakperf $(OUTPUT_DIR)

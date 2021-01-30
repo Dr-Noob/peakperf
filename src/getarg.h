@@ -6,11 +6,12 @@
 
 #define INVALID_N_THREADS -1
 
-typedef char peakperf_mode;
+typedef char bench_mode;
 
 enum {
-  PEAKPERF_MODE_CPU,
-  PEAKPERF_MODE_INVALID
+  BENCH_MODE_CPU,
+  BENCH_MODE_GPU,
+  BENCH_MODE_INVALID
 };
 
 bool parseArgs(int argc, char* argv[]);
@@ -22,6 +23,6 @@ int get_n_trials();
 int get_warmup_trials();
 int get_n_threads();
 bench_type get_benchmark_type();
-peakperf_mode get_mode();
+bench_mode get_benchmark_mode();
 
 #endif

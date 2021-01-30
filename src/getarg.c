@@ -19,7 +19,11 @@
 #define ARG_CHAR_THREADS    't'
 #define ARG_CHAR_BENCHMARK  'b'
 #define ARG_CHAR_LISTBENCHS 'l'
+#define ARG_CHAR_MODE       'm'
 #define ARG_CHAR_VERSION    'v'
+
+#define ARG_STR_CPU_MODE    "cpu"
+#define ARG_STR_GPU_MODE    "gpu"
 
 #define DEFAULT_N_TRIALS      10
 #define DEFAULT_WARMUP_TRIALS  2
@@ -32,10 +36,21 @@ struct args_struct {
   int n_warmup_trials;
   int n_threads;
   bench_type bench;
+  bench_mode mode;
 };
 
 int errn = 0;
 static struct args_struct args;
+
+bench_mode parse_bench_mode(char* str) {
+  if(strcmp(str, ARG_STR_CPU_MODE) == 0) {
+    return BENCH_MODE_CPU;    
+  }  
+  if(strcmp(str, ARG_STR_GPU_MODE) == 0) {
+    return BENCH_MODE_GPU;    
+  }
+  return BENCH_MODE_INVALID;   
+}
 
 int getarg_int(char* str) {
   errn = 0;
@@ -90,22 +105,30 @@ bool parseArgs(int argc, char* argv[]) {
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
   args.n_threads = INVALID_N_THREADS;
   args.bench = BENCH_TYPE_INVALID;
+  args.mode = BENCH_MODE_CPU;
 
-  while ((opt = getopt(argc, argv, "hvlr:w:t:b:")) != -1) {
+  while ((opt = getopt(argc, argv, "hvlr:w:t:b:m:")) != -1) {
     switch (opt) {
-    case 'h':
+    case ARG_CHAR_HELP:
       args.help_flag  = true;
       break;
       
-    case 'v':
+    case ARG_CHAR_VERSION:
       args.version_flag  = true;
       break;
       
-    case 'l':
+    case ARG_CHAR_MODE:
+      args.mode  = parse_bench_mode(optarg);
+      if(args.mode == BENCH_MODE_INVALID) {
+        printf("ERROR: Invalid mode: '%s'\n", optarg);
+      }
+      break;  
+      
+    case ARG_CHAR_LISTBENCHS:
       args.list_benchmarks_flag  = true;
       break;  
     
-    case 'r':
+    case ARG_CHAR_TRIALS:
       args.n_trials = getarg_int(optarg);
       if(errn != 0) {
         printf("ERROR: Option -r: ");
@@ -115,7 +138,7 @@ bool parseArgs(int argc, char* argv[]) {
       }
       break;
       
-    case 'w':
+    case ARG_CHAR_WARMUP:
       args.n_warmup_trials = getarg_int(optarg);
       if(errn != 0) {
         printf("ERROR: Option -w: ");
@@ -125,7 +148,7 @@ bool parseArgs(int argc, char* argv[]) {
       }
       break;
       
-    case 't':
+    case ARG_CHAR_THREADS:
       n_threads_set = true;
       args.n_threads = getarg_int(optarg);
       if(errn != 0) {
@@ -136,7 +159,7 @@ bool parseArgs(int argc, char* argv[]) {
       }
       break;
       
-    case 'b':
+    case ARG_CHAR_BENCHMARK:
       args.bench = parse_benchmark(optarg);
       if(args.bench == BENCH_TYPE_INVALID) {
         printf("ERROR: Option -b: Invalid benchmark\n");
@@ -198,6 +221,6 @@ bench_type get_benchmark_type() {
   return args.bench;    
 }
 
-peakperf_mode get_mode() {
-  return PEAKPERF_MODE_CPU;
+bench_mode get_benchmark_mode() {
+  return args.mode;
 }
