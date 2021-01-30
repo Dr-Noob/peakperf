@@ -160,12 +160,17 @@ bool parseArgs(int argc, char* argv[]) {
       break;
       
     case ARG_CHAR_BENCHMARK:
-      args.bench = parse_benchmark(optarg);
-      if(args.bench == BENCH_TYPE_INVALID) {
-        printf("ERROR: Option -b: Invalid benchmark\n");
-        args.help_flag  = true;   
+      #ifdef DEVICE_CPU_ENABLED
+        args.bench = parse_benchmark(optarg);
+        if(args.bench == BENCH_TYPE_INVALID) {
+          printf("ERROR: Option -b: Invalid benchmark\n");
+          args.help_flag  = true;   
+          return false;
+        }
+      #else
+        printf("ERROR: Option is only valid with CPU\n");
         return false;
-      }
+      #endif
       break;  
       
     default:
