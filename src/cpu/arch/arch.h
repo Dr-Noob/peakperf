@@ -79,7 +79,7 @@ struct benchmark;
 struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benchmark_type);
 void compute(struct benchmark* bench);
 double get_gflops(struct benchmark* bench);
-char* get_benchmark_name(struct benchmark* bench);
+const char* get_benchmark_name(struct benchmark* bench);
 bench_type parse_benchmark(char* str);
 void print_bench_types(struct cpu* cpu);
 

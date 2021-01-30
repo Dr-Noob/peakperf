@@ -20,14 +20,14 @@
    else if (ef_ == ef && f_ == f && (em_ == NA || em_ == em) && (m_ == NA || m_ == m) && (s_ == NA || s_ == s)) fill_uarch(arch, str, uarch);
 #define UARCH_END else { printf("Unknown microarchitecture detected: M=0x%.8X EM=0x%.8X F=0x%.8X EF=0x%.8X S=0x%.8X", m, em, f, ef, s); fill_uarch(arch, "Unknown", UARCH_UNKNOWN); }
 
-void fill_uarch(struct uarch* arch, char* str, MICROARCH u) {
-  arch->uarch_str = malloc(sizeof(char) * (strlen(str)+1));
+void fill_uarch(struct uarch* arch, const char* str, MICROARCH u) {
+  arch->uarch_str = (char*) malloc(sizeof(char) * (strlen(str)+1));
   strcpy(arch->uarch_str, str);
   arch->uarch = u;
 }
 
 struct uarch* get_uarch_from_cpuid_intel(uint32_t ef, uint32_t f, uint32_t em, uint32_t m, int s) {
-  struct uarch* arch = malloc(sizeof(struct uarch));
+  struct uarch* arch = (struct uarch*) malloc(sizeof(struct uarch));
   
   // EF: Extended Family                                          //
   // F:  Family                                                   //
@@ -147,9 +147,9 @@ struct uarch* get_uarch_from_cpuid_intel(uint32_t ef, uint32_t f, uint32_t em, u
   return arch;
 }
 
-// iNApired in Todd Allen's decode_uarch_amd
+// inspired in Todd Allen's decode_uarch_amd
 struct uarch* get_uarch_from_cpuid_amd(uint32_t ef, uint32_t f, uint32_t em, uint32_t m, int s) {
-  struct uarch* arch = malloc(sizeof(struct uarch));
+  struct uarch* arch = (struct uarch*) malloc(sizeof(struct uarch));
   
   // EF: Extended Family                                          //
   // F:  Family                                                   //

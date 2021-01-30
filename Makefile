@@ -9,8 +9,8 @@ CXX=g++
 NVCC=$(CUDA_BIN_PATH)/nvcc
 
 # CPU
-#SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
-CXXFLAGS_GENERIC=-O2 $(SANITY_FLAGS) -fpermissive -w
+SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
+CXXFLAGS_GENERIC=-O2 $(SANITY_FLAGS)
 CXXFLAGS_LINK=-lm -fopenmp
 CXXFLAGS_LINK_CUDA=-lcuda -lcudart -lm
 CXXFLAGS_SANDY_BRIDGE    = -DAVX_256_6_NOFMA -march=sandybridge    $(CXXFLAGS_GENERIC)

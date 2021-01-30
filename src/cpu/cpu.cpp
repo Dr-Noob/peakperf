@@ -37,10 +37,10 @@ int peakperf_cpu(int nTrials, int nWarmupTrials, int n_threads, bool list_benchm
   double mean = 0;
   double sd = 0;
   double sum = 0;
-  double gflops_list[nTrials];
+  double* gflops_list = (double*) malloc(sizeof(double) * nTrials);
   char* cpu_name = get_str_cpu_name(cpu);
   char* uarch_name = get_str_uarch(cpu);
-  char* bench_name = get_benchmark_name(bench);
+  const char* bench_name = get_benchmark_name(bench);
   int line_length = 13 + strlen(cpu_name);
 
   putchar('\n');

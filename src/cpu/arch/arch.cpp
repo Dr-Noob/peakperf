@@ -25,7 +25,7 @@
 struct benchmark {
   int n_threads;
   double gflops;
-  char* name;
+  const char* name;
   bench_type benchmark_type;
   void (*compute_function_256)(__m256 *farr_ptr, __m256, int);
   void (*compute_function_512)(__m512 *farr_ptr, __m512, int);
@@ -40,38 +40,38 @@ enum {
   BENCH_512_12,
 };
 
-static char *bench_name[] = {
-  [BENCH_TYPE_SANDY_BRIDGE]    = "Sandy Bridge (AVX)",
-  [BENCH_TYPE_IVY_BRIDGE]      = "Ivy Bridge (AVX)",
-  [BENCH_TYPE_HASWELL]         = "Haswell (AVX2)",
-  [BENCH_TYPE_BROADWELL]       = "Broadwell (AVX2)",
-  [BENCH_TYPE_SKYLAKE_256]     = "Skylake (AVX2)",
-  [BENCH_TYPE_SKYLAKE_512]     = "Skylake (AVX512)",
-  [BENCH_TYPE_KABY_LAKE]       = "Kaby Lake (AVX2)",  
-  [BENCH_TYPE_COFFEE_LAKE]     = "Coffee Lake (AVX2)",
-  [BENCH_TYPE_COMET_LAKE]      = "Comet Lake (AVX2)",
-  [BENCH_TYPE_ICE_LAKE]        = "Ice Lake (AVX2)",
-  [BENCH_TYPE_KNIGHTS_LANDING] = "Knights Landing (AVX512)",
-  [BENCH_TYPE_ZEN]             = "Zen (AVX2)",
-  [BENCH_TYPE_ZEN_PLUS]        = "Zen+ (AVX2)",
-  [BENCH_TYPE_ZEN2]            = "Zen 2 (AVX2)",
+static const char *bench_name[] = {
+  /*[BENCH_TYPE_SANDY_BRIDGE]    = */ "Sandy Bridge (AVX)",
+  /*[BENCH_TYPE_IVY_BRIDGE]      = */ "Ivy Bridge (AVX)",
+  /*[BENCH_TYPE_HASWELL]         = */ "Haswell (AVX2)",
+  /*[BENCH_TYPE_BROADWELL]       = */ "Broadwell (AVX2)",
+  /*[BENCH_TYPE_SKYLAKE_256]     = */ "Skylake (AVX2)",
+  /*[BENCH_TYPE_SKYLAKE_512]     = */ "Skylake (AVX512)",
+  /*[BENCH_TYPE_KABY_LAKE]       = */ "Kaby Lake (AVX2)",
+  /*[BENCH_TYPE_COFFEE_LAKE]     = */ "Coffee Lake (AVX2)",
+  /*[BENCH_TYPE_COMET_LAKE]      = */ "Comet Lake (AVX2)",
+  /*[BENCH_TYPE_ICE_LAKE]        = */ "Ice Lake (AVX2)",
+  /*[BENCH_TYPE_KNIGHTS_LANDING] = */ "Knights Landing (AVX512)",
+  /*[BENCH_TYPE_ZEN]             = */ "Zen (AVX2)",
+  /*[BENCH_TYPE_ZEN_PLUS]        = */ "Zen+ (AVX2)",
+  /*[BENCH_TYPE_ZEN2]            = */ "Zen 2 (AVX2)",
 };
 
-static char *bench_types_str[] = {
-  [BENCH_TYPE_SANDY_BRIDGE]    = "sandy_bridge",
-  [BENCH_TYPE_IVY_BRIDGE]      = "ivy_bridge",
-  [BENCH_TYPE_HASWELL]         = "haswell",
-  [BENCH_TYPE_BROADWELL]       = "broadwell",
-  [BENCH_TYPE_SKYLAKE_256]     = "skylake_256",
-  [BENCH_TYPE_SKYLAKE_512]     = "skylake_512",
-  [BENCH_TYPE_KABY_LAKE]       = "kaby_lake",
-  [BENCH_TYPE_COFFEE_LAKE]     = "coffee_lake",
-  [BENCH_TYPE_COMET_LAKE]      = "comet_lake",
-  [BENCH_TYPE_ICE_LAKE]        = "ice_lake",
-  [BENCH_TYPE_KNIGHTS_LANDING] = "knights_landing",
-  [BENCH_TYPE_ZEN]             = "zen",
-  [BENCH_TYPE_ZEN_PLUS]        = "zen_plus",
-  [BENCH_TYPE_ZEN2]            = "zen2",
+static const char *bench_types_str[] = {
+  /*[BENCH_TYPE_SANDY_BRIDGE]    = */ "sandy_bridge",
+  /*[BENCH_TYPE_IVY_BRIDGE]      = */ "ivy_bridge",
+  /*[BENCH_TYPE_HASWELL]         = */ "haswell",
+  /*[BENCH_TYPE_BROADWELL]       = */ "broadwell",
+  /*[BENCH_TYPE_SKYLAKE_256]     = */ "skylake_256",
+  /*[BENCH_TYPE_SKYLAKE_512]     = */ "skylake_512",
+  /*[BENCH_TYPE_KABY_LAKE]       = */ "kaby_lake",
+  /*[BENCH_TYPE_COFFEE_LAKE]     = */ "coffee_lake",
+  /*[BENCH_TYPE_COMET_LAKE]      = */ "comet_lake",
+  /*[BENCH_TYPE_ICE_LAKE]        = */ "ice_lake",
+  /*[BENCH_TYPE_KNIGHTS_LANDING] = */ "knights_landing",
+  /*[BENCH_TYPE_ZEN]             = */ "zen",
+  /*[BENCH_TYPE_ZEN_PLUS]        = */ "zen_plus",
+  /*[BENCH_TYPE_ZEN2]            = */ "zen2",
 };
 
 bool is_benchmark_supported(bench_type t, struct cpu* cpu) {
@@ -267,7 +267,7 @@ bool select_benchmark(struct benchmark* bench) {
 }
 
 struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benchmark_type) {    
-  struct benchmark* bench = malloc(sizeof(struct benchmark));
+  struct benchmark* bench = (struct benchmark*) malloc(sizeof(struct benchmark));
   
   if(n_threads > MAX_NUMBER_THREADS) {
     printf("ERROR: Max number of threads is %d\n", MAX_NUMBER_THREADS);
@@ -366,6 +366,6 @@ double get_gflops(struct benchmark* bench) {
   return bench->gflops;
 }
 
-char* get_benchmark_name(struct benchmark* bench) {
+const char* get_benchmark_name(struct benchmark* bench) {
   return bench->name;
 }

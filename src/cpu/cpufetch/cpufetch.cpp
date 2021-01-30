@@ -128,7 +128,7 @@ char* cpu_name() {
   eax = 0x80000000;
   cpuid(&eax, &ebx, &ecx, &edx);
   if(eax < 0x80000001) {
-    char* none = malloc(sizeof(char)*64);
+    char* none = (char*) malloc(sizeof(char)*64);
     sprintf(none,"Unknown");
     return none;
   }
@@ -200,7 +200,7 @@ char* cpu_name() {
   int i = 0;
   while(name[i] == ' ')i++;
 
-  char* name_withoutblank = malloc(sizeof(char)*64);
+  char* name_withoutblank = (char *) malloc(sizeof(char)*64);
   strcpy(name_withoutblank,name+i);
   return name_withoutblank;
 }
@@ -234,7 +234,7 @@ char* get_str_uarch(struct cpu* cpu) {
 }
 
 struct cpu* get_cpu_info() {
-  struct cpu* cpu = malloc(sizeof(struct cpu));
+  struct cpu* cpu = (struct cpu*) malloc(sizeof(struct cpu));
   
   cpu->cpu_name = cpu_name();
   cpu->cpu_vendor = cpu_vendor();
