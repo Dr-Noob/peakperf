@@ -1,0 +1,35 @@
+cmake_minimum_required(VERSION 3.10)
+
+project(peakperf)
+set(PROJECT_NAME "peakperf")
+set(PROJECT_VERSION "1.2")
+
+set(SANITY_FLAGS "-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2")
+set(CMAKE_C_FLAGS "${SANITY_FLAGS} -std=c99 -O2")
+set_source_files_properties(src/arch/arch.c         PROPERTIES COMPILE_FLAGS "-mavx -fopenmp")
+
+# architecture specific build
+set_source_files_properties(src/arch/sandy_bridge.c PROPERTIES COMPILE_FLAGS "-DAVX_256_6_NOFMA -march=sandybridge")
+set_source_files_properties(src/arch/ivy_bridge.c   PROPERTIES COMPILE_FLAGS "-DAVX_256_6_NOFMA -march=ivybridge")
+set_source_files_properties(src/arch/haswell.c      PROPERTIES COMPILE_FLAGS "-DAVX_256_10      -march=haswell")
+set_source_files_properties(src/arch/skylake_256.c  PROPERTIES COMPILE_FLAGS "-DAVX_256_8       -march=skylake")
+set_source_files_properties(src/arch/skylake_512.c  PROPERTIES COMPILE_FLAGS "-DAVX_512_8       -march=skylake-avx512")
+set_source_files_properties(src/arch/broadwell.c    PROPERTIES COMPILE_FLAGS "-DAVX_256_8       -march=broadwell")
+set_source_files_properties(src/arch/ice_lake.c     PROPERTIES COMPILE_FLAGS "-DAVX_256_8       -march=icelake-client")
+set_source_files_properties(src/arch/knl.c          PROPERTIES COMPILE_FLAGS "-DAVX_512_12      -march=knl")
+set_source_files_properties(src/arch/zen.c          PROPERTIES COMPILE_FLAGS "-DAVX_256_5       -march=znver1")
+set_source_files_properties(src/arch/zen2.c         PROPERTIES COMPILE_FLAGS "-DAVX_256_10      -march=znver1")
+
+add_library(sandy_bridge SHARED src/arch/sandy_bridge.c)
+add_library(ivy_bridge   SHARED src/arch/ivy_bridge.c)
+add_library(haswell      SHARED src/arch/haswell.c)
+add_library(skylake_256  SHARED src/arch/skylake_256.c)
+add_library(skylake_512  SHARED src/arch/skylake_512.c)
+add_library(broadwell    SHARED src/arch/broadwell.c)
+add_library(ice_lake     SHARED src/arch/ice_lake.c)
+add_library(knl          SHARED src/arch/knl.c)
+add_library(zen          SHARED src/arch/zen.c)
+add_library(zen2         SHARED src/arch/zen2.c)
+
+add_executable(peakperf src/main.c src/getarg.c src/cpufetch/cpu.c src/cpufetch/cpuid.c src/cpufetch/uarch.c src/arch/arch.c)
+target_link_libraries (peakperf -lm -fopenmp sandy_bridge ivy_bridge haswell skylake_256 skylake_512 broadwell ice_lake knl zen zen2)
