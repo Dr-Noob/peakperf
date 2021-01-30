@@ -3,6 +3,6 @@
 
 #include "arch.h"
 
-void compute_knl(TYPE *farr_ptr, TYPE mult, int index);
+void compute_knl(__m512 *farr_ptr, __m512 mult, int index);
 
 #endif

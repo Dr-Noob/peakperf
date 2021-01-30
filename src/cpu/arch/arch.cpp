@@ -7,8 +7,6 @@
 #define GREEN "\x1b[32;1m"
 #define RESET "\x1b[0m"
 
-#define TYPE __m256
-
 #include "arch.h"
 
 #include "sandy_bridge.h"  
@@ -29,7 +27,8 @@ struct benchmark {
   double gflops;
   char* name;
   bench_type benchmark_type;
-  void(*compute_function)(TYPE *farr_ptr, TYPE, int);
+  void (*compute_function_256)(__m256 *farr_ptr, __m256, int);
+  void (*compute_function_512)(__m512 *farr_ptr, __m512, int);
 };
 
 enum {
@@ -198,68 +197,71 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen 2           -> zen2
  */
 bool select_benchmark(struct benchmark* bench) {
+  bench->compute_function_256 = NULL;
+  bench->compute_function_512 = NULL;
+
   switch(bench->benchmark_type) {
     case BENCH_TYPE_SANDY_BRIDGE:
-      bench->compute_function = compute_sandy_bridge;
+      bench->compute_function_256 = compute_sandy_bridge;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_6_NOFMA);
-      break;  
+      break;
     case BENCH_TYPE_IVY_BRIDGE:
-      bench->compute_function = compute_ivy_bridge;
+      bench->compute_function_256 = compute_ivy_bridge;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_6_NOFMA);
       break;
     case BENCH_TYPE_HASWELL:
-      bench->compute_function = compute_haswell;
+      bench->compute_function_256 = compute_haswell;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_10);
-      break;  
+      break;
     case BENCH_TYPE_SKYLAKE_512:
-      bench->compute_function = compute_skylake_512;
+      bench->compute_function_512 = compute_skylake_512;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_512_8);
       break;
-    case BENCH_TYPE_SKYLAKE_256:    
-      bench->compute_function = compute_skylake_256;
-      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);          
+    case BENCH_TYPE_SKYLAKE_256:
+      bench->compute_function_256 = compute_skylake_256;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_BROADWELL:
-      bench->compute_function = compute_broadwell;
+      bench->compute_function_256 = compute_broadwell;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
-      break;  
+      break;
     case BENCH_TYPE_KABY_LAKE:
-      bench->compute_function = compute_skylake_256;
+      bench->compute_function_256 = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
-      break;  
+      break;
     case BENCH_TYPE_COFFEE_LAKE:
-      bench->compute_function = compute_skylake_256;
+      bench->compute_function_256 = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_COMET_LAKE:
-      bench->compute_function = compute_skylake_256;
+      bench->compute_function_256 = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
-      break;    
+      break;
     case BENCH_TYPE_ICE_LAKE:
-      bench->compute_function = compute_ice_lake;
-      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);        
+      bench->compute_function_256 = compute_ice_lake;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_KNIGHTS_LANDING:
-      bench->compute_function = compute_knl;
+      bench->compute_function_512 = compute_knl;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_512_12);
       break;
     case BENCH_TYPE_ZEN:
-      bench->compute_function = compute_zen;
+      bench->compute_function_256 = compute_zen;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
       break;
     case BENCH_TYPE_ZEN_PLUS:
-      bench->compute_function = compute_zen;
+      bench->compute_function_256 = compute_zen;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
-      break; 
+      break;
     case BENCH_TYPE_ZEN2:
-      bench->compute_function = compute_zen2;
+      bench->compute_function_256 = compute_zen2;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_10);
-      break; 
+      break;
     default:
       printf("ERROR: No valid benchmark! (bench: %d)\n", bench->benchmark_type);
       return false;
   }
-  
+
   bench->name = bench_name[bench->benchmark_type];
   return true;
 }
@@ -341,13 +343,24 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benc
   return NULL;
 }
 
-void compute(struct benchmark* bench) {      
-  TYPE mult = {0};
-  TYPE *farr_ptr = NULL;
-  
-  #pragma omp parallel for
-  for(int t=0; t < bench->n_threads; t++)
-    bench->compute_function(farr_ptr, mult, t);
+void compute(struct benchmark* bench) {
+  // TODO: Benchmark field which tells if benchmark is 256 or 512 bits long
+  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING) {
+    __m512 mult = {0};
+    __m512 *farr_ptr = NULL;
+
+   #pragma omp parallel for
+    for(int t=0; t < bench->n_threads; t++)
+      bench->compute_function_512(farr_ptr, mult, t);
+  }
+  else {
+    __m256 mult = {0};
+    __m256 *farr_ptr = NULL;
+
+   #pragma omp parallel for
+    for(int t=0; t < bench->n_threads; t++)
+      bench->compute_function_256(farr_ptr, mult, t);
+  }
 }
 
 double get_gflops(struct benchmark* bench) {

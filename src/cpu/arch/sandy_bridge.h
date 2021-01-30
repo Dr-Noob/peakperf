@@ -3,6 +3,6 @@
 
 #include "arch.h"
 
-void compute_sandy_bridge(TYPE *farr_ptr, TYPE mult, int index);
+void compute_sandy_bridge(__m256 *farr_ptr, __m256 mult, int index);
 
 #endif

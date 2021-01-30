@@ -1,4 +1,4 @@
-CXX=gcc
+CXX=g++
 
 CUDA_HOME            ?= $(CUDA_PATH)
 CUDA_INC_PATH        ?= $(CUDA_HOME)/include
@@ -7,8 +7,8 @@ CUDA_INC_PATH_COMMON ?= $(CUDA_HOME)/samples/common/inc
 CUDA_BIN_PATH        ?= $(CUDA_HOME)/bin
 CUDA_LIB_PATH        ?= $(CUDA_HOME)/lib64
 
-SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
-CXXFLAGS_GENERIC=-std=c99 -O2 $(SANITY_FLAGS)
+#SANITY_FLAGS=-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2
+CXXFLAGS_GENERIC=-O2 $(SANITY_FLAGS) -fpermissive -w
 CXXFLAGS_LINK=-lm -fopenmp
 CXXFLAGS_LINK_CUDA=-lcuda -lcudart -lm
 CXXFLAGS_SANDY_BRIDGE    = -DAVX_256_6_NOFMA -march=sandybridge    $(CXXFLAGS_GENERIC)
@@ -28,38 +28,38 @@ GPU_DIR=$(SRC_DIR)/gpu
 ARCH_DIR=$(CPU_DIR)/arch
 CPUFETCH_DIR=$(CPU_DIR)/cpufetch
 
-MAIN=$(SRC_DIR)/main.c $(SRC_DIR)/getarg.c
-CPU_DEVICE=$(CPU_DIR)/cpu.c $(CPUFETCH_DIR)/cpufetch.c $(CPUFETCH_DIR)/cpuid.c $(CPUFETCH_DIR)/uarch.c $(ARCH_DIR)/arch.c
-GPU_DEVICE=$(GPU_DIR)/gpu.c
+MAIN=$(SRC_DIR)/main.cpp $(SRC_DIR)/getarg.cpp
+CPU_DEVICE=$(CPU_DIR)/cpu.cpp $(CPUFETCH_DIR)/cpufetch.cpp $(CPUFETCH_DIR)/cpuid.cpp $(CPUFETCH_DIR)/uarch.cpp $(ARCH_DIR)/arch.cpp
+GPU_DEVICE=$(GPU_DIR)/gpu.cpp
 
-SANDY_BRIDGE=$(ARCH_DIR)/sandy_bridge.c
+SANDY_BRIDGE=$(ARCH_DIR)/sandy_bridge.cpp
 SANDY_BRIDGE_HEADERS=$(ARCH_DIR)/sandy_bridge.h $(ARCH_DIR)/arch.h
 
-IVY_BRIDGE=$(ARCH_DIR)/ivy_bridge.c
+IVY_BRIDGE=$(ARCH_DIR)/ivy_bridge.cpp
 IVY_BRIDGE_HEADERS=$(ARCH_DIR)/ivy_bridge.h $(ARCH_DIR)/arch.h
 
-HASWELL=$(ARCH_DIR)/haswell.c
+HASWELL=$(ARCH_DIR)/haswell.cpp
 HASWELL_HEADERS=$(ARCH_DIR)/haswell.h $(ARCH_DIR)/arch.h
 
-SKYLAKE_256=$(ARCH_DIR)/skylake_256.c
+SKYLAKE_256=$(ARCH_DIR)/skylake_256.cpp
 SKYLAKE_256_HEADERS=$(ARCH_DIR)/skylake_256.h $(ARCH_DIR)/arch.h
 
-SKYLAKE_512=$(ARCH_DIR)/skylake_512.c
+SKYLAKE_512=$(ARCH_DIR)/skylake_512.cpp
 SKYLAKE_512_HEADERS=$(ARCH_DIR)/skylake_512.h $(ARCH_DIR)/arch.h
 
-BROADWELL=$(ARCH_DIR)/broadwell.c
+BROADWELL=$(ARCH_DIR)/broadwell.cpp
 BROADWELL_HEADERS=$(ARCH_DIR)/broadwell.h $(ARCH_DIR)/arch.h
 
-ICE_LAKE=$(ARCH_DIR)/ice_lake.c
+ICE_LAKE=$(ARCH_DIR)/ice_lake.cpp
 ICE_LAKE_HEADERS=$(ARCH_DIR)/ice_lake.h $(ARCH_DIR)/arch.h
 
-KNL=$(ARCH_DIR)/knl.c
+KNL=$(ARCH_DIR)/knl.cpp
 KNL_HEADERS=$(ARCH_DIR)/knl.h $(ARCH_DIR)/arch.h
 
-ZEN=$(ARCH_DIR)/zen.c
+ZEN=$(ARCH_DIR)/zen.cpp
 ZEN_HEADERS=$(ARCH_DIR)/zen.h $(ARCH_DIR)/arch.h
 
-ZEN2=$(ARCH_DIR)/zen2.c
+ZEN2=$(ARCH_DIR)/zen2.cpp
 ZEN2_HEADERS=$(ARCH_DIR)/zen2.h $(ARCH_DIR)/arch.h
 
 OUTPUT_DIR=output
@@ -114,7 +114,7 @@ $(OUT_ZEN2): Makefile $(ZEN2) $(ZEN2_HEADERS)
 	$(CXX) $(CXXFLAGS_ZEN2) $(ZEN2) -c -o $@
 
 $(CPU_DEVICE_OUT): Makefile $(CPU_DEVICE)
-	$(CXX) $(CXXFLAGS_GENERIC) -mavx $(CPU_DEVICE) $(CXXFLAGS_LINK) -c
+	$(CXX) $(CXXFLAGS_GENERIC) -mavx -mavx512f $(CPU_DEVICE) $(CXXFLAGS_LINK) -c
 	mv *.o output/
 
 $(GPU_DEVICE_OUT): Makefile $(GPU_DEVICE)

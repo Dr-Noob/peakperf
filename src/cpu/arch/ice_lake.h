@@ -3,6 +3,6 @@
 
 #include "arch.h"
 
-void compute_ice_lake(TYPE *farr_ptr, TYPE mult, int index);
+void compute_ice_lake(__m256 *farr_ptr, __m256 mult, int index);
 
 #endif

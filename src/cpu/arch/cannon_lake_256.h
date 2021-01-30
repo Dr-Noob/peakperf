@@ -3,6 +3,6 @@
 
 #include "arch.h"
 
-void compute_cannon_lake_256(TYPE *farr_ptr, TYPE mult, int index);
+void compute_cannon_lake_256(__m256 *farr_ptr, __m256 mult, int index);
 
 #endif

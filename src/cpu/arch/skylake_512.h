@@ -3,6 +3,6 @@
 
 #include "arch.h"
 
-void compute_skylake_512(TYPE *farr_ptr, TYPE mult, int index);
+void compute_skylake_512(__m512 *farr_ptr, __m512 mult, int index);
 
 #endif

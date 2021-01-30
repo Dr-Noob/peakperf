@@ -3,6 +3,6 @@
 
 #include "arch.h"
 
-void compute_broadwell(TYPE *farr_ptr, TYPE mult, int index);
+void compute_broadwell(__m256 *farr_ptr, __m256 mult, int index);
 
 #endif
