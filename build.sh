@@ -1,8 +1,13 @@
 #!/bin/bash
 
-rm -rf build/
+# peakperf build script
+set -e
+
+rm -rf build/ peakperf
 mkdir build/
 cd build/
-#cmake -DENABLE_CPU_DEVICE=0 ..
-#make VERBOSE=1
-make
+
+cmake ..
+make -j$(nproc)
+cd -
+ln -s build/peakperf peakperf
