@@ -7,7 +7,7 @@ rm -rf build/ peakperf
 mkdir build/
 cd build/
 
-cmake ..
-make -j$(nproc)
+cmake -DENABLE_GPU_DEVICE=0 ..
+make
 cd -
 ln -s build/peakperf peakperf

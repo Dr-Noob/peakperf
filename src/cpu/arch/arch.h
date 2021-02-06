@@ -74,13 +74,13 @@ enum bench_types {
   #define SIZE OP_PER_IT*2
 #endif
 
-struct benchmark;
+struct benchmark_cpu;
 
-struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benchmark_type);
-void compute(struct benchmark* bench);
-double get_gflops(struct benchmark* bench);
-const char* get_benchmark_name(struct benchmark* bench);
-bench_type parse_benchmark(char* str);
-void print_bench_types(struct cpu* cpu);
+struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, bench_type benchmark_type);
+void compute_cpu(struct benchmark_cpu* bench);
+double get_gflops_cpu(struct benchmark_cpu* bench);
+const char* get_benchmark_name_cpu(struct benchmark_cpu* bench);
+bench_type parse_benchmark_cpu(char* str);
+void print_bench_types_cpu(struct cpu* cpu);
 
 #endif

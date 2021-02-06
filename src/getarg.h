@@ -22,7 +22,7 @@ bool list_benchmarks();
 int get_n_trials();
 int get_warmup_trials();
 int get_n_threads();
-bench_type get_benchmark_type();
+bench_type get_benchmark_type_args();
 device_type get_device_type();
 
 #endif

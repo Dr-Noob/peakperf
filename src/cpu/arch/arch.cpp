@@ -22,7 +22,7 @@
 #include "zen.h"
 #include "zen2.h"
 
-struct benchmark {
+struct benchmark_cpu {
   int n_threads;
   double gflops;
   const char* name;
@@ -99,7 +99,7 @@ bool is_benchmark_supported(bench_type t, struct cpu* cpu) {
   }  
 }
 
-bench_type parse_benchmark(char* str) {
+bench_type parse_benchmark_cpu(char* str) {
   int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
   for(bench_type t = 0; t < len; t++) {
     if(strcmp(str, bench_types_str[t]) == 0) {
@@ -196,7 +196,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen+            -> zen
  * - Zen 2           -> zen2
  */
-bool select_benchmark(struct benchmark* bench) {
+bool select_benchmark(struct benchmark_cpu* bench) {
   bench->compute_function_256 = NULL;
   bench->compute_function_512 = NULL;
 
@@ -266,8 +266,8 @@ bool select_benchmark(struct benchmark* bench) {
   return true;
 }
 
-struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benchmark_type) {    
-  struct benchmark* bench = (struct benchmark*) malloc(sizeof(struct benchmark));
+struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, bench_type benchmark_type) {    
+  struct benchmark_cpu* bench = (struct benchmark_cpu*) malloc(sizeof(struct benchmark_cpu));
   
   if(n_threads > MAX_NUMBER_THREADS) {
     printf("ERROR: Max number of threads is %d\n", MAX_NUMBER_THREADS);
@@ -343,12 +343,12 @@ struct benchmark* init_benchmark(struct cpu* cpu, int n_threads, bench_type benc
   return NULL;
 }
 
-void compute(struct benchmark* bench) {
+void compute_cpu (struct benchmark_cpu* bench) {
   if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING) {
     __m512 mult = {0};
     __m512 *farr_ptr = NULL;
 
-   #pragma omp parallel for
+    #pragma omp parallel for
     for(int t=0; t < bench->n_threads; t++)
       bench->compute_function_512(farr_ptr, mult, t);
   }
@@ -356,16 +356,16 @@ void compute(struct benchmark* bench) {
     __m256 mult = {0};
     __m256 *farr_ptr = NULL;
 
-   #pragma omp parallel for
+    #pragma omp parallel for
     for(int t=0; t < bench->n_threads; t++)
       bench->compute_function_256(farr_ptr, mult, t);
   }
 }
 
-double get_gflops(struct benchmark* bench) {
+double get_gflops_cpu(struct benchmark_cpu* bench) {
   return bench->gflops;
 }
 
-const char* get_benchmark_name(struct benchmark* bench) {
+const char* get_benchmark_name_cpu(struct benchmark_cpu* bench) {
   return bench->name;
 }

@@ -161,7 +161,7 @@ bool parseArgs(int argc, char* argv[]) {
       
     case ARG_CHAR_BENCHMARK:
       #ifdef DEVICE_CPU_ENABLED
-        args.bench = parse_benchmark(optarg);
+        args.bench = parse_benchmark_cpu(optarg);
         if(args.bench == BENCH_TYPE_INVALID) {
           printf("ERROR: Option -b: Invalid benchmark\n");
           args.help_flag  = true;   
@@ -222,7 +222,7 @@ int get_n_threads() {
   return args.n_threads;    
 }
 
-bench_type get_benchmark_type() {
+bench_type get_benchmark_type_args() {
   return args.bench;    
 }
 
