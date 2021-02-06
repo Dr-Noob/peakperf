@@ -3,12 +3,12 @@
 
 #define KERNEL_ITERS 100000000
 
-struct benchmark;
+struct benchmark_gpu;
 
-struct benchmark* init_benchmark();
-int get_n(struct benchmark* bench);
-double get_tflops(struct benchmark* bench);
-void compute(struct benchmark* bench, float *a, float *b, float *c, int n);
-void print_benchmark(struct benchmark* bench);
+struct benchmark_gpu* init_benchmark_gpu();
+double get_gflops_gpu(struct benchmark_gpu* bench);
+bool compute_gpu(struct benchmark_gpu* bench);
+const char* get_benchmark_name_gpu(struct benchmark_gpu* bench);
+void exit_benchmark_gpu();
 
 #endif

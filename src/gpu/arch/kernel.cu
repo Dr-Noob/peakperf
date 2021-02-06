@@ -8,18 +8,21 @@ enum {
   ARCH_UNKNOWN
 };
 
-struct benchmark {
+struct benchmark_gpu {
   int nbk; // Number of blocks
   int tpb; // Threads per block
   int n;
-  double tflops;
+  double gflops;
   int compute_capability;
   void(*compute_function)(float *, float *, float *, int);
   char arch;
+  float *d_A;
+  float *d_B;
+  float *d_C;
 };
 
-struct benchmark* init_benchmark() {
-  struct benchmark* bench = (struct benchmark *) malloc(sizeof(struct benchmark));
+struct benchmark_gpu* init_benchmark_gpu() {
+  struct benchmark_gpu* bench = (struct benchmark_gpu *) malloc(sizeof(struct benchmark_gpu));
 
   cudaDeviceProp deviceProp;
   cudaGetDeviceProperties(&deviceProp, 0);
@@ -41,33 +44,87 @@ struct benchmark* init_benchmark() {
   switch(bench->arch) {
     case ARCH_MAXWELL:
       bench->compute_function = matrixMul_maxwell;
-      bench->tflops = (double)(KERNEL_ITERS * 2 * (long)bench->n * WORK_MAXWELL)/(long)1000000000000;
+      bench->gflops = (double)(KERNEL_ITERS * 2 * (long)bench->n * WORK_MAXWELL)/(long)1000000000;
       break;
     default:
       return NULL;
   }
 
+  cudaError_t err = cudaSuccess;
+  float *h_A;
+  float *h_B;
+  int size = bench->n * sizeof(float);
+
+  if ((err = cudaMallocHost((void **)&h_A, size)) != cudaSuccess) {
+    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
+
+  if ((err = cudaMallocHost((void **)&h_B, size)) != cudaSuccess) {
+    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
+
+  for (int i = 0; i < bench->n; i++) {
+    h_A[i] = rand()/(float)RAND_MAX;
+    h_B[i] = rand()/(float)RAND_MAX;
+  }
+
+  if ((err = cudaMalloc((void **) &(bench->d_A), size)) != cudaSuccess) {
+    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
+
+  if ((err = cudaMalloc((void **) &(bench->d_B), size)) != cudaSuccess) {
+    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
+
+  if ((err = cudaMalloc((void **) &(bench->d_C), size)) != cudaSuccess) {
+    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
+
+  if ((err = cudaMemcpy(bench->d_A, h_A, size, cudaMemcpyHostToDevice)) != cudaSuccess) {
+    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
+
+  if ((err = cudaMemcpy(bench->d_B, h_B, size, cudaMemcpyHostToDevice)) != cudaSuccess) {
+    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
+
   return bench;
 }
 
-void print_benchmark(struct benchmark* bench) {
-  printf("  - Architecture: %d\n", bench->arch);
-  printf("  - Number of blocks: %d\n", bench->nbk);
-  printf("  - Threads per block: %d\n", bench->tpb);
+const char* get_benchmark_name_gpu(struct benchmark_gpu* bench) {
+  char* str = (char *) malloc(sizeof(char) * 10);
+  memset(str, 0, sizeof(char) * 10);
+  sprintf(str, "bench_gpu");
+  return str;
 }
 
-int get_n(struct benchmark* bench) {
-  return bench->n;
+double get_gflops_gpu(struct benchmark_gpu* bench) {
+  return bench->gflops;
 }
 
-
-double get_tflops(struct benchmark* bench) {
-  return bench->tflops;
-}
-
-void compute(struct benchmark* bench, float *a, float *b, float *c, int n) {
+bool compute_gpu(struct benchmark_gpu* bench) {
+  cudaError_t err = cudaSuccess;
   dim3 dimGrid(bench->nbk, 1, 1);
   dim3 dimBlock(bench->tpb, 1, 1);
 
-  bench->compute_function<<<dimGrid, dimBlock>>>(a, b, c, n);
+  bench->compute_function<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
+
+  cudaDeviceSynchronize();
+
+  if ((err = cudaGetLastError()) != cudaSuccess) {
+    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return false;
+  }
+  return true;
+}
+
+void exit_benchmark_gpu() {
+  cudaDeviceReset();
 }

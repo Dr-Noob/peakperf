@@ -343,7 +343,7 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, bench_t
   return NULL;
 }
 
-void compute_cpu (struct benchmark_cpu* bench) {
+bool compute_cpu (struct benchmark_cpu* bench) {
   if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING) {
     __m512 mult = {0};
     __m512 *farr_ptr = NULL;
@@ -360,6 +360,7 @@ void compute_cpu (struct benchmark_cpu* bench) {
     for(int t=0; t < bench->n_threads; t++)
       bench->compute_function_256(farr_ptr, mult, t);
   }
+  return true;
 }
 
 double get_gflops_cpu(struct benchmark_cpu* bench) {

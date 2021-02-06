@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
   int n_threads = get_n_threads();
   bool list_benchs = list_benchmarks();
   bench_type benchmark_type = get_benchmark_type(bench);
-  struct hardware* hw = get_hardware_info();
+  struct hardware* hw = get_hardware_info(bench);
   struct config* cfg = get_benchmark_config(bench, n_threads);
 
   /*if(list_benchmarks) {
@@ -98,7 +98,7 @@ int main(int argc, char* argv[]) {
   printf(BOLD "%6s %8s %8s" RESET "\n","Nº","Time(s)","GFLOP/s");
   for (int trial = 0; trial < n_trials+n_warmup_trials; trial++) {
     gettimeofday(&t0, 0);
-    compute(bench);
+    if(!compute(bench)) return EXIT_FAILURE;
     gettimeofday(&t1, 0);
 
     e_time = (double)((t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec)/1000000;
@@ -123,6 +123,8 @@ int main(int argc, char* argv[]) {
   if(n_warmup_trials > 0)
     printf("\n* - warm-up, not included in average");
   printf("\n\n");
+
+  exit_benchmark(bench);
 
   return EXIT_SUCCESS;
 }
