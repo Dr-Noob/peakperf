@@ -1,7 +1,11 @@
 #include <cuda_runtime.h>
 #include <stdio.h>
+#include <string.h>
 
 #include "maxwell.h"
+
+// Avoid ArchLinux package warning "WARNING: Package contains reference to $srcdir"
+#define __FILENAME__ (strrchr("/" __FILE__, '/') + 1)
 
 enum {
   ARCH_MAXWELL,
@@ -79,12 +83,12 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   int size = bench->n * sizeof(float);
 
   if ((err = cudaMallocHost((void **)&h_A, size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMallocHost((void **)&h_B, size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
@@ -94,27 +98,27 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   }
 
   if ((err = cudaMalloc((void **) &(bench->d_A), size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMalloc((void **) &(bench->d_B), size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMalloc((void **) &(bench->d_C), size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMemcpy(bench->d_A, h_A, size, cudaMemcpyHostToDevice)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMemcpy(bench->d_B, h_B, size, cudaMemcpyHostToDevice)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
@@ -139,7 +143,7 @@ bool compute_gpu(struct benchmark_gpu* bench) {
   cudaDeviceSynchronize();
 
   if ((err = cudaGetLastError()) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILE__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return false;
   }
   return true;
