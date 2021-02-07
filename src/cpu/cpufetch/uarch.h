@@ -76,7 +76,7 @@ struct uarch {
 };
 
 struct uarch* get_uarch(struct cpu* cpu);
-char* get_str_uarch(struct cpu* cpu);
+const char* get_str_uarch(struct cpu* cpu);
 void free_uarch_struct(struct uarch* arch);
 
 #endif

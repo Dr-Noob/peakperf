@@ -229,7 +229,7 @@ bool cpu_has_avx512(struct cpu* cpu) {
   return cpu->avx512;    
 }
 
-char* get_str_uarch(struct cpu* cpu) {
+const char* get_str_uarch(struct cpu* cpu) {
   return cpu->uarch->uarch_str;
 }
 

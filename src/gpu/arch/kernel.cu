@@ -8,40 +8,63 @@ enum {
   ARCH_UNKNOWN
 };
 
+static const char *uarch_str[] = {
+  /*[ARCH_MAXWELL]    = */ "Maxwell",
+};
+
 struct benchmark_gpu {
-  int nbk; // Number of blocks
+  int nbk;
   int tpb; // Threads per block
   int n;
   double gflops;
-  int compute_capability;
   void(*compute_function)(float *, float *, float *, int);
-  char arch;
   float *d_A;
   float *d_B;
   float *d_C;
 };
 
-struct benchmark_gpu* init_benchmark_gpu() {
-  struct benchmark_gpu* bench = (struct benchmark_gpu *) malloc(sizeof(struct benchmark_gpu));
+// We assume only one gpu is present...
+struct gpu {
+  int compute_capability;
+  int sm_count;
+  char uarch;
+  char* name;
+};
+
+struct gpu* get_gpu_info() {
+  struct gpu* gpu = (struct gpu *) malloc(sizeof(struct gpu));
 
   cudaDeviceProp deviceProp;
   cudaGetDeviceProperties(&deviceProp, 0);
 
-  bench->compute_capability = deviceProp.major * 10 + deviceProp.minor;
-  bench->nbk = deviceProp.multiProcessorCount;
-  bench->tpb = 1024;
-  bench->n = bench->nbk * bench->tpb;
+  int gpu_name_len = strlen(deviceProp.name);
+  gpu->compute_capability = deviceProp.major * 10 + deviceProp.minor;
+  gpu->sm_count = deviceProp.multiProcessorCount;
+  gpu->name = (char *) malloc(sizeof(char) * (gpu_name_len + 1));
+  memset(gpu->name, 0, gpu_name_len + 1);
+  strncpy(gpu->name, deviceProp.name, gpu_name_len);
 
-  switch(bench->compute_capability) {
+  switch(gpu->compute_capability) {
     case 52:
-      bench->arch = ARCH_MAXWELL;
+      gpu->uarch = ARCH_MAXWELL;
       break;
     default:
-      printf("Invalid arch found: %d.%d\n", deviceProp.major, deviceProp.minor);
+      printf("Invalid uarch found: %d.%d\n", deviceProp.major, deviceProp.minor);
       return NULL;
   }
 
-  switch(bench->arch) {
+  return gpu;
+}
+
+struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu) {
+  struct benchmark_gpu* bench = (struct benchmark_gpu *) malloc(sizeof(struct benchmark_gpu));
+
+  // TODO: Avoid this trick
+  bench->nbk = gpu->sm_count;
+  bench->tpb = 1024;
+  bench->n = gpu->sm_count * bench->tpb;
+
+  switch(gpu->uarch) {
     case ARCH_MAXWELL:
       bench->compute_function = matrixMul_maxwell;
       bench->gflops = (double)(KERNEL_ITERS * 2 * (long)bench->n * WORK_MAXWELL)/(long)1000000000;
@@ -99,10 +122,7 @@ struct benchmark_gpu* init_benchmark_gpu() {
 }
 
 const char* get_benchmark_name_gpu(struct benchmark_gpu* bench) {
-  char* str = (char *) malloc(sizeof(char) * 10);
-  memset(str, 0, sizeof(char) * 10);
-  sprintf(str, "bench_gpu");
-  return str;
+  return uarch_str[0];
 }
 
 double get_gflops_gpu(struct benchmark_gpu* bench) {
@@ -128,3 +148,12 @@ bool compute_gpu(struct benchmark_gpu* bench) {
 void exit_benchmark_gpu() {
   cudaDeviceReset();
 }
+
+char* get_str_gpu_name(struct gpu* gpu) {
+  return gpu->name;
+}
+
+const char* get_str_gpu_uarch(struct gpu* gpu) {
+  return uarch_str[gpu->uarch];
+}
+

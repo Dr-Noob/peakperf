@@ -35,6 +35,50 @@ void print_version() {
   printf("peakperf v%s\n", VERSION);
 }
 
+template <typename T>
+T max(T a, T b)
+{
+    return a > b ? a : b;
+}
+
+template <typename T>
+T min(T a, T b)
+{
+    return a < b ? a : b;
+}
+
+void print_header(struct benchmark* bench, struct config* cfg, struct hardware* hw, double gflops) {
+  struct config_str * cfg_str = get_cfg_str(bench, cfg);
+  const char* device_type_str = get_device_type_str(bench);
+  char* device_name = get_device_name_str(bench, hw);
+  const char* device_uarch = get_device_uarch_str(bench, hw);
+  const char* bench_name = get_benchmark_name(bench);
+  int line_length = 54;
+
+  int max_len = strlen("Iterations");
+  for(int i=0; i < cfg_str->num_fields; i++) {
+    max_len = max(max_len, (int) strlen(cfg_str->field_name[i]));
+  }
+
+  putchar('\n');
+  for(int i=0; i < line_length; i++) putchar('-');
+  printf("\n" BOLD "    peakperf (https://github.com/Dr-Noob/peakperf)" RESET "\n");
+  for(int i=0; i < line_length; i++) putchar('-');
+  putchar('\n');
+
+  printf("%*s %s: %s\n",         (int) (max_len-strlen(device_type_str)),        "", device_type_str, device_name);
+  printf("%*s Microarch: %s\n",  (int) (max_len-strlen("Microarch")),            "", device_uarch);
+  printf("%*s Benchmark: %s\n",  (int) (max_len-strlen("Benchmark")),            "", bench_name);
+  printf("%*s Iterations: %d\n", (int) (max_len-strlen("Iterations")),           "", MAXFLOPS_ITERS);
+  printf("%*s GFLOP: %.2f\n",    (int) (max_len-strlen("GFLOP")),                "", gflops);
+  for(int i=0; i < cfg_str->num_fields; i++) {
+    printf("%*s %s: %d\n",       (int) (max_len-strlen(cfg_str->field_name[i])), "", cfg_str->field_name[i], cfg_str->field_value[i]);
+  }
+  putchar('\n');
+
+  printf(BOLD "%6s %8s %8s" RESET "\n","Nº","Time(s)","GFLOP/s");
+}
+
 int main(int argc, char* argv[]) {
   if(!parseArgs(argc, argv))
     return EXIT_FAILURE;
@@ -81,21 +125,10 @@ int main(int argc, char* argv[]) {
   double sd = 0;
   double sum = 0;
   double* gflops_list = (double*) malloc(sizeof(double) * n_trials);
-  const char* bench_name = get_benchmark_name(bench);
-  int line_length = 13; // + strlen(cpu_name);
 
-  putchar('\n');
-  for(int i=0; i < line_length; i++) putchar('-');
-  printf("\n" BOLD "    peakperf (https://github.com/Dr-Noob/peakperf)" RESET "\n");
-  for(int i=0; i < line_length; i++) putchar('-');
-  putchar('\n');
-  print_hw_info(hw);
-  printf("  Benchmark: %s\n", bench_name);
-  printf(" Iterations: %d\n", MAXFLOPS_ITERS);
-  printf("      GFLOP: %.2f\n", gflops);
-  print_bench_cfg(cfg);
+  int line_length = 54;
+  print_header(bench, cfg, hw, gflops);
 
-  printf(BOLD "%6s %8s %8s" RESET "\n","Nº","Time(s)","GFLOP/s");
   for (int trial = 0; trial < n_trials+n_warmup_trials; trial++) {
     gettimeofday(&t0, 0);
     if(!compute(bench)) return EXIT_FAILURE;

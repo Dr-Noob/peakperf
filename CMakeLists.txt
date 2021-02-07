@@ -32,7 +32,7 @@ else()
 endif()
 
 set(SANITY_FLAGS "-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2")
-set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -O2")
+set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -O0 -g")
 
 if(ENABLE_CPU_DEVICE)
     target_compile_definitions(peakperf PUBLIC DEVICE_CPU_ENABLED)
