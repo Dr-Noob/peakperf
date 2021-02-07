@@ -1,0 +1,13 @@
+- add support for more GPUs
+- check if at least one GPU is present
+- allow for parsing GPU parameters
+- fix list_benchmark parameter
+- print CPU/GPU in peakperf header
+- improve significantly help flag
+- replace max/min C++ code
+- add man file
+- add debug option in CMake
+- fix MAXFLOPS_ITERS hack
+- update README and github page
+- use variables in CMake properly
+- update arch package
