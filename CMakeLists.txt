@@ -77,6 +77,8 @@ if(ENABLE_GPU_DEVICE)
     add_library(maxwell STATIC ${ARCH_GPU_DIR}/maxwell.cu)
 endif()
 
+install(TARGETS peakperf DESTINATION ${CMAKE_INSTALL_PREFIX})
+
 if(NOT WIN32)
   string(ASCII 27 Esc)
   set(ColourReset "${Esc}[m")
