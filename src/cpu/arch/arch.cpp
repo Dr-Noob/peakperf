@@ -7,6 +7,7 @@
 #define GREEN "\x1b[32;1m"
 #define RESET "\x1b[0m"
 
+#include "../../getarg.h"
 #include "arch.h"
 
 #include "sandy_bridge.h"
@@ -268,14 +269,17 @@ bool select_benchmark(struct benchmark_cpu* bench) {
 
 struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, bench_type benchmark_type) {    
   struct benchmark_cpu* bench = (struct benchmark_cpu*) malloc(sizeof(struct benchmark_cpu));
-  
-  if(n_threads > MAX_NUMBER_THREADS) {
+
+  bench->n_threads = n_threads;
+
+  if(bench->n_threads == INVALID_CFG) {
+    bench->n_threads = omp_get_max_threads();
+  }
+  if(bench->n_threads > MAX_NUMBER_THREADS) {
     printf("ERROR: Max number of threads is %d\n", MAX_NUMBER_THREADS);
     return NULL;
   }
-  
-  bench->n_threads = n_threads;
-  
+
   // Manual benchmark select
   if(benchmark_type != BENCH_TYPE_INVALID) {
     bench->benchmark_type = benchmark_type;
@@ -369,4 +373,8 @@ double get_gflops_cpu(struct benchmark_cpu* bench) {
 
 const char* get_benchmark_name_cpu(struct benchmark_cpu* bench) {
   return bench->name;
+}
+
+int get_n_threads(struct benchmark_cpu* bench) {
+  return bench->n_threads;
 }

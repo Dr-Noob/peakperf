@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdbool.h>
-#include <omp.h>
 #include <string.h>
 
 #include "benchmark.h"
@@ -76,21 +75,6 @@ struct hardware* get_hardware_info(struct benchmark* bench) {
   return hw;
 }
 
-struct config* get_benchmark_config(struct benchmark* bench, int n_threads) {
-  struct config* cfg = (struct config *) malloc(sizeof(struct config));
-
-  if(bench->device == DEVICE_TYPE_CPU) {
-    #ifdef DEVICE_CPU_ENABLED
-    if(n_threads == INVALID_N_THREADS)
-      cfg->n_threads = omp_get_max_threads();
-    else
-      cfg->n_threads = n_threads;
-    #endif
-  }
-
-  return cfg;
-}
-
 bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config* cfg, bench_type type) {
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
@@ -104,7 +88,7 @@ bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config*
   }
   else if(bench->device == DEVICE_TYPE_GPU) {
     #ifdef DEVICE_GPU_ENABLED
-      bench->gpu_bench = init_benchmark_gpu(hw->gpu);
+      bench->gpu_bench = init_benchmark_gpu(hw->gpu, cfg->nbk, cfg->tpb);
 
       if(bench->gpu_bench == NULL)
         return false;
@@ -196,7 +180,7 @@ const char *get_device_type_str(struct benchmark* bench) {
   return device_str[(int) bench->device];
 }
 
-struct config_str * get_cfg_str(struct benchmark* bench, struct config* cfg) {
+struct config_str * get_cfg_str(struct benchmark* bench) {
   struct config_str * cfg_str = (struct config_str *) malloc(sizeof(struct config_str));
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
@@ -204,7 +188,7 @@ struct config_str * get_cfg_str(struct benchmark* bench, struct config* cfg) {
       cfg_str->field_value = (int *) malloc(sizeof(int) * cfg_str->num_fields);
       cfg_str->field_name = (char **) malloc(sizeof(char *) * cfg_str->num_fields);
 
-      cfg_str->field_value[0] = cfg->n_threads;
+      cfg_str->field_value[0] = get_n_threads(bench->cpu_bench);
       cfg_str->field_name[0] = (char *) malloc(sizeof(char) * (strlen(CFG_STR_CPU_1) + 1));
       strncpy(cfg_str->field_name[0], CFG_STR_CPU_1, strlen(CFG_STR_CPU_1) + 1);
 
@@ -217,11 +201,11 @@ struct config_str * get_cfg_str(struct benchmark* bench, struct config* cfg) {
       cfg_str->field_value = (int *) malloc(sizeof(int) * cfg_str->num_fields);
       cfg_str->field_name = (char **) malloc(sizeof(char *) * cfg_str->num_fields);
 
-      cfg_str->field_value[0] = cfg->n_blocks;
+      cfg_str->field_value[0] = get_n_blocks(bench->gpu_bench);
       cfg_str->field_name[0] = (char *) malloc(sizeof(char) * (strlen(CFG_STR_GPU_1) + 1));
       strncpy(cfg_str->field_name[0], CFG_STR_GPU_1, strlen(CFG_STR_GPU_1) + 1);
 
-      cfg_str->field_value[1] = cfg->threads_per_block;
+      cfg_str->field_value[1] = get_threads_per_block(bench->gpu_bench);
       cfg_str->field_name[1] = (char *) malloc(sizeof(char) * (strlen(CFG_STR_GPU_2) + 1));
       strncpy(cfg_str->field_name[1], CFG_STR_GPU_2, strlen(CFG_STR_GPU_2) + 1);
 

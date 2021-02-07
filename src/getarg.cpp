@@ -34,9 +34,13 @@ struct args_struct {
   bool list_benchmarks_flag;
   int n_trials;
   int n_warmup_trials;
-  int n_threads;
   bench_type bench;
   device_type device;
+
+  int n_threads;
+  int nbk;
+  int tpb;
+  struct config* cfg;
 };
 
 int errn = 0;
@@ -103,9 +107,13 @@ bool parseArgs(int argc, char* argv[]) {
   args.list_benchmarks_flag = false;
   args.n_trials = DEFAULT_N_TRIALS;
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
-  args.n_threads = INVALID_N_THREADS;
   args.bench = BENCH_TYPE_INVALID;
   args.device = DEVICE_TYPE_CPU;
+
+  args.n_threads = INVALID_CFG;
+  args.tpb = INVALID_CFG;
+  args.nbk = INVALID_CFG;
+  args.cfg = (struct config *) malloc(sizeof(struct config));
 
   while ((opt = getopt(argc, argv, "hvlr:w:t:b:d:")) != -1) {
     switch (opt) {
@@ -194,8 +202,12 @@ bool parseArgs(int argc, char* argv[]) {
     printf("ERROR: Number of threads must be greater than zero\n");        
     return false;
   }
-  
-  return true;  
+
+  args.cfg->n_threads = args.n_threads;
+  args.cfg->tpb = args.tpb;
+  args.cfg->nbk = args.nbk;
+
+  return true;
 }
 
 bool showHelp() {
@@ -218,14 +230,14 @@ int get_warmup_trials() {
   return args.n_warmup_trials;
 }
 
-int get_n_threads() {
-  return args.n_threads;    
-}
-
 bench_type get_benchmark_type_args() {
-  return args.bench;    
+  return args.bench;
 }
 
 device_type get_device_type() {
   return args.device;
+}
+
+struct config* get_config() {
+  return args.cfg;
 }

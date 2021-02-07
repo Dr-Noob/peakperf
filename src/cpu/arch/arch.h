@@ -82,5 +82,6 @@ double get_gflops_cpu(struct benchmark_cpu* bench);
 const char* get_benchmark_name_cpu(struct benchmark_cpu* bench);
 bench_type parse_benchmark_cpu(char* str);
 void print_bench_types_cpu(struct cpu* cpu);
+int get_n_threads(struct benchmark_cpu* bench);
 
 #endif

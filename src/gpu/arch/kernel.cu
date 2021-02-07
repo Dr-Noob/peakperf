@@ -13,7 +13,7 @@ static const char *uarch_str[] = {
 };
 
 struct benchmark_gpu {
-  int nbk;
+  int nbk; // Blocks per thread
   int tpb; // Threads per block
   int n;
   double gflops;
@@ -56,10 +56,10 @@ struct gpu* get_gpu_info() {
   return gpu;
 }
 
-struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu) {
+struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   struct benchmark_gpu* bench = (struct benchmark_gpu *) malloc(sizeof(struct benchmark_gpu));
 
-  // TODO: Avoid this trick
+  // TODO: Dont ignore nbk, tpb
   bench->nbk = gpu->sm_count;
   bench->tpb = 1024;
   bench->n = gpu->sm_count * bench->tpb;
@@ -155,5 +155,13 @@ char* get_str_gpu_name(struct gpu* gpu) {
 
 const char* get_str_gpu_uarch(struct gpu* gpu) {
   return uarch_str[gpu->uarch];
+}
+
+int get_n_blocks(struct benchmark_gpu* bench) {
+  return bench->nbk;
+}
+
+int get_threads_per_block(struct benchmark_gpu* bench) {
+  return bench->tpb;
 }
 

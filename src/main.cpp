@@ -47,8 +47,8 @@ T min(T a, T b)
     return a < b ? a : b;
 }
 
-void print_header(struct benchmark* bench, struct config* cfg, struct hardware* hw, double gflops) {
-  struct config_str * cfg_str = get_cfg_str(bench, cfg);
+void print_header(struct benchmark* bench, struct hardware* hw, double gflops) {
+  struct config_str * cfg_str = get_cfg_str(bench);
   const char* device_type_str = get_device_type_str(bench);
   char* device_name = get_device_name_str(bench, hw);
   const char* device_uarch = get_device_uarch_str(bench, hw);
@@ -101,11 +101,10 @@ int main(int argc, char* argv[]) {
   if(bench == NULL) {
     return EXIT_FAILURE;
   }
-  int n_threads = get_n_threads();
+  struct config* cfg = get_config();
   bool list_benchs = list_benchmarks();
   bench_type benchmark_type = get_benchmark_type(bench);
   struct hardware* hw = get_hardware_info(bench);
-  struct config* cfg = get_benchmark_config(bench, n_threads);
 
   /*if(list_benchmarks) {
     print_bench_types(hw, bench);
@@ -127,7 +126,7 @@ int main(int argc, char* argv[]) {
   double* gflops_list = (double*) malloc(sizeof(double) * n_trials);
 
   int line_length = 54;
-  print_header(bench, cfg, hw, gflops);
+  print_header(bench, hw, gflops);
 
   for (int trial = 0; trial < n_trials+n_warmup_trials; trial++) {
     gettimeofday(&t0, 0);

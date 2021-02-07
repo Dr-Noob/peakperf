@@ -26,17 +26,6 @@ struct hardware {
   #endif
 };
 
-struct config {
-  #ifdef DEVICE_CPU_ENABLED
-  int n_threads;
-  #endif
-
-  #ifdef DEVICE_GPU_ENABLED
-  int n_blocks;
-  int threads_per_block;
-  #endif
-};
-
 struct config_str {
   int num_fields;
   char** field_name;
@@ -57,6 +46,6 @@ void exit_benchmark(struct benchmark* bench);
 char* get_device_name_str(struct benchmark* bench, struct hardware* hw);
 const char* get_device_uarch_str(struct benchmark* bench, struct hardware* hw);
 const char *get_device_type_str(struct benchmark* bench);
-struct config_str * get_cfg_str(struct benchmark* bench, struct config* cfg);
+struct config_str * get_cfg_str(struct benchmark* bench);
 
 #endif
