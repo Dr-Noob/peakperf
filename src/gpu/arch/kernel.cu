@@ -5,7 +5,7 @@
 #include "maxwell.h"
 
 // Avoid ArchLinux package warning "WARNING: Package contains reference to $srcdir"
-#define __FILENAME__ (strrchr("/" __FILE__, '/') + 1)
+#define __FILENAME__ "kernel.cu"
 
 enum {
   ARCH_MAXWELL,
