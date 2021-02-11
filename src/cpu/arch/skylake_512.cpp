@@ -1,4 +1,4 @@
-#include "skylake_512.h"
+#include "skylake_512.hpp"
 #define OP_PER_IT B_512_8_OP_IT
 
 TYPE farr_skylake_512[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

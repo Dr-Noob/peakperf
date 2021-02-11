@@ -1,7 +1,7 @@
 #include <cuda_runtime.h>
 #include <stdio.h>
 
-#include "maxwell.h"
+#include "maxwell.hpp"
 
 __global__
 void matrixMul_maxwell(float *vec_a, float *vec_b, float *vec_c, int n) {

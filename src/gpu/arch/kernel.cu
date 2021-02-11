@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "maxwell.h"
+#include "maxwell.hpp"
 
 // Avoid ArchLinux package warning "WARNING: Package contains reference to $srcdir"
 #define __FILENAME__ "kernel.cu"

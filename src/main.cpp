@@ -5,15 +5,15 @@
 #include <string.h>
 #include <sys/time.h>
 
-#include "getarg.h"
-#include "benchmark.h"
+#include "getarg.hpp"
+#include "benchmark.hpp"
 
 #define RED   "\x1b[31;1m"
 #define BOLD  "\x1b[1m"
 #define GREEN "\x1b[42m"
 #define RESET "\x1b[0m"
 
-static const char* VERSION = "1.20";
+static const char* VERSION = "1.10";
 
 void printHelp(char *argv[]) {
   printf("Usage: %s [-h] [-v] [-l] [-b bench_type] [-d device] [-r n_trials] [-w warmup_trials] [-t n_threads] \n\

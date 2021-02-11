@@ -7,7 +7,7 @@
 #include <getopt.h>
 #include <string.h>
 
-#include "getarg.h"
+#include "getarg.hpp"
 
 #define OVERFLOW          -1
 #define UNDERFLOW         -2

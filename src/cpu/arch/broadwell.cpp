@@ -1,4 +1,4 @@
-#include "broadwell.h"
+#include "broadwell.hpp"
 #define OP_PER_IT B_256_8_OP_IT
 
 TYPE farr_broadwell[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

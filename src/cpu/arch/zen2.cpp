@@ -1,4 +1,4 @@
-#include "zen2.h"
+#include "zen2.hpp"
 #define OP_PER_IT B_256_10_OP_IT
 
 TYPE farr_zen2[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

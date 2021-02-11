@@ -2,7 +2,7 @@
 #define __GETARG__
 
 #include <stdbool.h>
-#include "cpu/arch/arch.h"
+#include "cpu/arch/arch.hpp"
 
 #define INVALID_CFG -1
 

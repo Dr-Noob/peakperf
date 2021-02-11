@@ -7,8 +7,8 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include "cpuid.h"
-#include "uarch.h"
+#include "cpuid.hpp"
+#include "uarch.hpp"
 
 #define CPU_VENDOR_INTEL_STRING "GenuineIntel"
 #define CPU_VENDOR_AMD_STRING   "AuthenticAMD"

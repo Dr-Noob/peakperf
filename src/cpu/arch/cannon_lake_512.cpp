@@ -1,4 +1,4 @@
-#include "cannon_lake_512.h"
+#include "cannon_lake_512.hpp"
 #define OP_PER_IT B_256_10_OP_IT
 
 TYPE farr_cannon_lake_512[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

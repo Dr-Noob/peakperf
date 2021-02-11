@@ -1,4 +1,4 @@
-#include "zen.h"
+#include "zen.hpp"
 #define OP_PER_IT B_256_5_OP_IT
 
 TYPE farr_zen[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

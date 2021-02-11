@@ -1,4 +1,4 @@
-#include "ice_lake.h"
+#include "ice_lake.hpp"
 #define OP_PER_IT B_256_8_OP_IT
 
 TYPE farr_ice_lake[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

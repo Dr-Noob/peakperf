@@ -1,7 +1,7 @@
 #ifndef __BENCHMARK__
 #define __BENCHMARK__
 
-#include "getarg.h"
+#include "getarg.hpp"
 
 struct benchmark {
   #ifdef DEVICE_CPU_ENABLED

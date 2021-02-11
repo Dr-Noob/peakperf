@@ -1,4 +1,4 @@
-#include "ivy_bridge.h"
+#include "ivy_bridge.hpp"
 #define OP_PER_IT B_256_6_NOFMA_OP_IT
 
 TYPE farr_ivy_bridge[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

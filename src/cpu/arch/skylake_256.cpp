@@ -1,4 +1,4 @@
-#include "skylake_256.h"
+#include "skylake_256.hpp"
 #define OP_PER_IT B_256_8_OP_IT
 
 TYPE farr_skylake_256[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

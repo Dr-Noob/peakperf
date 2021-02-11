@@ -2,16 +2,16 @@
 #include <stdbool.h>
 #include <string.h>
 
-#include "benchmark.h"
+#include "benchmark.hpp"
 
 #ifdef DEVICE_CPU_ENABLED
-  #include "cpu/cpufetch/cpufetch.h"
-  #include "cpu/cpufetch/uarch.h"
-  #include "cpu/arch/arch.h"
+  #include "cpu/cpufetch/cpufetch.hpp"
+  #include "cpu/cpufetch/uarch.hpp"
+  #include "cpu/arch/arch.hpp"
 #endif
 
 #ifdef DEVICE_GPU_ENABLED
-  #include "gpu/arch/kernel.h"
+  #include "gpu/arch/kernel.hpp"
 #endif
 
 #define RED   "\x1b[31;1m"

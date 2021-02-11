@@ -1,4 +1,4 @@
-#include "haswell.h"
+#include "haswell.hpp"
 #define OP_PER_IT B_256_10_OP_IT
 
 TYPE farr_haswell[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

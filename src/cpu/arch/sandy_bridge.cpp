@@ -1,4 +1,4 @@
-#include "sandy_bridge.h"
+#include "sandy_bridge.hpp"
 #define OP_PER_IT B_256_6_NOFMA_OP_IT
 
 TYPE farr_sandy_bridge[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  

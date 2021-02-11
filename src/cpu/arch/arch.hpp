@@ -2,7 +2,7 @@
 #define __ARCH__
 
 #include <immintrin.h>
-#include "../cpufetch/uarch.h"
+#include "../cpufetch/uarch.hpp"
 
 typedef unsigned char bench_type;
 

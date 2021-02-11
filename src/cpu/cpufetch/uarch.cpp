@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "cpufetch.h"
-#include "cpuid.h"
-#include "uarch.h"
+#include "cpufetch.hpp"
+#include "cpuid.hpp"
+#include "uarch.hpp"
 
 // Data not available
 #define NA                   -1
