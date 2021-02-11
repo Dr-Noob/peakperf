@@ -36,7 +36,18 @@ struct gpu {
 };
 
 struct gpu* get_gpu_info() {
+  cudaError_t err = cudaSuccess;
   struct gpu* gpu = (struct gpu *) malloc(sizeof(struct gpu));
+
+  int num_gpus = -1;
+  if ((err = cudaGetDeviceCount(&num_gpus)) != cudaSuccess) {
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    return NULL;
+  }
+  if(num_gpus <= 0) {
+    printf("ERROR: No CUDA capable devices found!\n");
+    return NULL;
+  }
 
   cudaDeviceProp deviceProp;
   cudaGetDeviceProperties(&deviceProp, 0);
@@ -83,12 +94,12 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   int size = bench->n * sizeof(float);
 
   if ((err = cudaMallocHost((void **)&h_A, size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMallocHost((void **)&h_B, size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
@@ -98,27 +109,27 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   }
 
   if ((err = cudaMalloc((void **) &(bench->d_A), size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMalloc((void **) &(bench->d_B), size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMalloc((void **) &(bench->d_C), size)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMemcpy(bench->d_A, h_A, size, cudaMemcpyHostToDevice)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMemcpy(bench->d_B, h_B, size, cudaMemcpyHostToDevice)) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
@@ -143,7 +154,7 @@ bool compute_gpu(struct benchmark_gpu* bench) {
   cudaDeviceSynchronize();
 
   if ((err = cudaGetLastError()) != cudaSuccess) {
-    printf("[%s:%d]%s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
+    printf("[%s:%d] %s: %s\n", __FILENAME__, __LINE__, cudaGetErrorName(err), cudaGetErrorString(err));
     return false;
   }
   return true;

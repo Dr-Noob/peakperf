@@ -63,12 +63,16 @@ struct hardware* get_hardware_info(struct benchmark* bench) {
 
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
-      hw->cpu = get_cpu_info();
+      if((hw->cpu = get_cpu_info()) == NULL) {
+        return NULL;
+      }
     #endif
   }
   else if (bench->device == DEVICE_TYPE_GPU) {
     #ifdef DEVICE_GPU_ENABLED
-      hw->gpu = get_gpu_info();
+      if((hw->gpu = get_gpu_info()) == NULL) {
+        return NULL;
+      }
     #endif
   }
 

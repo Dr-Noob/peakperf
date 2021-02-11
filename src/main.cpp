@@ -105,6 +105,9 @@ int main(int argc, char* argv[]) {
   bool list_benchs = list_benchmarks();
   bench_type benchmark_type = get_benchmark_type(bench);
   struct hardware* hw = get_hardware_info(bench);
+  if(hw == NULL) {
+    return EXIT_FAILURE;
+  }
 
   /*if(list_benchmarks) {
     print_bench_types(hw, bench);

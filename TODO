@@ -1,5 +1,4 @@
 - add support for more GPUs
-- check if at least one GPU is present
 - allow for parsing GPU parameters
 - fix list_benchmark parameter
 - print CPU/GPU in peakperf header
