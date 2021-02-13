@@ -13,15 +13,6 @@
 #define UNDERFLOW         -2
 #define INVALID_ARG       -3
 
-#define ARG_CHAR_HELP       'h'
-#define ARG_CHAR_TRIALS     'r'
-#define ARG_CHAR_WARMUP     'w'
-#define ARG_CHAR_THREADS    't'
-#define ARG_CHAR_BENCHMARK  'b'
-#define ARG_CHAR_LISTBENCHS 'l'
-#define ARG_CHAR_DEVICE     'd'
-#define ARG_CHAR_VERSION    'v'
-
 #define ARG_STR_CPU_DEVICE  "cpu"
 #define ARG_STR_GPU_DEVICE  "gpu"
 
@@ -48,17 +39,17 @@ static struct args_struct args;
 
 device_type parse_device_type(char* str) {
   if(strcmp(str, ARG_STR_CPU_DEVICE) == 0) {
-    return DEVICE_TYPE_CPU;    
-  }  
-  if(strcmp(str, ARG_STR_GPU_DEVICE) == 0) {
-    return DEVICE_TYPE_GPU;    
+    return DEVICE_TYPE_CPU;
   }
-  return DEVICE_TYPE_INVALID;   
+  if(strcmp(str, ARG_STR_GPU_DEVICE) == 0) {
+    return DEVICE_TYPE_GPU;
+  }
+  return DEVICE_TYPE_INVALID;
 }
 
 int getarg_int(char* str) {
   errn = 0;
-  
+
   char* endptr;
   long tmp = strtol(str, &endptr, 10);
 
@@ -98,10 +89,29 @@ void printerror() {
   }
 }
 
+char * build_short_options() {
+  const char *c = args_chr;
+  int len = sizeof(args_chr) / sizeof(args_chr[0]);
+  char* str = (char *) malloc(sizeof(char) * (len*2 + 1));
+  memset(str, 0, sizeof(char) * (len*2 + 1));
+
+  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c%c",
+  c[ARG_LISTBENCHS], c[ARG_BENCHMARK], c[ARG_DEVICE],
+  c[ARG_TRIALS], c[ARG_WARMUP], c[ARG_CPU_THREADS],
+  c[ARG_GPU_BLOCKS], c[ARG_GPU_TPB], c[ARG_HELP], c[ARG_VERSION]);
+
+  return str;
+}
+
 bool parseArgs(int argc, char* argv[]) {
   int opt;
+  int option_index = 0;
+  opterr = 0;
+
   bool n_threads_set = false;
-    
+  bool n_blocks_set = false;
+  bool n_threads_per_block_set = false;
+
   args.help_flag = false;
   args.version_flag = false;
   args.list_benchmarks_flag = false;
@@ -115,92 +125,160 @@ bool parseArgs(int argc, char* argv[]) {
   args.nbk = INVALID_CFG;
   args.cfg = (struct config *) malloc(sizeof(struct config));
 
-  while ((opt = getopt(argc, argv, "hvlr:w:t:b:d:")) != -1) {
+  constexpr char *c = (char *) args_chr;
+
+  static struct option long_options[] = {
+    {args_str[ARG_LISTBENCHS],  no_argument,       0, c[ARG_LISTBENCHS]  },
+    {args_str[ARG_BENCHMARK],   required_argument, 0, c[ARG_BENCHMARK]   },
+    {args_str[ARG_DEVICE],      required_argument, 0, c[ARG_DEVICE]      },
+    {args_str[ARG_TRIALS],      required_argument, 0, c[ARG_TRIALS]      },
+    {args_str[ARG_WARMUP],      required_argument, 0, c[ARG_WARMUP]      },
+    {args_str[ARG_CPU_THREADS], required_argument, 0, c[ARG_CPU_THREADS] },
+    {args_str[ARG_GPU_BLOCKS],  required_argument, 0, c[ARG_GPU_BLOCKS]  },
+    {args_str[ARG_GPU_TPB],     required_argument, 0, c[ARG_GPU_TPB]     },
+    {args_str[ARG_HELP],        no_argument,       0, c[ARG_HELP]        },
+    {args_str[ARG_VERSION],     no_argument,       0, c[ARG_VERSION]     },
+    {0, 0, 0, 0}
+  };
+
+  char* short_options = build_short_options();
+  opt = getopt_long(argc, argv, short_options, long_options, &option_index);
+
+  while(opt != -1) {
     switch (opt) {
-    case ARG_CHAR_HELP:
-      args.help_flag  = true;
-      break;
-      
-    case ARG_CHAR_VERSION:
-      args.version_flag  = true;
-      break;
-      
-    case ARG_CHAR_DEVICE:
-      args.device  = parse_device_type(optarg);
-      if(args.device == DEVICE_TYPE_INVALID) {
-        printf("ERROR: Invalid device: '%s'\n", optarg);
-      }
-      break;  
-      
-    case ARG_CHAR_LISTBENCHS:
-      args.list_benchmarks_flag  = true;
-      break;  
-    
-    case ARG_CHAR_TRIALS:
-      args.n_trials = getarg_int(optarg);
-      if(errn != 0) {
-        printf("ERROR: Option -r: ");
-        printerror();
+      case c[ARG_HELP]:
         args.help_flag  = true;
-        return false;
-      }
-      break;
-      
-    case ARG_CHAR_WARMUP:
-      args.n_warmup_trials = getarg_int(optarg);
-      if(errn != 0) {
-        printf("ERROR: Option -w: ");
-        printerror();
-        args.help_flag  = true;    
-        return false;
-      }
-      break;
-      
-    case ARG_CHAR_THREADS:
-      n_threads_set = true;
-      args.n_threads = getarg_int(optarg);
-      if(errn != 0) {
-        printf("ERROR: Option -t: ");
-        printerror();
-        args.help_flag  = true;   
-        return false;
-      }
-      break;
-      
-    case ARG_CHAR_BENCHMARK:
-      #ifdef DEVICE_CPU_ENABLED
-        args.bench = parse_benchmark_cpu(optarg);
-        if(args.bench == BENCH_TYPE_INVALID) {
-          printf("ERROR: Option -b: Invalid benchmark\n");
-          args.help_flag  = true;   
+        break;
+
+      case c[ARG_VERSION]:
+        args.version_flag  = true;
+        break;
+
+      case c[ARG_DEVICE]:
+        args.device  = parse_device_type(optarg);
+        if(args.device == DEVICE_TYPE_INVALID) {
+          printf("ERROR: Invalid device: '%s'\n", args_str[ARG_DEVICE]);
+        }
+        break;
+
+      case c[ARG_LISTBENCHS]:
+        args.list_benchmarks_flag  = true;
+        break;
+
+      case c[ARG_TRIALS]:
+        args.n_trials = getarg_int(optarg);
+        if(errn != 0) {
+          printf("ERROR: Option %s: ", args_str[ARG_TRIALS]);
+          printerror();
+          args.help_flag  = true;
           return false;
         }
-      #else
-        printf("ERROR: Option is only valid with CPU\n");
-        return false;
-      #endif
-      break;  
-      
-    default:
-      printf("WARNING: Invalid options\n");
-      args.help_flag  = true;
-      return false;
+        break;
+
+      case c[ARG_WARMUP]:
+        args.n_warmup_trials = getarg_int(optarg);
+        if(errn != 0) {
+          printf("ERROR: Option %s: ", args_str[ARG_WARMUP]);
+          printerror();
+          args.help_flag  = true;
+          return false;
+        }
+        break;
+
+      case c[ARG_CPU_THREADS]:
+        n_threads_set = true;
+        args.n_threads = getarg_int(optarg);
+        if(errn != 0) {
+          printf("ERROR: Option %s: ", args_str[ARG_CPU_THREADS]);
+          printerror();
+          args.help_flag  = true;
+          return false;
+        }
+        break;
+
+      case c[ARG_GPU_BLOCKS]:
+        n_blocks_set = true;
+        args.nbk = getarg_int(optarg);
+        if(errn != 0) {
+          printf("ERROR: Option %s: ", args_str[ARG_GPU_BLOCKS]);
+          printerror();
+          args.help_flag  = true;
+          return false;
+        }
+        break;
+
+      case c[ARG_GPU_TPB]:
+        n_threads_per_block_set = true;
+        args.tpb = getarg_int(optarg);
+        if(errn != 0) {
+          printf("ERROR: Option %s: ", args_str[ARG_GPU_TPB]);
+          printerror();
+          args.help_flag  = true;
+          return false;
+        }
+        break;
+
+      case c[ARG_BENCHMARK]:
+        #ifdef DEVICE_CPU_ENABLED
+          args.bench = parse_benchmark_cpu(optarg);
+          if(args.bench == BENCH_TYPE_INVALID) {
+            printf("ERROR: Option %s: Invalid benchmark\n", args_str[ARG_BENCHMARK]);
+            args.help_flag  = true;
+            return false;
+          }
+        #else
+          printf("ERROR: Option is only valid with CPU\n");
+          return false;
+        #endif
+        break;
+
+      default:
+        printf("WARNING: Invalid options\n");
+        args.help_flag  = true;
+        return true;
     }
+
+    option_index = 0;
+    opt = getopt_long(argc, argv, short_options, long_options, &option_index);
   }
-  
-  
-  // check args //  
+  free(short_options);
+
+  // check args //
   if(args.n_trials <= 0) {
-    printf("ERROR: Number of trials must be greater than zero\n");        
+    printf("ERROR: Number of trials must be greater than zero\n");
     return false;
   }
   if(args.n_warmup_trials < 0) {
-    printf("ERROR: Number of warmup trials must be greater or equal to zero\n");        
+    printf("ERROR: Number of warmup trials must be greater or equal to zero\n");
     return false;
   }
-  if(n_threads_set && args.n_threads <= 0) {
-    printf("ERROR: Number of threads must be greater than zero\n");        
-    return false;
+  if(args.device == DEVICE_TYPE_CPU) {
+    if(n_threads_set && args.n_threads <= 0) {
+      printf("ERROR: Number of threads must be greater than zero\n");
+      return false;
+    }
+    if(n_blocks_set) {
+      printf("ERROR: Option %s is only available in GPU mode\n", args_str[ARG_GPU_BLOCKS]);
+      return false;
+    }
+    if(n_threads_per_block_set) {
+      printf("ERROR: Option %s is only available in GPU mode\n", args_str[ARG_GPU_TPB]);
+      return false;
+    }
+  }
+  else {
+    if(n_threads_set) {
+      printf("ERROR: Option %s is only available in CPU mode\n", args_str[ARG_CPU_THREADS]);
+      return false;
+    }
+    if(n_blocks_set && args.nbk <= 0) {
+      printf("ERROR: Number of blocks must be greater than zero\n");
+      return false;
+    }
+    if(n_threads_per_block_set && args.tpb <= 0) {
+      printf("ERROR: Number of threads per block must be greater than zero\n");
+      return false;
+    }
   }
 
   args.cfg->n_threads = args.n_threads;

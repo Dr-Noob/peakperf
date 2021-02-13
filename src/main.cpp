@@ -13,27 +13,7 @@
 #define GREEN "\x1b[42m"
 #define RESET "\x1b[0m"
 
-static const char* VERSION = "1.10";
-
-void printHelp(char *argv[]) {
-  printf("Usage: %s [-h] [-v] [-l] [-b bench_type] [-d device] [-r n_trials] [-w warmup_trials] [-t n_threads] \n\
-    Options: \n\
-      -h      Prints this help and exit\n\
-      -v      Prints peakperf version and exit\n\
-      -l      List the avaiable benchmark types\n\
-      -b      Select a specific benchmark to run\n\
-      -d      Select the device to run the benchmark on. Possible values are:\n\
-        * cpu Run peakperf in the CPU (default)\n\
-        * gpu Run peakperf in the GPU\n\
-      -r      Set the number of trials of the benchmark\n\
-      -w      Set the number of warmup trials\n\
-      -t      Set the number of threads to use\n",
-      argv[0]);
-}
-
-void print_version() {
-  printf("peakperf v%s\n", VERSION);
-}
+static const char* VERSION = "1.11";
 
 template <typename T>
 T max(T a, T b)
@@ -45,6 +25,38 @@ template <typename T>
 T min(T a, T b)
 {
     return a < b ? a : b;
+}
+
+void printHelp(char *argv[]) {
+  const char **t = args_str;
+  const char *c = args_chr;
+  int max_len = -1;
+  int len = sizeof(args_str) / sizeof(args_str[0]);
+  for(int i=0; i < len; i++) {
+    max_len = max(max_len, (int) strlen(args_str[i]));
+  }
+
+  printf("Usage: %s [OPTION]...\n\n", argv[0]);
+
+  printf("General options: \n");
+  printf("  -%c, --%s %*s Prints this help and exit\n", c[ARG_HELP], t[ARG_HELP], (int) (max_len-strlen(t[ARG_HELP])), "");
+  printf("  -%c, --%s %*s Prints peakperf version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
+  printf("  -%c, --%s %*s List the avaiable benchmark types\n", c[ARG_LISTBENCHS], t[ARG_LISTBENCHS], (int) (max_len-strlen(t[ARG_LISTBENCHS])), "");
+  printf("  -%c, --%s %*s Select a specific benchmark to run\n", c[ARG_BENCHMARK], t[ARG_BENCHMARK], (int) (max_len-strlen(t[ARG_BENCHMARK])), "");
+  printf("  -%c, --%s %*s Set the number of trials of the benchmark\n", c[ARG_TRIALS], t[ARG_TRIALS], (int) (max_len-strlen(t[ARG_TRIALS])), "");
+  printf("  -%c, --%s %*s Set the number of warmup trials\n", c[ARG_WARMUP], t[ARG_WARMUP], (int) (max_len-strlen(t[ARG_WARMUP])), "");
+  printf("  -%c, --%s %*s Select the device to run the benchmark on. Possible values are:\n", c[ARG_DEVICE], t[ARG_DEVICE], (int) (max_len-strlen(t[ARG_DEVICE])), "");
+  printf("      cpu: Run peakperf in the CPU (default)\n");
+  printf("      gpu: Run peakperf in the GPU\n");
+  printf("\nCPU device only options:\n");
+  printf("  -%c, --%s %*s Set the number of threads to use (default: omp_get_max_threads())\n", c[ARG_CPU_THREADS], t[ARG_CPU_THREADS], (int) (max_len-strlen(t[ARG_CPU_THREADS])), "");
+  printf("\nGPU device only options:\n");
+  printf("  -%c, --%s %*s Set the number of CUDA blocks to use (default: number of SM in the running GPU)\n", c[ARG_GPU_BLOCKS], t[ARG_GPU_BLOCKS], (int) (max_len-strlen(t[ARG_GPU_BLOCKS])), "");
+  printf("  -%c, --%s %*s Set the number of threads per block to use (default: 1024)\n", c[ARG_GPU_TPB], t[ARG_GPU_TPB], (int) (max_len-strlen(t[ARG_GPU_TPB])), "");
+}
+
+void print_version() {
+  printf("peakperf v%s\n", VERSION);
 }
 
 void print_header(struct benchmark* bench, struct hardware* hw, double gflops) {

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "../../getarg.hpp"
 #include "maxwell.hpp"
 
 // Avoid ArchLinux package warning "WARNING: Package contains reference to $srcdir"
@@ -74,9 +75,8 @@ struct gpu* get_gpu_info() {
 struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   struct benchmark_gpu* bench = (struct benchmark_gpu *) malloc(sizeof(struct benchmark_gpu));
 
-  // TODO: Dont ignore nbk, tpb
-  bench->nbk = gpu->sm_count;
-  bench->tpb = 1024;
+  bench->nbk = (nbk == INVALID_CFG) ? gpu->sm_count : nbk;
+  bench->tpb = (tpb == INVALID_CFG) ? 1024 : tpb;
   bench->n = gpu->sm_count * bench->tpb;
 
   switch(gpu->uarch) {
