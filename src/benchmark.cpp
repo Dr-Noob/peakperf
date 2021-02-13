@@ -218,3 +218,16 @@ struct config_str * get_cfg_str(struct benchmark* bench) {
   }
   return NULL;
 }
+
+void print_bench_types(struct benchmark* bench, struct hardware* hw) {
+  if(bench->device == DEVICE_TYPE_CPU) {
+    #ifdef DEVICE_CPU_ENABLED
+      print_bench_types_cpu(hw->cpu);
+    #endif
+  }
+  else if(bench->device == DEVICE_TYPE_GPU) {
+    #ifdef DEVICE_GPU_ENABLED
+      print_bench_types_gpu(hw->gpu);
+    #endif
+  }
+}

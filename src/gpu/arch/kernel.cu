@@ -15,6 +15,14 @@ static const char *uarch_str[] = {
   /*[ARCH_MAXWELL]    = */ "Maxwell",
 };
 
+static const char *bench_name[] = {
+  /*[BENCH_TYPE_MAXWELL]    = */ "Maxwell",
+};
+
+static const char *bench_types_str[] = {
+  /*[BENCH_TYPE_MAXWELL]    = */ "maxwell",
+};
+
 struct benchmark_gpu {
   int nbk; // Blocks per thread
   int tpb; // Threads per block
@@ -132,6 +140,25 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   }
 
   return bench;
+}
+
+void print_bench_types_gpu(struct gpu* gpu) {
+  int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
+  long unsigned int longest = 0;
+  long unsigned int total_length = 0;
+  for(bench_type t = 0; t < len; t++) {
+    if(strlen(bench_name[t]) > longest) {
+      longest = strlen(bench_name[t]);
+      total_length = longest + 16 + strlen(bench_types_str[t]);
+    }
+  }
+
+  printf("Available benchmark types for GPU:\n");
+  for(long unsigned i=0; i < total_length; i++) putchar('-');
+  putchar('\n');
+  for(bench_type t = 0; t < len; t++) {
+    printf("  - %s %*s(Keyword: %s)\n", bench_name[t], (int) (strlen(bench_name[t]) - longest), "", bench_types_str[t]);
+  }
 }
 
 const char* get_benchmark_name_gpu(struct benchmark_gpu* bench) {

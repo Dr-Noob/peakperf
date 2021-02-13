@@ -71,31 +71,6 @@ static const char *bench_types_str[] = {
   /*[BENCH_TYPE_ZEN2]            = */ "zen2",
 };
 
-bool is_benchmark_supported(bench_type t, struct cpu* cpu) {
-  switch(t) {
-    case BENCH_TYPE_SANDY_BRIDGE:
-    case BENCH_TYPE_IVY_BRIDGE:
-      return cpu_has_avx(cpu);
-    case BENCH_TYPE_HASWELL:
-    case BENCH_TYPE_BROADWELL:
-    case BENCH_TYPE_SKYLAKE_256:
-    case BENCH_TYPE_KABY_LAKE:
-    case BENCH_TYPE_COFFEE_LAKE:
-    case BENCH_TYPE_COMET_LAKE:
-    case BENCH_TYPE_ICE_LAKE:
-    case BENCH_TYPE_ZEN:
-    case BENCH_TYPE_ZEN_PLUS:
-    case BENCH_TYPE_ZEN2:    
-      return cpu_has_avx2(cpu) && cpu_has_fma(cpu);
-    case BENCH_TYPE_SKYLAKE_512:
-    case BENCH_TYPE_KNIGHTS_LANDING:    
-      return cpu_has_avx512(cpu) && cpu_has_fma(cpu);
-    default:
-      printErr("Invalid benchmark found in is_benchmark_supported: %d", t);
-      return false;
-  }  
-}
-
 bench_type parse_benchmark_cpu(char* str) {
   int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
   for(bench_type t = 0; t < len; t++) {
@@ -106,36 +81,30 @@ bench_type parse_benchmark_cpu(char* str) {
   return BENCH_TYPE_INVALID;    
 }
 
-void print_bench_types(struct cpu* cpu) {
+void print_bench_types_cpu(struct cpu* cpu) {
   int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
   long unsigned int longest = 0;
   long unsigned int total_length = 0;
   for(bench_type t = 0; t < len; t++) {
-    if(strlen(bench_name[t]) > longest) { 
+    if(strlen(bench_name[t]) > longest) {
       longest = strlen(bench_name[t]);
       total_length = longest + 16 + strlen(bench_types_str[t]);
     }
   }
-  
-  printf("Available benchmark types:\n");  
+
+  printf("Available benchmark types for CPU:\n");
   for(long unsigned i=0; i < total_length; i++) putchar('-');
   putchar('\n');
   for(bench_type t = 0; t < len; t++) {
-    if(is_benchmark_supported(t, cpu))
-      printf("  - " GREEN "%s" RESET " %*s(Keyword: %s)\n", bench_name[t], (int) (strlen(bench_name[t]) - longest), "", bench_types_str[t]);
-    else
-      printf("  - " RED "%s" RESET " %*s(Keyword: %s)\n", bench_name[t], (int) (strlen(bench_name[t]) - longest), "", bench_types_str[t]);
+    printf("  - %s %*s(Keyword: %s)\n", bench_name[t], (int) (strlen(bench_name[t]) - longest), "", bench_types_str[t]);
   }
-  printf("\nLegend:\n");
-  printf("* " GREEN "BENCH: " RESET "The running CPU supports the execution of the benchmark\n");
-  printf("* " RED "BENCH: " RESET "The running CPU does not support the execution of the benchmark due to the lack of some instruction set\n");  
 }
 
 double compute_gflops(int n_threads, char bench) {
   int fma_available;
   int op_per_it;
   int bytes_in_vect;
-  
+
   switch(bench) {
     case BENCH_256_6_NOFMA:
       fma_available = B_256_6_NOFMA_FMA_AV;

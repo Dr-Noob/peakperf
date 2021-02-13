@@ -105,10 +105,10 @@ int main(int argc, char* argv[]) {
     return EXIT_FAILURE;
   }
 
-  /*if(list_benchmarks) {
-    print_bench_types(hw, bench);
+  if(list_benchmarks()) {
+    print_bench_types(bench, hw);
     return EXIT_SUCCESS;
-  }*/
+  }
 
   struct timeval t0;
   struct timeval t1;

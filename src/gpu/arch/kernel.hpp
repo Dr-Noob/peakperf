@@ -15,5 +15,6 @@ const char* get_str_gpu_uarch(struct gpu* gpu);
 struct gpu* get_gpu_info();
 int get_n_blocks(struct benchmark_gpu* bench);
 int get_threads_per_block(struct benchmark_gpu* bench);
+void print_bench_types_gpu(struct gpu* gpu);
 
 #endif

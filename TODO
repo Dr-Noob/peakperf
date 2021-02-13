@@ -1,5 +1,5 @@
 - add support for more GPUs
-- fix list_benchmark parameter
+- allow benchmark selection in GPU
 - improve help flag
 - add man file
 - add debug option in CMake
