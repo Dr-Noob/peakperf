@@ -1,8 +1,6 @@
 - add support for more GPUs
 - fix list_benchmark parameter
-- print CPU/GPU in peakperf header
-- improve significantly help flag
-- replace max/min C++ code
+- improve help flag
 - add man file
 - add debug option in CMake
 - fix MAXFLOPS_ITERS hack

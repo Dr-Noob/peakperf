@@ -7,6 +7,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include "../../global.hpp"
 #include "cpuid.hpp"
 #include "uarch.hpp"
 
@@ -49,9 +50,9 @@ void fill_features_cpuid(struct cpu* cpu) {
     cpu->fma = (ecx & ((int)1 << 12)) != 0;
   }
   else {
-    cpu->avx = false;    
-    cpu->fma = false;    
-    printf("ERROR: Could not determine CPU features\n");
+    cpu->avx = false;
+    cpu->fma = false;
+    printErr("Could not determine CPU features");
   }
   
   if (maxLevels >= 0x00000007){

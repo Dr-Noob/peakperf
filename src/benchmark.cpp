@@ -36,7 +36,7 @@ struct benchmark* init_benchmark_device(device_type device) {
     #ifdef DEVICE_CPU_ENABLED
       return bench;
     #else
-      printf(RED "ERROR" RESET " peakperf was not built with CPU support\n");
+      printfErr("peakperf was not built with CPU support");
       return NULL;
     #endif
   }
@@ -44,12 +44,12 @@ struct benchmark* init_benchmark_device(device_type device) {
     #ifdef DEVICE_GPU_ENABLED
       return bench;
     #else
-      printf(RED "ERROR:" RESET " peakperf was not built with GPU support\n");
+      printErr("peakperf was not built with GPU support");
       return NULL;
     #endif
   }
   else {
-    printf(RED "ERROR:" RESET " Invalid device found: %d\n", device);
+    printf("Invalid device found: %d", device);
     return NULL;
   }
 }

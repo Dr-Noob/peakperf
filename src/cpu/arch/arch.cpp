@@ -2,11 +2,7 @@
 #include <omp.h>
 #include <string.h>
 
-#define RED   "\x1b[31;1m"
-#define BOLD  "\x1b[1m"
-#define GREEN "\x1b[32;1m"
-#define RESET "\x1b[0m"
-
+#include "../../global.hpp"
 #include "../../getarg.hpp"
 #include "arch.hpp"
 
@@ -95,7 +91,7 @@ bool is_benchmark_supported(bench_type t, struct cpu* cpu) {
     case BENCH_TYPE_KNIGHTS_LANDING:    
       return cpu_has_avx512(cpu) && cpu_has_fma(cpu);
     default:
-      printf("ERROR: Invalid benchmark found in is_benchmark_supported: %d\n", t);
+      printErr("Invalid benchmark found in is_benchmark_supported: %d", t);
       return false;
   }  
 }
@@ -170,13 +166,13 @@ double compute_gflops(int n_threads, char bench) {
       fma_available = B_512_12_FMA_AV;
       op_per_it = B_512_12_OP_IT;
       bytes_in_vect = B_512_12_BYTES;
-      break;  
+      break;
     default:
-      printf("ERROR: Invalid benchmark type!\n");
+      printErr("Invalid benchmark type!");
       return -1.0;
   }
-  
-  return (double)((long)n_threads*MAXFLOPS_ITERS*op_per_it*(bytes_in_vect/4)*fma_available)/1000000000;        
+
+  return (double)((long)n_threads*MAXFLOPS_ITERS*op_per_it*(bytes_in_vect/4)*fma_available)/1000000000;
 }
 
 /*
@@ -259,7 +255,7 @@ bool select_benchmark(struct benchmark_cpu* bench) {
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_10);
       break;
     default:
-      printf("ERROR: No valid benchmark! (bench: %d)\n", bench->benchmark_type);
+      printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);
       return false;
   }
 
@@ -276,7 +272,7 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, bench_t
     bench->n_threads = omp_get_max_threads();
   }
   if(bench->n_threads > MAX_NUMBER_THREADS) {
-    printf("ERROR: Max number of threads is %d\n", MAX_NUMBER_THREADS);
+    printErr("Max number of threads is %d", MAX_NUMBER_THREADS);
     return NULL;
   }
 
@@ -337,7 +333,7 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, bench_t
         bench->benchmark_type = BENCH_TYPE_ZEN2;
         break;    
       default:
-        printf("ERROR: No valid uarch found! (uarch: %d)\n", u);
+        printErr("No valid uarch found! (uarch: %d)", u);
         return NULL;
     }
   }

@@ -7,25 +7,9 @@
 
 #include "getarg.hpp"
 #include "benchmark.hpp"
-
-#define RED   "\x1b[31;1m"
-#define BOLD  "\x1b[1m"
-#define GREEN "\x1b[42m"
-#define RESET "\x1b[0m"
+#include "global.hpp"
 
 static const char* VERSION = "1.11";
-
-template <typename T>
-T max(T a, T b)
-{
-    return a > b ? a : b;
-}
-
-template <typename T>
-T min(T a, T b)
-{
-    return a < b ? a : b;
-}
 
 void printHelp(char *argv[]) {
   const char **t = args_str;

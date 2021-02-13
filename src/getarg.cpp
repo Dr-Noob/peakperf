@@ -3,11 +3,11 @@
 #include <assert.h>
 #include <stdio.h>
 #include <unistd.h>
-
 #include <getopt.h>
 #include <string.h>
 
 #include "getarg.hpp"
+#include "global.hpp"
 
 #define OVERFLOW          -1
 #define UNDERFLOW         -2
@@ -75,16 +75,16 @@ int getarg_int(char* str) {
 void printerror() {
   switch (errn) {
     case OVERFLOW:
-      printf("Overflow detected\n");
+      printErr("Overflow detected while parsing the arguments");
       break;
     case UNDERFLOW:
-      printf("Underflow detected\n");
+      printErr("Underflow detected while parsing the arguments");
       break;
     case INVALID_ARG:
-      printf("Invalid arg\n");
+      printErr("Invalid argument");
       break;
     default:
-      printf("Invalid error: %d\n", errn);
+      printErr("Invalid error: %d", errn);
       break;
   }
 }
@@ -157,7 +157,7 @@ bool parseArgs(int argc, char* argv[]) {
       case c[ARG_DEVICE]:
         args.device  = parse_device_type(optarg);
         if(args.device == DEVICE_TYPE_INVALID) {
-          printf("ERROR: Invalid device: '%s'\n", args_str[ARG_DEVICE]);
+          printErr("Invalid device: '%s'", args_str[ARG_DEVICE]);
         }
         break;
 
@@ -168,7 +168,7 @@ bool parseArgs(int argc, char* argv[]) {
       case c[ARG_TRIALS]:
         args.n_trials = getarg_int(optarg);
         if(errn != 0) {
-          printf("ERROR: Option %s: ", args_str[ARG_TRIALS]);
+          printErr("Option %s: ", args_str[ARG_TRIALS]);
           printerror();
           args.help_flag  = true;
           return false;
@@ -178,7 +178,7 @@ bool parseArgs(int argc, char* argv[]) {
       case c[ARG_WARMUP]:
         args.n_warmup_trials = getarg_int(optarg);
         if(errn != 0) {
-          printf("ERROR: Option %s: ", args_str[ARG_WARMUP]);
+          printErr("Option %s: ", args_str[ARG_WARMUP]);
           printerror();
           args.help_flag  = true;
           return false;
@@ -189,7 +189,7 @@ bool parseArgs(int argc, char* argv[]) {
         n_threads_set = true;
         args.n_threads = getarg_int(optarg);
         if(errn != 0) {
-          printf("ERROR: Option %s: ", args_str[ARG_CPU_THREADS]);
+          printErr("Option %s: ", args_str[ARG_CPU_THREADS]);
           printerror();
           args.help_flag  = true;
           return false;
@@ -200,7 +200,7 @@ bool parseArgs(int argc, char* argv[]) {
         n_blocks_set = true;
         args.nbk = getarg_int(optarg);
         if(errn != 0) {
-          printf("ERROR: Option %s: ", args_str[ARG_GPU_BLOCKS]);
+          printErr("Option %s: ", args_str[ARG_GPU_BLOCKS]);
           printerror();
           args.help_flag  = true;
           return false;
@@ -211,7 +211,7 @@ bool parseArgs(int argc, char* argv[]) {
         n_threads_per_block_set = true;
         args.tpb = getarg_int(optarg);
         if(errn != 0) {
-          printf("ERROR: Option %s: ", args_str[ARG_GPU_TPB]);
+          printErr("Option %s: ", args_str[ARG_GPU_TPB]);
           printerror();
           args.help_flag  = true;
           return false;
@@ -222,12 +222,12 @@ bool parseArgs(int argc, char* argv[]) {
         #ifdef DEVICE_CPU_ENABLED
           args.bench = parse_benchmark_cpu(optarg);
           if(args.bench == BENCH_TYPE_INVALID) {
-            printf("ERROR: Option %s: Invalid benchmark\n", args_str[ARG_BENCHMARK]);
+            printErr("Option %s: Invalid benchmark", args_str[ARG_BENCHMARK]);
             args.help_flag  = true;
             return false;
           }
         #else
-          printf("ERROR: Option is only valid with CPU\n");
+          printErr("Option is only valid with CPU");
           return false;
         #endif
         break;
@@ -245,38 +245,38 @@ bool parseArgs(int argc, char* argv[]) {
 
   // check args //
   if(args.n_trials <= 0) {
-    printf("ERROR: Number of trials must be greater than zero\n");
+    printErr("Number of trials must be greater than zero");
     return false;
   }
   if(args.n_warmup_trials < 0) {
-    printf("ERROR: Number of warmup trials must be greater or equal to zero\n");
+    printErr("Number of warmup trials must be greater or equal to zero");
     return false;
   }
   if(args.device == DEVICE_TYPE_CPU) {
     if(n_threads_set && args.n_threads <= 0) {
-      printf("ERROR: Number of threads must be greater than zero\n");
+      printErr("Number of threads must be greater than zero");
       return false;
     }
     if(n_blocks_set) {
-      printf("ERROR: Option %s is only available in GPU mode\n", args_str[ARG_GPU_BLOCKS]);
+      printErr("Option %s is only available in GPU mode", args_str[ARG_GPU_BLOCKS]);
       return false;
     }
     if(n_threads_per_block_set) {
-      printf("ERROR: Option %s is only available in GPU mode\n", args_str[ARG_GPU_TPB]);
+      printErr("Option %s is only available in GPU mode", args_str[ARG_GPU_TPB]);
       return false;
     }
   }
   else {
     if(n_threads_set) {
-      printf("ERROR: Option %s is only available in CPU mode\n", args_str[ARG_CPU_THREADS]);
+      printErr("Option %s is only available in CPU mode", args_str[ARG_CPU_THREADS]);
       return false;
     }
     if(n_blocks_set && args.nbk <= 0) {
-      printf("ERROR: Number of blocks must be greater than zero\n");
+      printErr("Number of blocks must be greater than zero");
       return false;
     }
     if(n_threads_per_block_set && args.tpb <= 0) {
-      printf("ERROR: Number of threads per block must be greater than zero\n");
+      printErr("Number of threads per block must be greater than zero");
       return false;
     }
   }

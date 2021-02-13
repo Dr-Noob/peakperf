@@ -10,7 +10,7 @@ set(CPUFETCH_DIR "${CPU_DIR}/cpufetch")
 set(ARCH_CPU_DIR "${CPU_DIR}/arch")
 set(ARCH_GPU_DIR "${GPU_DIR}/arch")
 
-add_executable(peakperf ${SRC_DIR}/main.cpp ${SRC_DIR}/benchmark.cpp ${SRC_DIR}/getarg.cpp)
+add_executable(peakperf ${SRC_DIR}/main.cpp ${SRC_DIR}/benchmark.cpp ${SRC_DIR}/getarg.cpp ${SRC_DIR}/global.cpp)
 
 if (CMAKE_VERSION VERSION_LESS 3.17)
     include(FindCUDA)
@@ -31,7 +31,7 @@ else()
 endif()
 
 set(SANITY_FLAGS "-Wall -Wextra -Werror -fstack-protector-all -pedantic -Wno-unused -Wfloat-equal -Wshadow -Wpointer-arith -Wformat=2")
-set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -O2 -g")
+set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -O2")
 
 if(ENABLE_CPU_DEVICE)
     target_compile_definitions(peakperf PUBLIC DEVICE_CPU_ENABLED)
