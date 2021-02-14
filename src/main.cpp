@@ -31,9 +31,19 @@ void printHelp(char *argv[]) {
   printf("  -%c, --%s %*s Select a specific benchmark to run\n", c[ARG_BENCHMARK], t[ARG_BENCHMARK], (int) (max_len-strlen(t[ARG_BENCHMARK])), "");
   printf("  -%c, --%s %*s Set the number of trials of the benchmark\n", c[ARG_TRIALS], t[ARG_TRIALS], (int) (max_len-strlen(t[ARG_TRIALS])), "");
   printf("  -%c, --%s %*s Set the number of warmup trials\n", c[ARG_WARMUP], t[ARG_WARMUP], (int) (max_len-strlen(t[ARG_WARMUP])), "");
-  printf("  -%c, --%s %*s Select the device to run the benchmark on. Possible values are:\n", c[ARG_DEVICE], t[ARG_DEVICE], (int) (max_len-strlen(t[ARG_DEVICE])), "");
-  printf("      cpu: Run peakperf in the CPU (default)\n");
-  printf("      gpu: Run peakperf in the GPU\n");
+  printf("  -%c, --%s %*s Select the device to run the benchmark on\n", c[ARG_DEVICE], t[ARG_DEVICE], (int) (max_len-strlen(t[ARG_DEVICE])), "");
+  printf("         %*s By default, CPU device is used if it is available\n", max_len, "");
+  printf("         %*s Possible values are:\n", max_len, "");
+  #ifdef DEVICE_CPU_ENABLED
+    printf("         %*s cpu: Run peakperf in the CPU. Available: YES\n", max_len, "");
+  #else
+    printf("         %*s cpu: Run peakperf in the CPU. Available: NO\n", max_len, "");
+  #endif
+  #ifdef DEVICE_GPU_ENABLED
+    printf("         %*s gpu: Run peakperf in the GPU. Available: YES\n", max_len, "");
+  #else
+    printf("         %*s gpu: Run peakperf in the GPU. Available: NO\n", max_len, "");
+  #endif
   printf("\nCPU device only options:\n");
   printf("  -%c, --%s %*s Set the number of threads to use (default: omp_get_max_threads())\n", c[ARG_CPU_THREADS], t[ARG_CPU_THREADS], (int) (max_len-strlen(t[ARG_CPU_THREADS])), "");
   printf("\nGPU device only options:\n");

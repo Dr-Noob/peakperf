@@ -1,8 +1,9 @@
+Code
 - add support for more GPUs
-- improve help flag
-- add man file
-- add debug option in CMake
 - fix MAXFLOPS_ITERS / KERNEL_ITERS hack
-- update README and github page
+CMake
+- add debug option in CMake
 - use variables in CMake properly
-- update arch package
+DOC
+- update README and github page
+- add man file
