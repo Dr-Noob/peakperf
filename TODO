@@ -1,9 +1,8 @@
 - add support for more GPUs
-- allow benchmark selection in GPU
 - improve help flag
 - add man file
 - add debug option in CMake
-- fix MAXFLOPS_ITERS hack
+- fix MAXFLOPS_ITERS / KERNEL_ITERS hack
 - update README and github page
 - use variables in CMake properly
 - update arch package

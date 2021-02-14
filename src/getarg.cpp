@@ -8,6 +8,8 @@
 
 #include "getarg.hpp"
 #include "global.hpp"
+#include "cpu/arch/arch.hpp"
+#include "gpu/arch/kernel.hpp"
 
 #define OVERFLOW          -1
 #define UNDERFLOW         -2
@@ -25,7 +27,7 @@ struct args_struct {
   bool list_benchmarks_flag;
   int n_trials;
   int n_warmup_trials;
-  bench_type bench;
+  char* benchmark_name;
   device_type device;
 
   int n_threads;
@@ -117,8 +119,8 @@ bool parseArgs(int argc, char* argv[]) {
   args.list_benchmarks_flag = false;
   args.n_trials = DEFAULT_N_TRIALS;
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
-  args.bench = BENCH_TYPE_INVALID;
   args.device = DEVICE_TYPE_CPU;
+  args.benchmark_name = NULL;
 
   args.n_threads = INVALID_CFG;
   args.tpb = INVALID_CFG;
@@ -219,17 +221,8 @@ bool parseArgs(int argc, char* argv[]) {
         break;
 
       case c[ARG_BENCHMARK]:
-        #ifdef DEVICE_CPU_ENABLED
-          args.bench = parse_benchmark_cpu(optarg);
-          if(args.bench == BENCH_TYPE_INVALID) {
-            printErr("Option %s: Invalid benchmark", args_str[ARG_BENCHMARK]);
-            args.help_flag  = true;
-            return false;
-          }
-        #else
-          printErr("Option is only valid with CPU");
-          return false;
-        #endif
+        args.benchmark_name = (char *) malloc(sizeof(char) * (strlen(optarg) + 1));
+        strcpy(args.benchmark_name, optarg);
         break;
 
       default:
@@ -308,8 +301,8 @@ int get_warmup_trials() {
   return args.n_warmup_trials;
 }
 
-bench_type get_benchmark_type_args() {
-  return args.bench;
+char* get_benchmark_str_args() {
+  return args.benchmark_name;
 }
 
 device_type get_device_type() {

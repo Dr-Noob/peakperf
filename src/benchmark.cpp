@@ -54,10 +54,6 @@ struct benchmark* init_benchmark_device(device_type device) {
   }
 }
 
-bench_type get_benchmark_type(struct benchmark* bench) {
-  return get_benchmark_type_args();
-}
-
 struct hardware* get_hardware_info(struct benchmark* bench) {
   struct hardware* hw = (struct hardware *) malloc(sizeof(struct hardware));
 
@@ -79,10 +75,10 @@ struct hardware* get_hardware_info(struct benchmark* bench) {
   return hw;
 }
 
-bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config* cfg, bench_type type) {
+bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config* cfg, char* bench_type_str) {
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
-      bench->cpu_bench = init_benchmark_cpu(hw->cpu, cfg->n_threads, type);
+      bench->cpu_bench = init_benchmark_cpu(hw->cpu, cfg->n_threads, bench_type_str);
 
       if(bench->cpu_bench == NULL)
         return false;
@@ -92,7 +88,7 @@ bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config*
   }
   else if(bench->device == DEVICE_TYPE_GPU) {
     #ifdef DEVICE_GPU_ENABLED
-      bench->gpu_bench = init_benchmark_gpu(hw->gpu, cfg->nbk, cfg->tpb);
+      bench->gpu_bench = init_benchmark_gpu(hw->gpu, cfg->nbk, cfg->tpb, bench_type_str);
 
       if(bench->gpu_bench == NULL)
         return false;

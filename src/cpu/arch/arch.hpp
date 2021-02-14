@@ -3,8 +3,7 @@
 
 #include <immintrin.h>
 #include "../cpufetch/uarch.hpp"
-
-typedef unsigned char bench_type;
+#include "../../getarg.hpp"
 
 enum bench_types {
   BENCH_TYPE_SANDY_BRIDGE,
@@ -21,7 +20,6 @@ enum bench_types {
   BENCH_TYPE_ZEN,
   BENCH_TYPE_ZEN_PLUS,
   BENCH_TYPE_ZEN2,
-  BENCH_TYPE_INVALID,
 };
 
 #define MAXFLOPS_ITERS 1000000000
@@ -76,7 +74,7 @@ enum bench_types {
 
 struct benchmark_cpu;
 
-struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, bench_type benchmark_type);
+struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char* bench_type_str);
 bool compute_cpu(struct benchmark_cpu* bench);
 double get_gflops_cpu(struct benchmark_cpu* bench);
 const char* get_benchmark_name_cpu(struct benchmark_cpu* bench);

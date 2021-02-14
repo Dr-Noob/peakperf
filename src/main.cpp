@@ -9,7 +9,9 @@
 #include "benchmark.hpp"
 #include "global.hpp"
 
-static const char* VERSION = "1.11";
+#define MAXFLOPS_ITERS 1000000000
+
+static const char* VERSION = "1.12";
 
 void printHelp(char *argv[]) {
   const char **t = args_str;
@@ -92,6 +94,7 @@ int main(int argc, char* argv[]) {
   int n_trials = get_n_trials();
   int n_warmup_trials = get_warmup_trials();
   device_type device = get_device_type();
+  char* benchmark_name = get_benchmark_str_args();
 
   struct benchmark* bench = init_benchmark_device(device);
   if(bench == NULL) {
@@ -99,7 +102,6 @@ int main(int argc, char* argv[]) {
   }
   struct config* cfg = get_config();
   bool list_benchs = list_benchmarks();
-  bench_type benchmark_type = get_benchmark_type(bench);
   struct hardware* hw = get_hardware_info(bench);
   if(hw == NULL) {
     return EXIT_FAILURE;
@@ -112,7 +114,7 @@ int main(int argc, char* argv[]) {
 
   struct timeval t0;
   struct timeval t1;
-  bool flag = init_benchmark(bench, hw, cfg, benchmark_type);
+  bool flag = init_benchmark(bench, hw, cfg, benchmark_name);
   if(!flag) {
     return EXIT_FAILURE;
   }

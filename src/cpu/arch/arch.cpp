@@ -232,8 +232,20 @@ bool select_benchmark(struct benchmark_cpu* bench) {
   return true;
 }
 
-struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, bench_type benchmark_type) {    
+struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *bench_type_str) {
   struct benchmark_cpu* bench = (struct benchmark_cpu*) malloc(sizeof(struct benchmark_cpu));
+  bench_type benchmark_type;
+
+  if(bench_type_str == NULL) {
+    benchmark_type = BENCH_TYPE_INVALID;
+  }
+  else {
+   benchmark_type = parse_benchmark_cpu(bench_type_str);
+   if(benchmark_type == BENCH_TYPE_INVALID) {
+     printErr("Invalid CPU benchmark specified: '%s'", bench_type_str);
+     return NULL;
+   }
+  }
 
   bench->n_threads = n_threads;
 
