@@ -33,6 +33,7 @@ struct args_struct {
   int n_threads;
   int nbk;
   int tpb;
+  int gpu_idx;
   struct config* cfg;
 };
 
@@ -77,16 +78,16 @@ int getarg_int(char* str) {
 void printerror() {
   switch (errn) {
     case OVERFLOW:
-      printErr("Overflow detected while parsing the arguments");
+      printf("Overflow detected while parsing the arguments\n");
       break;
     case UNDERFLOW:
-      printErr("Underflow detected while parsing the arguments");
+      printf("Underflow detected while parsing the arguments\n");
       break;
     case INVALID_ARG:
-      printErr("Invalid argument");
+      printf("Invalid argument\n");
       break;
     default:
-      printErr("Invalid error: %d", errn);
+      printf("Invalid error: %d\n", errn);
       break;
   }
 }
@@ -97,10 +98,11 @@ char * build_short_options() {
   char* str = (char *) malloc(sizeof(char) * (len*2 + 1));
   memset(str, 0, sizeof(char) * (len*2 + 1));
 
-  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c%c",
+  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c:%c%c",
   c[ARG_LISTBENCHS], c[ARG_BENCHMARK], c[ARG_DEVICE],
   c[ARG_TRIALS], c[ARG_WARMUP], c[ARG_CPU_THREADS],
-  c[ARG_GPU_BLOCKS], c[ARG_GPU_TPB], c[ARG_HELP], c[ARG_VERSION]);
+  c[ARG_GPU_BLOCKS], c[ARG_GPU_TPB], c[ARG_GPU_IDX],
+  c[ARG_HELP], c[ARG_VERSION]);
 
   return str;
 }
@@ -113,6 +115,7 @@ bool parseArgs(int argc, char* argv[]) {
   bool n_threads_set = false;
   bool n_blocks_set = false;
   bool n_threads_per_block_set = false;
+  bool gpu_idx_set = false;
 
   args.help_flag = false;
   args.version_flag = false;
@@ -125,6 +128,7 @@ bool parseArgs(int argc, char* argv[]) {
   args.n_threads = INVALID_CFG;
   args.tpb = INVALID_CFG;
   args.nbk = INVALID_CFG;
+  args.gpu_idx = 0;
   args.cfg = (struct config *) malloc(sizeof(struct config));
 
   constexpr char *c = (char *) args_chr;
@@ -138,6 +142,7 @@ bool parseArgs(int argc, char* argv[]) {
     {args_str[ARG_CPU_THREADS], required_argument, 0, c[ARG_CPU_THREADS] },
     {args_str[ARG_GPU_BLOCKS],  required_argument, 0, c[ARG_GPU_BLOCKS]  },
     {args_str[ARG_GPU_TPB],     required_argument, 0, c[ARG_GPU_TPB]     },
+    {args_str[ARG_GPU_IDX],     required_argument, 0, c[ARG_GPU_IDX]     },
     {args_str[ARG_HELP],        no_argument,       0, c[ARG_HELP]        },
     {args_str[ARG_VERSION],     no_argument,       0, c[ARG_VERSION]     },
     {0, 0, 0, 0}
@@ -220,6 +225,17 @@ bool parseArgs(int argc, char* argv[]) {
         }
         break;
 
+      case c[ARG_GPU_IDX]:
+        gpu_idx_set = true;
+        args.gpu_idx = getarg_int(optarg);
+        if(errn != 0) {
+          printErr("Option %s: ", args_str[ARG_GPU_IDX]);
+          printerror();
+          args.help_flag  = true;
+          return false;
+        }
+        break;
+
       case c[ARG_BENCHMARK]:
         args.benchmark_name = (char *) malloc(sizeof(char) * (strlen(optarg) + 1));
         strcpy(args.benchmark_name, optarg);
@@ -258,6 +274,10 @@ bool parseArgs(int argc, char* argv[]) {
       printErr("Option %s is only available in GPU mode", args_str[ARG_GPU_TPB]);
       return false;
     }
+    if(gpu_idx_set) {
+      printErr("Option %s is only available in GPU mode", args_str[ARG_GPU_IDX]);
+      return false;
+    }
   }
   else {
     if(n_threads_set) {
@@ -277,6 +297,7 @@ bool parseArgs(int argc, char* argv[]) {
   args.cfg->n_threads = args.n_threads;
   args.cfg->tpb = args.tpb;
   args.cfg->nbk = args.nbk;
+  args.cfg->gpu_idx = args.gpu_idx;
 
   return true;
 }

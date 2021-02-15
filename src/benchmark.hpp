@@ -33,7 +33,7 @@ struct config_str {
 };
 
 struct benchmark* init_benchmark_device(device_type device);
-struct hardware* get_hardware_info(struct benchmark* bench);
+struct hardware* get_hardware_info(struct benchmark* bench, struct config* cfg);
 struct config* get_benchmark_config(struct benchmark* bench, int n_threads);
 bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config* cfg, char* bench_type_str);
 void print_hw_info(struct hardware* hw);

@@ -54,7 +54,7 @@ struct benchmark* init_benchmark_device(device_type device) {
   }
 }
 
-struct hardware* get_hardware_info(struct benchmark* bench) {
+struct hardware* get_hardware_info(struct benchmark* bench, struct config* cfg) {
   struct hardware* hw = (struct hardware *) malloc(sizeof(struct hardware));
 
   if(bench->device == DEVICE_TYPE_CPU) {
@@ -66,7 +66,7 @@ struct hardware* get_hardware_info(struct benchmark* bench) {
   }
   else if (bench->device == DEVICE_TYPE_GPU) {
     #ifdef DEVICE_GPU_ENABLED
-      if((hw->gpu = get_gpu_info()) == NULL) {
+      if((hw->gpu = get_gpu_info(cfg->gpu_idx)) == NULL) {
         return NULL;
       }
     #endif

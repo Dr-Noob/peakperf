@@ -47,6 +47,7 @@ void printHelp(char *argv[]) {
   printf("\nGPU device only options:\n");
   printf("  -%c, --%s %*s Set the number of CUDA blocks to use (default: number of SM in the running GPU)\n", c[ARG_GPU_BLOCKS], t[ARG_GPU_BLOCKS], (int) (max_len-strlen(t[ARG_GPU_BLOCKS])), "");
   printf("  -%c, --%s %*s Set the number of threads per block to use (default: 1024)\n", c[ARG_GPU_TPB], t[ARG_GPU_TPB], (int) (max_len-strlen(t[ARG_GPU_TPB])), "");
+  printf("  -%c, --%s %*s Select the GPU to run the benchmark on (default: 0)\n", c[ARG_GPU_IDX], t[ARG_GPU_IDX], (int) (max_len-strlen(t[ARG_GPU_IDX])), "");
 }
 
 void print_version() {
@@ -111,7 +112,7 @@ int main(int argc, char* argv[]) {
   }
   struct config* cfg = get_config();
   bool list_benchs = list_benchmarks();
-  struct hardware* hw = get_hardware_info(bench);
+  struct hardware* hw = get_hardware_info(bench, cfg);
   if(hw == NULL) {
     return EXIT_FAILURE;
   }

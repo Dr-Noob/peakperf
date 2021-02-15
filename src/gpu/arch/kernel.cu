@@ -74,7 +74,7 @@ bench_type parse_benchmark_gpu(char* str) {
   return BENCH_TYPE_INVALID;
 }
 
-struct gpu* get_gpu_info() {
+struct gpu* get_gpu_info(int gpu_idx) {
   cudaError_t err = cudaSuccess;
   struct gpu* gpu = (struct gpu *) malloc(sizeof(struct gpu));
 
@@ -87,9 +87,17 @@ struct gpu* get_gpu_info() {
     printErr("No CUDA capable devices found!");
     return NULL;
   }
+  if(gpu_idx < 0) {
+    printErr("GPU index must be equal or greater than zero");
+    return NULL;
+  }
+  if(gpu_idx+1 > num_gpus) {
+    printErr("Requested GPU index %d in a system with %d GPUs", gpu_idx, num_gpus);
+    return NULL;
+  }
 
   cudaDeviceProp deviceProp;
-  cudaGetDeviceProperties(&deviceProp, 0);
+  cudaGetDeviceProperties(&deviceProp, gpu_idx);
 
   int gpu_name_len = strlen(deviceProp.name);
   gpu->compute_capability = deviceProp.major * 10 + deviceProp.minor;
@@ -103,7 +111,8 @@ struct gpu* get_gpu_info() {
       gpu->uarch = ARCH_MAXWELL;
       break;
     default:
-      printf("Invalid uarch found: %d.%d\n", deviceProp.major, deviceProp.minor);
+      printf("GPU: %s\n", gpu->name);
+      printf("Invalid uarch: %d.%d\n", deviceProp.major, deviceProp.minor);
       return NULL;
   }
 
