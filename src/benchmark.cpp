@@ -227,3 +227,17 @@ void print_bench_types(struct benchmark* bench, struct hardware* hw) {
     #endif
   }
 }
+
+long get_benchmark_iterations(struct benchmark* bench) {
+  if(bench->device == DEVICE_TYPE_CPU) {
+    #ifdef DEVICE_CPU_ENABLED
+      return BENCHMARK_CPU_ITERS;
+    #endif
+  }
+  else if(bench->device == DEVICE_TYPE_GPU) {
+    #ifdef DEVICE_GPU_ENABLED
+      return BENCHMARK_GPU_ITERS;
+    #endif
+  }
+  return -1;
+}

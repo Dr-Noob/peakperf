@@ -9,8 +9,6 @@
 #include "benchmark.hpp"
 #include "global.hpp"
 
-#define MAXFLOPS_ITERS 1000000000
-
 static const char* VERSION = "1.12";
 
 void printHelp(char *argv[]) {
@@ -61,6 +59,7 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops) {
   char* device_name = get_device_name_str(bench, hw);
   const char* device_uarch = get_device_uarch_str(bench, hw);
   const char* bench_name = get_benchmark_name(bench);
+  long benchmark_iterations = get_benchmark_iterations(bench);
   int line_length = 54;
 
   int max_len = strlen("Iterations");
@@ -74,13 +73,13 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops) {
   for(int i=0; i < line_length; i++) putchar('-');
   putchar('\n');
 
-  printf("%*s %s: %s\n",         (int) (max_len-strlen(device_type_str)),        "", device_type_str, device_name);
-  printf("%*s Microarch: %s\n",  (int) (max_len-strlen("Microarch")),            "", device_uarch);
-  printf("%*s Benchmark: %s\n",  (int) (max_len-strlen("Benchmark")),            "", bench_name);
-  printf("%*s Iterations: %d\n", (int) (max_len-strlen("Iterations")),           "", MAXFLOPS_ITERS);
-  printf("%*s GFLOP: %.2f\n",    (int) (max_len-strlen("GFLOP")),                "", gflops);
+  printf("%*s %s: %s\n",          (int) (max_len-strlen(device_type_str)),        "", device_type_str, device_name);
+  printf("%*s Microarch: %s\n",   (int) (max_len-strlen("Microarch")),            "", device_uarch);
+  printf("%*s Benchmark: %s\n",   (int) (max_len-strlen("Benchmark")),            "", bench_name);
+  printf("%*s Iterations: %.2e\n", (int) (max_len-strlen("Iterations")),           "", (double) benchmark_iterations);
+  printf("%*s GFLOP: %.2f\n",     (int) (max_len-strlen("GFLOP")),                "", gflops);
   for(int i=0; i < cfg_str->num_fields; i++) {
-    printf("%*s %s: %d\n",       (int) (max_len-strlen(cfg_str->field_name[i])), "", cfg_str->field_name[i], cfg_str->field_value[i]);
+    printf("%*s %s: %d\n",        (int) (max_len-strlen(cfg_str->field_name[i])), "", cfg_str->field_name[i], cfg_str->field_value[i]);
   }
   putchar('\n');
 

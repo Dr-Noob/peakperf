@@ -3,7 +3,7 @@
 
 #include "../../getarg.hpp"
 
-#define KERNEL_ITERS 100000000
+#define BENCHMARK_GPU_ITERS 100000000
 
 struct benchmark_gpu;
 

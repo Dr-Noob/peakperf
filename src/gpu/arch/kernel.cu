@@ -53,7 +53,7 @@ bool select_benchmark(struct benchmark_gpu* bench) {
   switch(bench->benchmark_type) {
     case BENCH_TYPE_MAXWELL:
       bench->compute_function = matrixMul_maxwell;
-      bench->gflops = (double)(KERNEL_ITERS * 2 * (long)bench->n * WORK_MAXWELL)/(long)1000000000;
+      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_MAXWELL)/(long)1000000000;
       break;
     default:
       printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);

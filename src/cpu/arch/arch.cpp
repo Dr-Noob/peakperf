@@ -2,9 +2,8 @@
 #include <omp.h>
 #include <string.h>
 
-#include "../../global.hpp"
-#include "../../getarg.hpp"
 #include "arch.hpp"
+#include "../../global.hpp"
 
 #include "sandy_bridge.hpp"
 #include "ivy_bridge.hpp"
@@ -141,7 +140,7 @@ double compute_gflops(int n_threads, char bench) {
       return -1.0;
   }
 
-  return (double)((long)n_threads*MAXFLOPS_ITERS*op_per_it*(bytes_in_vect/4)*fma_available)/1000000000;
+  return (double)((long)n_threads*BENCHMARK_CPU_ITERS*op_per_it*(bytes_in_vect/4)*fma_available)/1000000000;
 }
 
 /*

@@ -6,7 +6,7 @@ TYPE farr_sandy_bridge[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
 void compute_sandy_bridge(TYPE *farr, TYPE mult, int index) {
   farr = farr_sandy_bridge[index];
   
-  for(long i=0; i<MAXFLOPS_ITERS; i++) {
+  for(long i=0; i < BENCHMARK_CPU_ITERS; i++) {
     farr[0]  = _mm256_add_ps(farr[0], farr[1]);
     farr[2]  = _mm256_add_ps(farr[2], farr[3]);
     farr[4]  = _mm256_add_ps(farr[4], farr[5]);

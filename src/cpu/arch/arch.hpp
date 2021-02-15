@@ -22,7 +22,7 @@ enum bench_types {
   BENCH_TYPE_ZEN2,
 };
 
-#define MAXFLOPS_ITERS 1000000000
+#define BENCHMARK_CPU_ITERS 1000000000
 #define MAX_NUMBER_THREADS 512
 
 /* 

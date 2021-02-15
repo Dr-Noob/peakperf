@@ -6,7 +6,7 @@ TYPE farr_haswell[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
 void compute_haswell(TYPE *farr, TYPE mult, int index) {
   farr = farr_haswell[index];
   
-  for(long i=0; i<MAXFLOPS_ITERS; i++) {
+  for(long i=0; i < BENCHMARK_CPU_ITERS; i++) {
     farr[0]  = _mm256_fmadd_ps(mult, farr[0], farr[1]);
     farr[2]  = _mm256_fmadd_ps(mult, farr[2], farr[3]);
     farr[4]  = _mm256_fmadd_ps(mult, farr[4], farr[5]);

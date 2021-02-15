@@ -28,7 +28,7 @@ void matrixMul_maxwell(float *vec_a, float *vec_b, float *vec_c, int n) {
   float c5 = 0.0;
   float c6 = 0.0;
 
-  for(long i=0; i < KERNEL_ITERS; i++) {
+  for(long i=0; i < BENCHMARK_GPU_ITERS; i++) {
     c1 = (a1 * b1) + c1;
     c2 = (a2 * b2) + c2;
     c3 = (a3 * b3) + c3;
