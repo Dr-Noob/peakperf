@@ -1,6 +1,5 @@
 Code
 - add support for more GPUs
-- print a suggest for a solution for CUDA cudaErrorLaunchTimeout error
 CMake
 - add debug option in CMake
 - use variables in CMake properly

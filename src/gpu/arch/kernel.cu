@@ -84,7 +84,7 @@ struct gpu* get_gpu_info() {
     return NULL;
   }
   if(num_gpus <= 0) {
-    printErr("No CUDA capable devices found!\n");
+    printErr("No CUDA capable devices found!");
     return NULL;
   }
 
@@ -231,7 +231,12 @@ bool compute_gpu(struct benchmark_gpu* bench) {
   cudaDeviceSynchronize();
 
   if ((err = cudaGetLastError()) != cudaSuccess) {
-    printErr("%s: %s\n", cudaGetErrorName(err), cudaGetErrorString(err));
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    if(err == cudaErrorLaunchTimeout) {
+      printf("         NOTE: The GPU used by peakperf is attached to a display.\n");
+      printf("         A possible workaround is to stop X server by issuing:\n");
+      printf("         sudo systemctl isolate multi-user.target\n");
+    }
     return false;
   }
   return true;
