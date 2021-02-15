@@ -70,11 +70,13 @@ if(ENABLE_GPU_DEVICE)
     #set(CMAKE_CUDA_FLAGS "-g")
     set(CMAKE_CUDA_ARCHITECTURES 52)
     add_library(gpu_device STATIC ${ARCH_GPU_DIR}/kernel.cu)
-    target_link_libraries(peakperf gpu_device maxwell)
+    target_link_libraries(peakperf gpu_device maxwell turing)
 
     # architecture specific build
     set_source_files_properties(${ARCH_GPU_DIR}/maxwell.cu PROPERTIES COMPILE_FLAGS "-arch=sm_52")
+    set_source_files_properties(${ARCH_GPU_DIR}/turing.cu PROPERTIES COMPILE_FLAGS "-arch=sm_75")
     add_library(maxwell STATIC ${ARCH_GPU_DIR}/maxwell.cu)
+    add_library(turing  STATIC ${ARCH_GPU_DIR}/turing.cu)
 endif()
 
 install(TARGETS peakperf DESTINATION bin)

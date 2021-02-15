@@ -4,27 +4,34 @@
 
 #include "../../global.hpp"
 #include "../../getarg.hpp"
+
 #include "maxwell.hpp"
+#include "turing.hpp"
 
 enum {
   ARCH_MAXWELL,
+  ARCH_TURING,
   ARCH_UNKNOWN
 };
 
 enum bench_types {
-  BENCH_TYPE_MAXWELL
+  BENCH_TYPE_MAXWELL,
+  BENCH_TYPE_TURING
 };
 
 static const char *uarch_str[] = {
   /*[ARCH_MAXWELL]    = */ "Maxwell",
+  /*[ARCH_MAXWELL]    = */ "Turing",
 };
 
 static const char *bench_name[] = {
   /*[BENCH_TYPE_MAXWELL]    = */ "Maxwell",
+  /*[BENCH_TYPE_TURING]     = */ "Turing",
 };
 
 static const char *bench_types_str[] = {
   /*[BENCH_TYPE_MAXWELL]    = */ "maxwell",
+  /*[BENCH_TYPE_TURING]     = */ "turing",
 };
 
 struct benchmark_gpu {
@@ -52,8 +59,12 @@ bool select_benchmark(struct benchmark_gpu* bench) {
   bench->compute_function = NULL;
   switch(bench->benchmark_type) {
     case BENCH_TYPE_MAXWELL:
-      bench->compute_function = matrixMul_maxwell;
+      bench->compute_function = compute_maxwell;
       bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_MAXWELL)/(long)1000000000;
+      break;
+    case BENCH_TYPE_TURING:
+      bench->compute_function = compute_turing;
+      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_TURING)/(long)1000000000;
       break;
     default:
       printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);
@@ -137,6 +148,9 @@ struct gpu* get_gpu_info(int gpu_idx) {
     case 52:
       gpu->uarch = ARCH_MAXWELL;
       break;
+    case 75:
+      gpu->uarch = ARCH_TURING;
+      break;
     default:
       printf("GPU: %s\n", gpu->name);
       printf("Invalid uarch: %d.%d\n", deviceProp.major, deviceProp.minor);
@@ -173,6 +187,9 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb, char
     switch(gpu->uarch) {
       case ARCH_MAXWELL:
         bench->benchmark_type = BENCH_TYPE_MAXWELL;
+        break;
+      case ARCH_TURING:
+        bench->benchmark_type = BENCH_TYPE_TURING;
         break;
       default:
         return NULL;

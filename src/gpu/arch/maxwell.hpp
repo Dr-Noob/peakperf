@@ -4,6 +4,6 @@
 #include "kernel.hpp"
 #define WORK_MAXWELL 6
 
-__global__ void matrixMul_maxwell(float *a, float *b, float *c, int n);
+__global__ void compute_maxwell(float *a, float *b, float *c, int n);
 
 #endif
