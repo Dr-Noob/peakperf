@@ -19,5 +19,6 @@ int get_n_blocks(struct benchmark_gpu* bench);
 int get_threads_per_block(struct benchmark_gpu* bench);
 void print_bench_types_gpu(struct gpu* gpu);
 bench_type parse_benchmark_gpu(char* str);
+void print_cuda_gpus_list();
 
 #endif

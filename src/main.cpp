@@ -9,7 +9,7 @@
 #include "benchmark.hpp"
 #include "global.hpp"
 
-static const char* VERSION = "1.12";
+static const char* VERSION = "1.13";
 
 void printHelp(char *argv[]) {
   const char **t = args_str;
@@ -47,6 +47,7 @@ void printHelp(char *argv[]) {
   printf("\nGPU device only options:\n");
   printf("  -%c, --%s %*s Set the number of CUDA blocks to use (default: number of SM in the running GPU)\n", c[ARG_GPU_BLOCKS], t[ARG_GPU_BLOCKS], (int) (max_len-strlen(t[ARG_GPU_BLOCKS])), "");
   printf("  -%c, --%s %*s Set the number of threads per block to use (default: 1024)\n", c[ARG_GPU_TPB], t[ARG_GPU_TPB], (int) (max_len-strlen(t[ARG_GPU_TPB])), "");
+  printf("  -%c, --%s %*s Prints a list of the available GPUs in the system\n", c[ARG_GPU_LIST], t[ARG_GPU_LIST], (int) (max_len-strlen(t[ARG_GPU_LIST])), "");
   printf("  -%c, --%s %*s Select the GPU to run the benchmark on (default: 0)\n", c[ARG_GPU_IDX], t[ARG_GPU_IDX], (int) (max_len-strlen(t[ARG_GPU_IDX])), "");
 }
 
@@ -109,6 +110,10 @@ int main(int argc, char* argv[]) {
   struct benchmark* bench = init_benchmark_device(device);
   if(bench == NULL) {
     return EXIT_FAILURE;
+  }
+
+  if(list_gpus()) {
+    return print_gpus_list(bench);
   }
   struct config* cfg = get_config();
   bool list_benchs = list_benchmarks();

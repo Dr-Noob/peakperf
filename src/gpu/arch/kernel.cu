@@ -74,6 +74,33 @@ bench_type parse_benchmark_gpu(char* str) {
   return BENCH_TYPE_INVALID;
 }
 
+void print_cuda_gpus_list() {
+  cudaError_t err = cudaSuccess;
+  int num_gpus = -1;
+  if ((err = cudaGetDeviceCount(&num_gpus)) != cudaSuccess) {
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    return;
+  }
+  printf("GPUs available: %d\n", num_gpus);
+
+  if(num_gpus > 0) {
+    cudaDeviceProp deviceProp;
+    int max_len = 0;
+
+    for(int idx=0; idx < num_gpus; idx++) {
+      cudaGetDeviceProperties(&deviceProp, idx);
+      max_len = max(max_len, (int) strlen(deviceProp.name));
+    }
+
+    for(int i=0; i < max_len + 28; i++) putchar('-');
+    putchar('\n');
+    for(int idx=0; idx < num_gpus; idx++) {
+      cudaGetDeviceProperties(&deviceProp, idx);
+      printf("%d: %s (Compute Capability %d.%d)\n", idx, deviceProp.name, deviceProp.major, deviceProp.minor);
+    }
+  }
+}
+
 struct gpu* get_gpu_info(int gpu_idx) {
   cudaError_t err = cudaSuccess;
   struct gpu* gpu = (struct gpu *) malloc(sizeof(struct gpu));

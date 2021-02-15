@@ -228,6 +228,21 @@ void print_bench_types(struct benchmark* bench, struct hardware* hw) {
   }
 }
 
+int print_gpus_list(struct benchmark* bench) {
+  if(bench->device == DEVICE_TYPE_CPU) {
+    #ifdef DEVICE_CPU_ENABLED
+      return EXIT_FAILURE;
+    #endif
+  }
+  else if(bench->device == DEVICE_TYPE_GPU) {
+    #ifdef DEVICE_GPU_ENABLED
+      print_cuda_gpus_list();
+      return EXIT_SUCCESS;
+    #endif
+  }
+  return EXIT_FAILURE;
+}
+
 long get_benchmark_iterations(struct benchmark* bench) {
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED

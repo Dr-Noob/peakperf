@@ -25,6 +25,7 @@ struct args_struct {
   bool help_flag;
   bool version_flag;
   bool list_benchmarks_flag;
+  bool list_gpus_flag;
   int n_trials;
   int n_warmup_trials;
   char* benchmark_name;
@@ -98,11 +99,11 @@ char * build_short_options() {
   char* str = (char *) malloc(sizeof(char) * (len*2 + 1));
   memset(str, 0, sizeof(char) * (len*2 + 1));
 
-  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c:%c%c",
+  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c%c:%c%c",
   c[ARG_LISTBENCHS], c[ARG_BENCHMARK], c[ARG_DEVICE],
   c[ARG_TRIALS], c[ARG_WARMUP], c[ARG_CPU_THREADS],
-  c[ARG_GPU_BLOCKS], c[ARG_GPU_TPB], c[ARG_GPU_IDX],
-  c[ARG_HELP], c[ARG_VERSION]);
+  c[ARG_GPU_BLOCKS], c[ARG_GPU_TPB], c[ARG_GPU_LIST],
+  c[ARG_GPU_IDX], c[ARG_HELP], c[ARG_VERSION]);
 
   return str;
 }
@@ -120,6 +121,7 @@ bool parseArgs(int argc, char* argv[]) {
   args.help_flag = false;
   args.version_flag = false;
   args.list_benchmarks_flag = false;
+  args.list_gpus_flag = false;
   args.n_trials = DEFAULT_N_TRIALS;
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
   args.device = DEVICE_TYPE_CPU;
@@ -142,6 +144,7 @@ bool parseArgs(int argc, char* argv[]) {
     {args_str[ARG_CPU_THREADS], required_argument, 0, c[ARG_CPU_THREADS] },
     {args_str[ARG_GPU_BLOCKS],  required_argument, 0, c[ARG_GPU_BLOCKS]  },
     {args_str[ARG_GPU_TPB],     required_argument, 0, c[ARG_GPU_TPB]     },
+    {args_str[ARG_GPU_LIST],    no_argument,       0, c[ARG_GPU_LIST]    },
     {args_str[ARG_GPU_IDX],     required_argument, 0, c[ARG_GPU_IDX]     },
     {args_str[ARG_HELP],        no_argument,       0, c[ARG_HELP]        },
     {args_str[ARG_VERSION],     no_argument,       0, c[ARG_VERSION]     },
@@ -170,6 +173,10 @@ bool parseArgs(int argc, char* argv[]) {
 
       case c[ARG_LISTBENCHS]:
         args.list_benchmarks_flag  = true;
+        break;
+
+      case c[ARG_GPU_LIST]:
+        args.list_gpus_flag  = true;
         break;
 
       case c[ARG_TRIALS]:
@@ -274,6 +281,10 @@ bool parseArgs(int argc, char* argv[]) {
       printErr("Option %s is only available in GPU mode", args_str[ARG_GPU_TPB]);
       return false;
     }
+    if(args.list_gpus_flag) {
+      printErr("Option %s is only available in GPU mode", args_str[ARG_GPU_LIST]);
+      return false;
+    }
     if(gpu_idx_set) {
       printErr("Option %s is only available in GPU mode", args_str[ARG_GPU_IDX]);
       return false;
@@ -312,6 +323,10 @@ bool showVersion() {
 
 bool list_benchmarks() {
   return args.list_benchmarks_flag;
+}
+
+bool list_gpus() {
+  return args.list_gpus_flag;
 }
 
 int get_n_trials() {

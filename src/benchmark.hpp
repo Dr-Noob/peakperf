@@ -47,6 +47,7 @@ const char* get_device_uarch_str(struct benchmark* bench, struct hardware* hw);
 const char *get_device_type_str(struct benchmark* bench);
 struct config_str * get_cfg_str(struct benchmark* bench);
 void print_bench_types(struct benchmark* bench, struct hardware* hw);
+int print_gpus_list(struct benchmark* bench);
 long get_benchmark_iterations(struct benchmark* bench);
 
 #endif
