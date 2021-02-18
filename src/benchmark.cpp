@@ -1,8 +1,11 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <string.h>
+#include <stdlib.h>
+#include <unistd.h>
 
 #include "benchmark.hpp"
+#include "global.hpp"
 
 #ifdef DEVICE_CPU_ENABLED
   #include "cpu/cpufetch/cpufetch.hpp"
@@ -36,7 +39,7 @@ struct benchmark* init_benchmark_device(device_type device) {
     #ifdef DEVICE_CPU_ENABLED
       return bench;
     #else
-      printfErr("peakperf was not built with CPU support");
+      printErr("peakperf was not built with CPU support");
       return NULL;
     #endif
   }

@@ -2,7 +2,6 @@ Code
 - add support for more GPUs
 CMake
 - add debug option in CMake
-- use variables in CMake properly
 DOC
 - update README and github page
 - add man file
