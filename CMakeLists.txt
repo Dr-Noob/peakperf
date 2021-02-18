@@ -12,11 +12,6 @@ set(ARCH_GPU_DIR "${GPU_DIR}/arch")
 
 add_executable(peakperf ${SRC_DIR}/main.cpp ${SRC_DIR}/benchmark.cpp ${SRC_DIR}/getarg.cpp ${SRC_DIR}/global.cpp)
 
-if (CMAKE_VERSION VERSION_LESS 3.17)
-    include(FindCUDA)
-    set(CMAKE_CUDA_COMPILER "${CUDA_TOOLKIT_ROOT_DIR}/bin/nvcc")
-endif()
-
 if(NOT DEFINED ENABLE_CPU_DEVICE)
     set(ENABLE_CPU_DEVICE true)
 endif()
