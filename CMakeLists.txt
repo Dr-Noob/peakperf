@@ -62,20 +62,15 @@ endif()
 
 if(ENABLE_GPU_DEVICE)
     target_compile_definitions(peakperf PUBLIC DEVICE_GPU_ENABLED)
+    set(CMAKE_CUDA_ARCHITECTURES 52 75)
 
     #set(CMAKE_CUDA_FLAGS "-g")
     add_library(gpu_device STATIC ${ARCH_GPU_DIR}/kernel.cu)
     target_link_libraries(peakperf gpu_device maxwell turing)
 
     # architecture specific build
-    set_source_files_properties(${ARCH_GPU_DIR}/turing.cu PROPERTIES CUDA_ARCHITECTURES 72)
-    set_source_files_properties(${ARCH_GPU_DIR}/maxwell.cu PROPERTIES CUDA_ARCHITECTURES 52)
     add_library(maxwell STATIC ${ARCH_GPU_DIR}/maxwell.cu)
     add_library(turing  STATIC ${ARCH_GPU_DIR}/turing.cu)
-
-    set_property(TARGET gpu_device PROPERTY CUDA_ARCHITECTURES 52 75)
-    set_property(TARGET maxwell    PROPERTY CUDA_ARCHITECTURES 52)
-    set_property(TARGET turing     PROPERTY CUDA_ARCHITECTURES 75)
 endif()
 
 install(TARGETS peakperf DESTINATION bin)
