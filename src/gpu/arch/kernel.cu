@@ -10,27 +10,32 @@
 
 enum {
   ARCH_MAXWELL,
+  ARCH_PASCAL,
   ARCH_TURING,
   ARCH_UNKNOWN
 };
 
 enum bench_types {
   BENCH_TYPE_MAXWELL,
+  BENCH_TYPE_PASCAL,
   BENCH_TYPE_TURING
 };
 
 static const char *uarch_str[] = {
   /*[ARCH_MAXWELL]    = */ "Maxwell",
-  /*[ARCH_MAXWELL]    = */ "Turing",
+  /*[ARCH_PASCAL]     = */ "Pascal",
+  /*[ARCH_TURING]     = */ "Turing",
 };
 
 static const char *bench_name[] = {
   /*[BENCH_TYPE_MAXWELL]    = */ "Maxwell",
+  /*[BENCH_TYPE_PASCAL]     = */ "Pascal",
   /*[BENCH_TYPE_TURING]     = */ "Turing",
 };
 
 static const char *bench_types_str[] = {
   /*[BENCH_TYPE_MAXWELL]    = */ "maxwell",
+  /*[BENCH_TYPE_TURING]     = */ "pascal",
   /*[BENCH_TYPE_TURING]     = */ "turing",
 };
 
@@ -59,6 +64,7 @@ bool select_benchmark(struct benchmark_gpu* bench) {
   bench->compute_function = NULL;
   switch(bench->benchmark_type) {
     case BENCH_TYPE_MAXWELL:
+    case BENCH_TYPE_PASCAL:
       bench->compute_function = compute_mad_6;
       bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_MAD_6)/(long)1000000000;
       break;
@@ -148,6 +154,9 @@ struct gpu* get_gpu_info(int gpu_idx) {
     case 52:
       gpu->uarch = ARCH_MAXWELL;
       break;
+    case 61:
+      gpu->uarch = ARCH_PASCAL;
+      break;
     case 75:
       gpu->uarch = ARCH_TURING;
       break;
@@ -187,6 +196,9 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb, char
     switch(gpu->uarch) {
       case ARCH_MAXWELL:
         bench->benchmark_type = BENCH_TYPE_MAXWELL;
+        break;
+      case ARCH_PASCAL:
+        bench->benchmark_type = BENCH_TYPE_PASCAL;
         break;
       case ARCH_TURING:
         bench->benchmark_type = BENCH_TYPE_TURING;

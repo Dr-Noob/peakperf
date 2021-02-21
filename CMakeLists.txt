@@ -62,7 +62,7 @@ endif()
 
 if(ENABLE_GPU_DEVICE)
     target_compile_definitions(peakperf PUBLIC DEVICE_GPU_ENABLED)
-    set(CMAKE_CUDA_ARCHITECTURES 52 75)
+    set(CMAKE_CUDA_ARCHITECTURES 52 61 75)
 
     #set(CMAKE_CUDA_FLAGS "-g")
     add_library(gpu_device STATIC ${ARCH_GPU_DIR}/kernel.cu)
