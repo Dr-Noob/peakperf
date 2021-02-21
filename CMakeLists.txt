@@ -66,11 +66,11 @@ if(ENABLE_GPU_DEVICE)
 
     #set(CMAKE_CUDA_FLAGS "-g")
     add_library(gpu_device STATIC ${ARCH_GPU_DIR}/kernel.cu)
-    target_link_libraries(peakperf gpu_device maxwell turing)
+    target_link_libraries(peakperf gpu_device mad_6 mad_4)
 
     # architecture specific build
-    add_library(maxwell STATIC ${ARCH_GPU_DIR}/maxwell.cu)
-    add_library(turing  STATIC ${ARCH_GPU_DIR}/turing.cu)
+    add_library(mad_6 STATIC ${ARCH_GPU_DIR}/mad_6.cu)
+    add_library(mad_4 STATIC ${ARCH_GPU_DIR}/mad_4.cu)
 endif()
 
 install(TARGETS peakperf DESTINATION bin)

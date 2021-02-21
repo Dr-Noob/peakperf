@@ -1,8 +1,8 @@
-#include "maxwell.hpp"
+#include "mad_6.hpp"
 
 __global__
-void compute_maxwell(float *vec_a, float *vec_b, float *vec_c, int n) {
-  int idx = (blockIdx.x * blockDim.x + threadIdx.x) * WORK_MAXWELL;
+void compute_mad_6(float *vec_a, float *vec_b, float *vec_c, int n) {
+  int idx = (blockIdx.x * blockDim.x + threadIdx.x) * WORK_MAD_6;
 
   float a1 = vec_a[idx+0];
   float a2 = vec_a[idx+1];

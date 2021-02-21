@@ -5,8 +5,8 @@
 #include "../../global.hpp"
 #include "../../getarg.hpp"
 
-#include "maxwell.hpp"
-#include "turing.hpp"
+#include "mad_6.hpp"
+#include "mad_4.hpp"
 
 enum {
   ARCH_MAXWELL,
@@ -59,12 +59,12 @@ bool select_benchmark(struct benchmark_gpu* bench) {
   bench->compute_function = NULL;
   switch(bench->benchmark_type) {
     case BENCH_TYPE_MAXWELL:
-      bench->compute_function = compute_maxwell;
-      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_MAXWELL)/(long)1000000000;
+      bench->compute_function = compute_mad_6;
+      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_MAD_6)/(long)1000000000;
       break;
     case BENCH_TYPE_TURING:
-      bench->compute_function = compute_turing;
-      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_TURING)/(long)1000000000;
+      bench->compute_function = compute_mad_4;
+      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_MAD_4)/(long)1000000000;
       break;
     default:
       printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);

@@ -1,8 +1,8 @@
-#include "turing.hpp"
+#include "mad_4.hpp"
 
 __global__
-void compute_turing(float *vec_a, float *vec_b, float *vec_c, int n) {
-  int idx = (blockIdx.x * blockDim.x + threadIdx.x) * WORK_TURING;
+void compute_mad_4(float *vec_a, float *vec_b, float *vec_c, int n) {
+  int idx = (blockIdx.x * blockDim.x + threadIdx.x) * WORK_MAD_4;
 
   float a1 = vec_a[idx+0];
   float a2 = vec_a[idx+1];
