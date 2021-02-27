@@ -8,7 +8,7 @@ void compute_mad_6(float *vec_a, float *vec_b, float *vec_c, int n) {
   float c = 0.0;
 
   for(long i=0; i < BENCHMARK_GPU_ITERS; i++) {
-    c = (a * b) + c;
+    c = (c * a) + b;
   }
 
   vec_c[idx] = c;
