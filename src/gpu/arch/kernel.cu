@@ -1,4 +1,6 @@
 #include <cuda_runtime.h>
+#include "helper_cuda.h"
+
 #include <stdio.h>
 #include <string.h>
 
@@ -56,6 +58,8 @@ struct benchmark_gpu {
 struct gpu {
   int compute_capability;
   int sm_count;
+  int cc_major;
+  int cc_minor;
   char uarch;
   char* name;
 };
@@ -66,7 +70,7 @@ bool select_benchmark(struct benchmark_gpu* bench) {
     case BENCH_TYPE_MAXWELL:
     case BENCH_TYPE_PASCAL:
       bench->compute_function = compute_mad_6;
-      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_MAD_6)/(long)1000000000;
+      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n)/(long)1000000000;
       break;
     case BENCH_TYPE_TURING:
       bench->compute_function = compute_mad_4;
@@ -144,6 +148,8 @@ struct gpu* get_gpu_info(int gpu_idx) {
   cudaGetDeviceProperties(&deviceProp, gpu_idx);
 
   int gpu_name_len = strlen(deviceProp.name);
+  gpu->cc_major = deviceProp.major;
+  gpu->cc_minor = deviceProp.minor;
   gpu->compute_capability = deviceProp.major * 10 + deviceProp.minor;
   gpu->sm_count = deviceProp.multiProcessorCount;
   gpu->name = (char *) malloc(sizeof(char) * (gpu_name_len + 1));
@@ -185,7 +191,7 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb, char
   }
 
   bench->nbk = (nbk == INVALID_CFG) ? gpu->sm_count : nbk;
-  bench->tpb = (tpb == INVALID_CFG) ? 1024 : tpb;
+  bench->tpb = (tpb == INVALID_CFG) ? (6 * _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor)): tpb;
   bench->n = gpu->sm_count * bench->tpb;
 
   // Manual benchmark select
