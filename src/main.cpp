@@ -24,8 +24,6 @@ void printHelp(char *argv[]) {
   printf("General options: \n");
   printf("  -%c, --%s %*s Prints this help and exit\n", c[ARG_HELP], t[ARG_HELP], (int) (max_len-strlen(t[ARG_HELP])), "");
   printf("  -%c, --%s %*s Prints peakperf version and exit\n", c[ARG_VERSION], t[ARG_VERSION], (int) (max_len-strlen(t[ARG_VERSION])), "");
-  printf("  -%c, --%s %*s List the avaiable benchmark types\n", c[ARG_LISTBENCHS], t[ARG_LISTBENCHS], (int) (max_len-strlen(t[ARG_LISTBENCHS])), "");
-  printf("  -%c, --%s %*s Select a specific benchmark to run\n", c[ARG_BENCHMARK], t[ARG_BENCHMARK], (int) (max_len-strlen(t[ARG_BENCHMARK])), "");
   printf("  -%c, --%s %*s Set the number of trials of the benchmark\n", c[ARG_TRIALS], t[ARG_TRIALS], (int) (max_len-strlen(t[ARG_TRIALS])), "");
   printf("  -%c, --%s %*s Set the number of warmup trials\n", c[ARG_WARMUP], t[ARG_WARMUP], (int) (max_len-strlen(t[ARG_WARMUP])), "");
   printf("  -%c, --%s %*s Select the device to run the benchmark on\n", c[ARG_DEVICE], t[ARG_DEVICE], (int) (max_len-strlen(t[ARG_DEVICE])), "");
@@ -42,6 +40,8 @@ void printHelp(char *argv[]) {
     printf("         %*s gpu: Run peakperf in the GPU. Available: NO\n", max_len, "");
   #endif
   printf("\nCPU device only options:\n");
+  printf("  -%c, --%s %*s List the avaiable benchmark types\n", c[ARG_LISTBENCHS], t[ARG_LISTBENCHS], (int) (max_len-strlen(t[ARG_LISTBENCHS])), "");
+  printf("  -%c, --%s %*s Select a specific benchmark to run\n", c[ARG_BENCHMARK], t[ARG_BENCHMARK], (int) (max_len-strlen(t[ARG_BENCHMARK])), "");
   printf("  -%c, --%s %*s Set the number of threads to use (default: omp_get_max_threads())\n", c[ARG_CPU_THREADS], t[ARG_CPU_THREADS], (int) (max_len-strlen(t[ARG_CPU_THREADS])), "");
   printf("\nGPU device only options:\n");
   printf("  -%c, --%s %*s Set the number of CUDA blocks to use (default: number of SM in the running GPU)\n", c[ARG_GPU_BLOCKS], t[ARG_GPU_BLOCKS], (int) (max_len-strlen(t[ARG_GPU_BLOCKS])), "");
@@ -76,7 +76,9 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops) {
 
   printf("%*s %s: %s\n",          (int) (max_len-strlen(device_type_str)),        "", device_type_str, device_name);
   printf("%*s Microarch: %s\n",   (int) (max_len-strlen("Microarch")),            "", device_uarch);
-  printf("%*s Benchmark: %s\n",   (int) (max_len-strlen("Benchmark")),            "", bench_name);
+  if(bench_name != NULL) {
+    printf("%*s Benchmark: %s\n",   (int) (max_len-strlen("Benchmark")),            "", bench_name);
+  }
   printf("%*s Iterations: %.2e\n", (int) (max_len-strlen("Iterations")),           "", (double) benchmark_iterations);
   printf("%*s GFLOP: %.2f\n",     (int) (max_len-strlen("GFLOP")),                "", gflops);
   for(int i=0; i < cfg_str->num_fields; i++) {

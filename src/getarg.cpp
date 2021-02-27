@@ -291,6 +291,14 @@ bool parseArgs(int argc, char* argv[]) {
     }
   }
   else {
+    if(args.benchmark_name != NULL) {
+      printErr("Option %s is only available in CPU mode", args_str[ARG_BENCHMARK]);
+      return false;
+    }
+    if(args.list_benchmarks_flag) {
+      printErr("Option %s is only available in CPU mode", args_str[ARG_LISTBENCHS]);
+      return false;
+    }
     if(n_threads_set) {
       printErr("Option %s is only available in CPU mode", args_str[ARG_CPU_THREADS]);
       return false;

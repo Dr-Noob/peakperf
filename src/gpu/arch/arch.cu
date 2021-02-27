@@ -16,28 +16,10 @@ enum {
   ARCH_UNKNOWN
 };
 
-enum bench_types {
-  BENCH_TYPE_MAXWELL,
-  BENCH_TYPE_PASCAL,
-  BENCH_TYPE_TURING
-};
-
 static const char *uarch_str[] = {
   /*[ARCH_MAXWELL]    = */ "Maxwell",
   /*[ARCH_PASCAL]     = */ "Pascal",
   /*[ARCH_TURING]     = */ "Turing",
-};
-
-static const char *bench_name[] = {
-  /*[BENCH_TYPE_MAXWELL]    = */ "Maxwell",
-  /*[BENCH_TYPE_PASCAL]     = */ "Pascal",
-  /*[BENCH_TYPE_TURING]     = */ "Turing",
-};
-
-static const char *bench_types_str[] = {
-  /*[BENCH_TYPE_MAXWELL]    = */ "maxwell",
-  /*[BENCH_TYPE_TURING]     = */ "pascal",
-  /*[BENCH_TYPE_TURING]     = */ "turing",
 };
 
 struct benchmark_gpu {
@@ -46,7 +28,6 @@ struct benchmark_gpu {
   int n;
   double gflops;
   const char* name;
-  bench_type benchmark_type;
   float *d_A;
   float *d_B;
   float *d_C;
@@ -62,16 +43,6 @@ struct gpu {
   char uarch;
   char* name;
 };
-
-bench_type parse_benchmark_gpu(char* str) {
-  int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
-  for(bench_type t = 0; t < len; t++) {
-    if(strcmp(str, bench_types_str[t]) == 0) {
-      return t;
-    }
-  }
-  return BENCH_TYPE_INVALID;
-}
 
 void print_cuda_gpus_list() {
   cudaError_t err = cudaSuccess;
@@ -156,47 +127,14 @@ struct gpu* get_gpu_info(int gpu_idx) {
   return gpu;
 }
 
-struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb, char* bench_type_str) {
+struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   struct benchmark_gpu* bench = (struct benchmark_gpu *) malloc(sizeof(struct benchmark_gpu));
-  bench_type benchmark_type;
 
-  if(bench_type_str == NULL) {
-    benchmark_type = BENCH_TYPE_INVALID;
-  }
-  else {
-   benchmark_type = parse_benchmark_gpu(bench_type_str);
-   if(benchmark_type == BENCH_TYPE_INVALID) {
-     printErr("Invalid GPU benchmark specified: '%s'", bench_type_str);
-     return NULL;
-   }
-  }
-
+  // TODO: Warn if nbk or tpb are not optimal values
   bench->nbk = (nbk == INVALID_CFG) ? gpu->sm_count : nbk;
   bench->tpb = (tpb == INVALID_CFG) ? (gpu->latency * _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor)): tpb;
-  bench->n = gpu->sm_count * bench->tpb;
-
-  // Manual benchmark select
-  if(benchmark_type != BENCH_TYPE_INVALID) {
-    bench->benchmark_type = benchmark_type;
-  }
-  else {  // Automatic benchmark select
-    switch(gpu->uarch) {
-      case ARCH_MAXWELL:
-        bench->benchmark_type = BENCH_TYPE_MAXWELL;
-        break;
-      case ARCH_PASCAL:
-        bench->benchmark_type = BENCH_TYPE_PASCAL;
-        break;
-      case ARCH_TURING:
-        bench->benchmark_type = BENCH_TYPE_TURING;
-        break;
-      default:
-        return NULL;
-    }
-  }
-
+  bench->n = bench->nbk * bench->tpb;
   bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n)/(long)1000000000;
-  bench->name = bench_name[BENCH_TYPE_MAXWELL];
 
   cudaError_t err = cudaSuccess;
   float *h_A;
@@ -244,29 +182,6 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb, char
   }
 
   return bench;
-}
-
-void print_bench_types_gpu(struct gpu* gpu) {
-  int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
-  long unsigned int longest = 0;
-  long unsigned int total_length = 0;
-  for(bench_type t = 0; t < len; t++) {
-    if(strlen(bench_name[t]) > longest) {
-      longest = strlen(bench_name[t]);
-      total_length = longest + 16 + strlen(bench_types_str[t]);
-    }
-  }
-
-  printf("Available benchmark types for GPU:\n");
-  for(long unsigned i=0; i < total_length; i++) putchar('-');
-  putchar('\n');
-  for(bench_type t = 0; t < len; t++) {
-    printf("  - %s %*s(Keyword: %s)\n", bench_name[t], (int) (strlen(bench_name[t]) - longest), "", bench_types_str[t]);
-  }
-}
-
-const char* get_benchmark_name_gpu(struct benchmark_gpu* bench) {
-  return bench->name;
 }
 
 double get_gflops_gpu(struct benchmark_gpu* bench) {
@@ -331,4 +246,3 @@ int get_n_blocks(struct benchmark_gpu* bench) {
 int get_threads_per_block(struct benchmark_gpu* bench) {
   return bench->tpb;
 }
-

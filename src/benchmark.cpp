@@ -91,7 +91,7 @@ bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config*
   }
   else if(bench->device == DEVICE_TYPE_GPU) {
     #ifdef DEVICE_GPU_ENABLED
-      bench->gpu_bench = init_benchmark_gpu(hw->gpu, cfg->nbk, cfg->tpb, bench_type_str);
+      bench->gpu_bench = init_benchmark_gpu(hw->gpu, cfg->nbk, cfg->tpb);
 
       if(bench->gpu_bench == NULL)
         return false;
@@ -133,11 +133,6 @@ const char* get_benchmark_name(struct benchmark* bench) {
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
       return get_benchmark_name_cpu(bench->cpu_bench);
-    #endif
-  }
-  else if(bench->device == DEVICE_TYPE_GPU) {
-    #ifdef DEVICE_GPU_ENABLED
-      return get_benchmark_name_gpu(bench->gpu_bench);
     #endif
   }
   return NULL;
@@ -222,11 +217,6 @@ void print_bench_types(struct benchmark* bench, struct hardware* hw) {
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
       print_bench_types_cpu(hw->cpu);
-    #endif
-  }
-  else if(bench->device == DEVICE_TYPE_GPU) {
-    #ifdef DEVICE_GPU_ENABLED
-      print_bench_types_gpu(hw->gpu);
     #endif
   }
 }
