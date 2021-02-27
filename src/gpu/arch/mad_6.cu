@@ -6,7 +6,7 @@ void compute_mad_6(float *vec_a, float *vec_b, float *vec_c, int n) {
   float b = vec_b[0];
   float c = 0.0;
 
-  #pragma unroll 3000
+  #pragma unroll 2000
   for(long i=0; i < BENCHMARK_GPU_ITERS; i++) {
     c = (c * a) + b;
   }
