@@ -75,7 +75,7 @@ enum bench_types {
 struct benchmark_cpu;
 
 struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char* bench_type_str);
-bool compute_cpu(struct benchmark_cpu* bench);
+bool compute_cpu(struct benchmark_cpu* bench, double* e_time);
 double get_gflops_cpu(struct benchmark_cpu* bench);
 const char* get_benchmark_name_cpu(struct benchmark_cpu* bench);
 bench_type parse_benchmark_cpu(char* str);

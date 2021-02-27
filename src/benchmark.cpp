@@ -101,15 +101,15 @@ bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config*
   return false;
 }
 
-bool compute(struct benchmark* bench) {
+bool compute(struct benchmark* bench, double* e_time) {
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
-    return compute_cpu(bench->cpu_bench);
+    return compute_cpu(bench->cpu_bench, e_time);
     #endif
   }
   else if(bench->device == DEVICE_TYPE_GPU) {
     #ifdef DEVICE_GPU_ENABLED
-    return compute_gpu(bench->gpu_bench);
+    return compute_gpu(bench->gpu_bench, e_time);
     #endif
   }
   return false;

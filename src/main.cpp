@@ -3,7 +3,6 @@
 #include <omp.h>
 #include <math.h>
 #include <string.h>
-#include <sys/time.h>
 
 #include "getarg.hpp"
 #include "benchmark.hpp"
@@ -127,8 +126,6 @@ int main(int argc, char* argv[]) {
     return EXIT_SUCCESS;
   }
 
-  struct timeval t0;
-  struct timeval t1;
   bool flag = init_benchmark(bench, hw, cfg, benchmark_name);
   if(!flag) {
     return EXIT_FAILURE;
@@ -145,11 +142,8 @@ int main(int argc, char* argv[]) {
   print_header(bench, hw, gflops);
 
   for (int trial = 0; trial < n_trials+n_warmup_trials; trial++) {
-    gettimeofday(&t0, 0);
-    if(!compute(bench)) return EXIT_FAILURE;
-    gettimeofday(&t1, 0);
+    if(!compute(bench, &e_time)) return EXIT_FAILURE;
 
-    e_time = (double)((t1.tv_sec-t0.tv_sec)*1000000 + t1.tv_usec-t0.tv_usec)/1000000;
     if (trial >= n_warmup_trials) {
       mean += gflops/e_time;
       gflops_list[trial-n_warmup_trials] = gflops/e_time;

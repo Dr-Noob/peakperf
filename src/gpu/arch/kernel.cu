@@ -292,14 +292,32 @@ double get_gflops_gpu(struct benchmark_gpu* bench) {
   return bench->gflops;
 }
 
-bool compute_gpu(struct benchmark_gpu* bench) {
+bool compute_gpu(struct benchmark_gpu* bench, double* e_time) {
   cudaError_t err = cudaSuccess;
+  cudaEvent_t start;
+  cudaEvent_t stop;
   dim3 dimGrid(bench->nbk, 1, 1);
   dim3 dimBlock(bench->tpb, 1, 1);
 
-  bench->compute_function<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
-
   cudaDeviceSynchronize();
+
+  if ((err = cudaEventCreate(&start)) != cudaSuccess) {
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    return false;
+  }
+  if ((err = cudaEventCreate(&stop)) != cudaSuccess) {
+    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    return false;
+  }
+
+  cudaEventRecord(start, 0);
+  bench->compute_function<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
+  cudaEventRecord(stop, 0);
+  cudaEventSynchronize(stop);
+
+  float e_time_gpu;
+  cudaEventElapsedTime(&e_time_gpu, start, stop);
+  *e_time = e_time_gpu/1000;
 
   if ((err = cudaGetLastError()) != cudaSuccess) {
     printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
