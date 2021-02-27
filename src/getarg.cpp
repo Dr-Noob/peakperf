@@ -9,7 +9,7 @@
 #include "getarg.hpp"
 #include "global.hpp"
 #include "cpu/arch/arch.hpp"
-#include "gpu/arch/kernel.hpp"
+#include "gpu/arch/arch.hpp"
 
 #define OVERFLOW          -1
 #define UNDERFLOW         -2

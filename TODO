@@ -1,4 +1,5 @@
 Code
+- remove -l for GPUs
 - add support for more GPUs
 CMake
 - add debug option in CMake
