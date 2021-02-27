@@ -8,7 +8,6 @@
 #include "../../getarg.hpp"
 
 #include "mad_6.hpp"
-#include "mad_4.hpp"
 
 enum {
   ARCH_MAXWELL,
@@ -57,33 +56,13 @@ struct benchmark_gpu {
 // We assume only one gpu is present...
 struct gpu {
   int compute_capability;
+  int latency;
   int sm_count;
   int cc_major;
   int cc_minor;
   char uarch;
   char* name;
 };
-
-bool select_benchmark(struct benchmark_gpu* bench) {
-  bench->compute_function = NULL;
-  switch(bench->benchmark_type) {
-    case BENCH_TYPE_MAXWELL:
-    case BENCH_TYPE_PASCAL:
-      bench->compute_function = compute_mad_6;
-      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n)/(long)1000000000;
-      break;
-    case BENCH_TYPE_TURING:
-      bench->compute_function = compute_mad_4;
-      bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n * WORK_MAD_4)/(long)1000000000;
-      break;
-    default:
-      printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);
-      return false;
-  }
-
-  bench->name = bench_name[bench->benchmark_type];
-  return true;
-}
 
 bench_type parse_benchmark_gpu(char* str) {
   int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
@@ -158,12 +137,15 @@ struct gpu* get_gpu_info(int gpu_idx) {
 
   switch(gpu->compute_capability) {
     case 52:
+      gpu->latency = 6;
       gpu->uarch = ARCH_MAXWELL;
       break;
     case 61:
+      gpu->latency = 6;
       gpu->uarch = ARCH_PASCAL;
       break;
     case 75:
+      gpu->latency = 4;
       gpu->uarch = ARCH_TURING;
       break;
     default:
@@ -191,7 +173,7 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb, char
   }
 
   bench->nbk = (nbk == INVALID_CFG) ? gpu->sm_count : nbk;
-  bench->tpb = (tpb == INVALID_CFG) ? (6 * _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor)): tpb;
+  bench->tpb = (tpb == INVALID_CFG) ? (gpu->latency * _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor)): tpb;
   bench->n = gpu->sm_count * bench->tpb;
 
   // Manual benchmark select
@@ -214,8 +196,10 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb, char
     }
   }
 
-  if(!select_benchmark(bench))
-    return NULL;
+  // Only one benchmark exists!!!
+  bench->compute_function = compute_mad_6;
+  bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n)/(long)1000000000;
+  bench->name = bench_name[BENCH_TYPE_MAXWELL];
 
   cudaError_t err = cudaSuccess;
   float *h_A;

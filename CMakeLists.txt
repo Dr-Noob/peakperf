@@ -67,11 +67,10 @@ if(ENABLE_GPU_DEVICE)
     #set(CMAKE_CUDA_FLAGS "-g")
     add_library(gpu_device STATIC ${ARCH_GPU_DIR}/kernel.cu)
     target_include_directories(gpu_device PUBLIC ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/common/inc)
-    target_link_libraries(peakperf gpu_device mad_6 mad_4)
+    target_link_libraries(peakperf gpu_device mad_6)
 
     # architecture specific build
     add_library(mad_6 STATIC ${ARCH_GPU_DIR}/mad_6.cu)
-    add_library(mad_4 STATIC ${ARCH_GPU_DIR}/mad_4.cu)
 endif()
 
 install(TARGETS peakperf DESTINATION bin)
