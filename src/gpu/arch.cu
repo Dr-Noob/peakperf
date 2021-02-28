@@ -10,16 +10,24 @@
 #include "kernel.hpp"
 
 enum {
+  ARCH_FERMI,
+  ARCH_KEPLER,
   ARCH_MAXWELL,
   ARCH_PASCAL,
+  ARCH_VOLTA,
   ARCH_TURING,
+  ARCH_AMPERE,
   ARCH_UNKNOWN
 };
 
 static const char *uarch_str[] = {
+  /*[ARCH_FERMI]      = */ "Fermi",
+  /*[ARCH_KEPLER]     = */ "Kepler",
   /*[ARCH_MAXWELL]    = */ "Maxwell",
   /*[ARCH_PASCAL]     = */ "Pascal",
+  /*[ARCH_VOLTA]      = */ "Volta",
   /*[ARCH_TURING]     = */ "Turing",
+  /*[ARCH_AMPERE]     = */ "Ampere",
 };
 
 struct benchmark_gpu {
@@ -105,22 +113,60 @@ struct gpu* get_gpu_info(int gpu_idx) {
   memset(gpu->name, 0, gpu_name_len + 1);
   strncpy(gpu->name, deviceProp.name, gpu_name_len);
 
+  // https://en.wikipedia.org/w/index.php?title=CUDA#GPUs_supported
   switch(gpu->compute_capability) {
+    case 20:
+    case 21:
+      gpu->uarch = ARCH_FERMI;
+      break;
+    case 30:
+    case 32:
+    case 35:
+    case 37:
+      gpu->uarch = ARCH_KEPLER;
+      break;
+    case 50:
     case 52:
-      gpu->latency = 6;
+    case 53:
       gpu->uarch = ARCH_MAXWELL;
       break;
+    case 60:
     case 61:
-      gpu->latency = 6;
+    case 62:
       gpu->uarch = ARCH_PASCAL;
       break;
+    case 70:
+    case 72:
+      gpu->uarch = ARCH_VOLTA;
+      break;
     case 75:
-      gpu->latency = 4;
       gpu->uarch = ARCH_TURING;
+      break;
+    case 80:
+    case 86:
+      gpu->uarch = ARCH_AMPERE;
       break;
     default:
       printf("GPU: %s\n", gpu->name);
-      printf("Invalid uarch: %d.%d\n", deviceProp.major, deviceProp.minor);
+      printErr("Invalid uarch: %d.%d\n", deviceProp.major, deviceProp.minor);
+      return NULL;
+  }
+
+  // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instructions (?)
+  switch(gpu->uarch) {
+    case ARCH_FERMI:      // UNTESTED
+    case ARCH_KEPLER:     // UNTESTED
+    case ARCH_MAXWELL:
+    case ARCH_PASCAL:
+    case ARCH_VOLTA:      // UNTESTED
+      gpu->latency = 6;
+      break;
+    case ARCH_TURING:
+    case ARCH_AMPERE:     // UNTESTED
+      gpu->latency = 4;
+      break;
+    default:
+      printErr("latency unknown for uarch: %d.%d\n", deviceProp.major, deviceProp.minor);
       return NULL;
   }
 
