@@ -14,7 +14,7 @@
 #endif
 
 #ifdef DEVICE_GPU_ENABLED
-  #include "gpu/arch/arch.hpp"
+  #include "gpu/arch.hpp"
 #endif
 
 #define RED   "\x1b[31;1m"

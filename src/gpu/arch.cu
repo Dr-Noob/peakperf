@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 
-#include "../../global.hpp"
-#include "../../getarg.hpp"
+#include "../global.hpp"
+#include "../getarg.hpp"
 
 #include "kernel.hpp"
 

@@ -1,7 +1,7 @@
 #ifndef __KERNEL__
 #define __KERNEL__
 
-#include "../../getarg.hpp"
+#include "../getarg.hpp"
 
 #define BENCHMARK_GPU_ITERS 400000000
 

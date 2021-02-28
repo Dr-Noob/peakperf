@@ -8,7 +8,6 @@ set(CPU_DIR "${SRC_DIR}/cpu")
 set(GPU_DIR "${SRC_DIR}/gpu")
 set(CPUFETCH_DIR "${CPU_DIR}/cpufetch")
 set(ARCH_CPU_DIR "${CPU_DIR}/arch")
-set(ARCH_GPU_DIR "${GPU_DIR}/arch")
 
 add_executable(peakperf ${SRC_DIR}/main.cpp ${SRC_DIR}/benchmark.cpp ${SRC_DIR}/getarg.cpp ${SRC_DIR}/global.cpp)
 
@@ -65,7 +64,7 @@ if(ENABLE_GPU_DEVICE)
     set(CMAKE_CUDA_ARCHITECTURES 52 61 75)
 
     #set(CMAKE_CUDA_FLAGS "-g")
-    add_library(gpu_device STATIC ${ARCH_GPU_DIR}/arch.cu ${ARCH_GPU_DIR}/kernel.cu)
+    add_library(gpu_device STATIC ${GPU_DIR}/arch.cu ${GPU_DIR}/kernel.cu)
     target_include_directories(gpu_device PUBLIC ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/common/inc)
     target_link_libraries(peakperf gpu_device)
 endif()
