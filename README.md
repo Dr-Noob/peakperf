@@ -1,25 +1,90 @@
 # peakperf
-Benchmark to achieve peak performance on x86_64 CPUs.
+Microbenchmark to achieve peak performance on x86_64 CPUs and NVIDIA GPUs.
 
-## Instalation
+**Table of Contents**
+<!-- UPDATE with: doctoc --notitle README.md -->
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+
+- [1. Support](#1-support)
+- [2. Instalation](#2-instalation)
+  - [2.1 Building from source](#21-building-from-source)
+  - [2.2 Enabling and disabling support for CPU/GPU](#22-enabling-and-disabling-support-for-cpugpu)
+    - [CUDA is installed but peakperf is unable to find it](#cuda-is-installed-but-peakperf-is-unable-to-find-it)
+    - [Manually disabling compilation for CPU/GPU](#manually-disabling-compilation-for-cpugpu)
+- [3. Usage:](#3-usage)
+  - [3.1 Selecting CPU or GPU](#31-selecting-cpu-or-gpu)
+  - [3.2. The environment](#32-the-environment)
+  - [3.3. Microarchitecture detection](#33-microarchitecture-detection)
+  - [3.4. Options](#34-options)
+- [4. Understanding the microbenchmark](#4-understanding-the-microbenchmark)
+  - [4.1 What is "peak performance" anyway?](#41-what-is-peak-performance-anyway)
+  - [4.2 The formula](#42-the-formula)
+  - [4.3 About the frequency to use in the formula](#43-about-the-frequency-to-use-in-the-formula)
+  - [4.4 What can I do if I do not get the expected results?](#44-what-can-i-do-if-i-do-not-get-the-expected-results)
+- [5. Evaluation](#5-evaluation)
+  - [Intel](#intel)
+  - [AMD](#amd)
+- [6. Microarchitecture table](#6-microarchitecture-table)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
+### 1. Support
+peakperf only works properly in Linux. peakperf under Windows / macOS has not been tested, so performance may not be optimal. Windows port may be implemented in the future (see [Issue #1](https://github.com/Dr-Noob/peakperf/issues/1))
+
+### 2. Instalation
 There is a peakperf package available in Arch Linux ([peakperf-git](https://aur.archlinux.org/packages/peakperf-git)).
 
-If you are in another distro, you can build `peakperf` from source:
+If you are in another distro, you can build `peakperf` from source.
 
-### Building from source
-Build the microbenchmark with `make`:
+#### 2.1 Building from source
+Build the microbenchmark with the build script, which uses `cmake`:
 
 ```
 git clone https://github.com/Dr-Noob/peakperf
 cd peakperf
-make
+./build.sh
 ./peakperf
 ```
 
-## Usage:
+#### 2.2 Enabling and disabling support for CPU/GPU
+By default, peakperf will be built with support for CPU and GPU. The support for the GPU will only be enabled if CUDA is found. During the `cmake` execution, peakperf will print a summary where you can check which devices peakperf was compiled for.
 
 ```
-[noob@drnoob peakperf]$ ./peakperf
+-- ----------------------
+-- peakperf build report:
+-- CPU mode: ON
+-- GPU mode: ON
+-- ----------------------
+```
+
+##### CUDA is installed but peakperf is unable to find it
+Sometimes, `cmake` will fail to find CUDA even tough it is installed. To let `cmake` find CUDA, edit the build.sh script and use:
+- `-DCMAKE_CUDA_COMPILER=/path/to/nvcc`
+- `-DCMAKE_CUDA_COMPILER_TOOLKIT_ROOT=/path/to/cuda`
+
+##### Manually disabling compilation for CPU/GPU
+Use `cmake` variables:
+- `-DENABLE_CPU_DEVICE=[ON|OFF]`
+- `-DENABLE_GPU_DEVICE=[ON|OFF]`
+
+For example, building with `-DENABLE_CPU_DEVICE=OFF` results in:
+
+```
+-- ----------------------
+-- peakperf build report:
+-- CPU mode: OFF
+-- GPU mode: ON
+-- ----------------------
+```
+
+### 3. Usage:
+
+#### 3.1 Selecting CPU or GPU
+By default, peakperf will run on the CPU:
+
+```
+[noob@drnoob peakperf]$ ./peakperf -t 4
 
 -----------------------------------------------------
     peakperf (https://github.com/Dr-Noob/peakperf)
@@ -27,7 +92,7 @@ make
         CPU: Intel(R) Core(TM) i7-4790K CPU @ 4.00GHz
   Microarch: Haswell
   Benchmark: Haswell (AVX2)
- Iterations: 1000000000
+ Iterations: 1.00e+09
       GFLOP: 640.00
     Threads: 4
 
@@ -35,14 +100,7 @@ make
     1  1.25743   508.97 *
     2  1.25137   511.44 *
     3  1.25141   511.42
-    4  1.25138   511.43
-    5  1.25137   511.44
-    6  1.25138   511.43
-    7  1.25141   511.42
-    8  1.25141   511.43
-    9  1.25136   511.44
-   10  1.25137   511.44
-   11  1.25140   511.43
+    ...................
    12  1.25136   511.44
 -----------------------------------------------------
  Average performance:      511.43 +- 0.01 GFLOP/s
@@ -50,7 +108,40 @@ make
 * - warm-up, not included in average
 ```
 
-To achieve the best performance, you should run this test with the computer working under minimum load (e.g, in non-graphics mode). A good way to do this is by issuing `systemctl isolate multi-user.target`. peakperf automatically detects your CPU and runs the best benchmark for your architecture. You can, however, see all available benchmarks in peakperf and select which one you one to run:
+To manually select the device, use `-d [cpu|gpu]`. To run peakpef on the GPU:
+
+```
+[noob@drnoob peakperf]$ ./peakperf -d gpu
+
+------------------------------------------------------
+    peakperf (https://github.com/Dr-Noob/peakperf)
+------------------------------------------------------
+           GPU: GeForce GTX 970
+     Microarch: Maxwell
+    Iterations: 4.00e+08
+         GFLOP: 7987.20
+        Blocks: 13
+ Threads/block: 768
+
+   Nº  Time(s)  GFLOP/s
+    1  1.87078  4269.44 *
+    2  1.84159  4337.12 *
+    3  1.84205  4336.03
+    ...................
+   12  1.84194  4336.31
+------------------------------------------------------
+ Average performance:      4336.69 +- 0.91 GFLOP/s
+------------------------------------------------------
+* - warm-up, not included in average
+```
+
+#### 3.2. The environment
+To achieve the best performance, you should run this test with the computer working under minimum load (e.g, in non-graphics mode). If you are in a desktop machine, a good way to do this is by issuing `systemctl isolate multi-user.target`.
+
+#### 3.3. Microarchitecture detection
+peakperf automatically detects your CPU/GPU and runs the best benchmark for your architecture.
+
+1. For the CPU, you can see all available benchmarks in peakperf and select which one you one to run:
 
 ```
 [noob@drnoob peakperf]$ ./peakperf -l
@@ -59,14 +150,18 @@ Available benchmark types:
 [noob@drnoob peakperf]$ ./peakperf -b haswell
 ```
 
-## Support
-peakperf only works properly in *Linux*. peakperf under *Windows* / *macOS* has not been tested, so performance may not be optimal. Windows port is planned to be implemented in the future (see [Issue #1](https://github.com/Dr-Noob/peakperf/issues/1))
+2. For the GPU, only one benchmark exists, and the optimality of the microbenchmark depends on the kernel launch configuration. peakperf automatically determine this configuration for your GPU.
 
-## Understanding the microbenchmark
-#### 0. What is "peak performance" anyway?
+#### 3.4. Options
+peakperf has many different options to tweak and expriment with your hardware. Use `-h` to print all available options
+
+_NOTE_: Some options are available only on CPU or GPU
+
+### 4. Understanding the microbenchmark
+#### 4.1 What is "peak performance" anyway?
 Peak performance refers to the maximum performance that a chip (a CPU) can achieve. The more powerful the CPU is, the greater the peak performance can achieve. This performance is a theoretical limit, computed using a formula (see next section), measured in floating point operation per seconds (FLOP/s or GFLOP/s, which stands for gigaflops). This value establishes a performance limit that the CPU is unable to overcome. However, achieving the peak performance (the maximum performance for a given CPU) is a very hard (but also interesting) task. To do so, the software must take advantage of the full power of the CPU. peakperf is a microbenchmark that achieves peak performance on many different x86_64 microarchitectures.
 
-#### 1. The formula
+#### 4.2 The formula
 
 ```
 N_CORES * FREQUENCY * FMA * UNITS * (SIZE_OF_VECTOR/32)
@@ -86,7 +181,7 @@ For the example of a i7-4790K, we have:
 
 And, as you can see in the previous test, we got 511.43 GFLOP/S, which tell us that peakperf is working properly and our CPU is behaving exactly as we expected. But, why did I chosse 3.997 GHz as the frequency?
 
-#### 2. About the frequency to use in the formula
+#### 4.3 About the frequency to use in the formula
 
 While running this microbenchmark, your CPU will be executing AVX code, so the frequency of your CPU running this code is neither your base nor your turbo frequency. Please, have a look at [this document](http://www.dolbeau.name/dolbeau/publications/peak.pdf) (on section IV.B) for more information.
 
@@ -111,10 +206,10 @@ As you can see, i7-4790K's frequency while running AVX code is ~3997.630 MHz, wh
 1. The microbenchmark is not working correctly. Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues)
 2. Your CPU is not able to keep a stable frequency. This often happens if it's to hot, so the CPU is forced to low the frequency to not to melt itself.
 
-#### 3. What if I do not get the expected results?
+#### 4.4 What can I do if I do not get the expected results?
 Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues), posting the output of peakperf.
 
-## Tests on real hardware (one for each microarchitecture)
+### 5. Evaluation
 This tables show results for each microarchitecture suported by peakperf. To see the full table of benchmarks tested, see [benchmarks](BENCHMARKS.md).
 
 #### Intel
@@ -148,7 +243,7 @@ _NOTE 3_: KNL performance is computed as PP * (6/7) (see [explanation](https://s
 
 _NOTE 4_: Sandy Bridge and Ivy Bridge have ADD and MUL VPUs that can be used in parallel. Therefore, Xeon E5-2650 v2 formula is computed as `FREQ * CORES * 2 * 2 * 8`. However, i5-2400 peak performance is computed as the half. The explanation for this is that ADD and MUL VPUs can only be used if CPU supports hyperthreading. If CPU do not support hyperthreading, one core is unable to fill both VPUs fast enough.
 
-## Microarchitecture table
+### 6. Microarchitecture table
 
 The following table acts as a summary of all supported microarchitectures with their characteristics:
 
