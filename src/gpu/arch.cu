@@ -177,8 +177,15 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   struct benchmark_gpu* bench = (struct benchmark_gpu *) malloc(sizeof(struct benchmark_gpu));
 
   // TODO: Warn if nbk or tpb are not optimal values
-  bench->nbk = (nbk == INVALID_CFG) ? (gpu->latency * gpu->sm_count) : nbk;
-  bench->tpb = (tpb == INVALID_CFG) ? _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor) : tpb;
+  if(gpu->compute_capability >= 50) {
+    bench->nbk = (nbk == INVALID_CFG) ? gpu->sm_count : nbk;
+    bench->tpb = (tpb == INVALID_CFG) ? (gpu->latency * _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor)): tpb;
+  }
+  else {
+    // Fix for old architectures where too many tpb were launched (this config is supposed to keep the same performance)
+    bench->nbk = (nbk == INVALID_CFG) ? (gpu->latency * gpu->sm_count) : nbk;
+    bench->tpb = (tpb == INVALID_CFG) ? _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor) : tpb;
+  }
   bench->n = bench->nbk * bench->tpb;
   bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n)/(long)1000000000;
 
