@@ -29,15 +29,15 @@ Microbenchmark to achieve peak performance on x86_64 CPUs and NVIDIA GPUs.
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-### 1. Support
+# 1. Support
 peakperf only works properly in Linux. peakperf under Windows / macOS has not been tested, so performance may not be optimal. Windows port may be implemented in the future (see [Issue #1](https://github.com/Dr-Noob/peakperf/issues/1))
 
-### 2. Instalation
+# 2. Instalation
 There is a peakperf package available in Arch Linux ([peakperf-git](https://aur.archlinux.org/packages/peakperf-git)).
 
 If you are in another distro, you can build `peakperf` from source.
 
-#### 2.1 Building from source
+## 2.1 Building from source
 Build the microbenchmark with the build script, which uses `cmake`:
 
 ```
@@ -47,7 +47,7 @@ cd peakperf
 ./peakperf
 ```
 
-#### 2.2 Enabling and disabling support for CPU/GPU
+## 2.2 Enabling and disabling support for CPU/GPU
 By default, peakperf will be built with support for CPU and GPU. The support for the GPU will only be enabled if CUDA is found. During the `cmake` execution, peakperf will print a summary where you can check which devices peakperf was compiled for.
 
 ```
@@ -58,12 +58,12 @@ By default, peakperf will be built with support for CPU and GPU. The support for
 -- ----------------------
 ```
 
-##### CUDA is installed but peakperf is unable to find it
+### CUDA is installed but peakperf is unable to find it
 Sometimes, `cmake` will fail to find CUDA even tough it is installed. To let `cmake` find CUDA, edit the build.sh script and use:
 - `-DCMAKE_CUDA_COMPILER=/path/to/nvcc`
 - `-DCMAKE_CUDA_COMPILER_TOOLKIT_ROOT=/path/to/cuda`
 
-##### Manually disabling compilation for CPU/GPU
+### Manually disabling compilation for CPU/GPU
 Use `cmake` variables:
 - `-DENABLE_CPU_DEVICE=[ON|OFF]`
 - `-DENABLE_GPU_DEVICE=[ON|OFF]`
@@ -78,9 +78,9 @@ For example, building with `-DENABLE_CPU_DEVICE=OFF` results in:
 -- ----------------------
 ```
 
-### 3. Usage:
+# 3. Usage:
 
-#### 3.1 Selecting CPU or GPU
+## 3.1 Selecting CPU or GPU
 By default, peakperf will run on the CPU:
 
 ```
@@ -135,10 +135,10 @@ To manually select the device, use `-d [cpu|gpu]`. To run peakpef on the GPU:
 * - warm-up, not included in average
 ```
 
-#### 3.2. The environment
+## 3.2. The environment
 To achieve the best performance, you should run this test with the computer working under minimum load (e.g, in non-graphics mode). If you are in a desktop machine, a good way to do this is by issuing `systemctl isolate multi-user.target`.
 
-#### 3.3. Microarchitecture detection
+## 3.3. Microarchitecture detection
 peakperf automatically detects your CPU/GPU and runs the best benchmark for your architecture.
 
 1. For the CPU, you can see all available benchmarks in peakperf and select which one you one to run:
@@ -152,16 +152,16 @@ Available benchmark types:
 
 2. For the GPU, only one benchmark exists, and the optimality of the microbenchmark depends on the kernel launch configuration. peakperf automatically determine this configuration for your GPU.
 
-#### 3.4. Options
+## 3.4. Options
 peakperf has many different options to tweak and expriment with your hardware. Use `-h` to print all available options
 
 _NOTE_: Some options are available only on CPU or GPU
 
-### 4. Understanding the microbenchmark
-#### 4.1 What is "peak performance" anyway?
+# 4. Understanding the microbenchmark
+## 4.1 What is "peak performance" anyway?
 Peak performance refers to the maximum performance that a chip (a CPU) can achieve. The more powerful the CPU is, the greater the peak performance can achieve. This performance is a theoretical limit, computed using a formula (see next section), measured in floating point operation per seconds (FLOP/s or GFLOP/s, which stands for gigaflops). This value establishes a performance limit that the CPU is unable to overcome. However, achieving the peak performance (the maximum performance for a given CPU) is a very hard (but also interesting) task. To do so, the software must take advantage of the full power of the CPU. peakperf is a microbenchmark that achieves peak performance on many different x86_64 microarchitectures.
 
-#### 4.2 The formula
+## 4.2 The formula
 
 ```
 N_CORES * FREQUENCY * FMA * UNITS * (SIZE_OF_VECTOR/32)
@@ -181,7 +181,7 @@ For the example of a i7-4790K, we have:
 
 And, as you can see in the previous test, we got 511.43 GFLOP/S, which tell us that peakperf is working properly and our CPU is behaving exactly as we expected. But, why did I chosse 3.997 GHz as the frequency?
 
-#### 4.3 About the frequency to use in the formula
+## 4.3 About the frequency to use in the formula
 
 While running this microbenchmark, your CPU will be executing AVX code, so the frequency of your CPU running this code is neither your base nor your turbo frequency. Please, have a look at [this document](http://www.dolbeau.name/dolbeau/publications/peak.pdf) (on section IV.B) for more information.
 
@@ -206,13 +206,13 @@ As you can see, i7-4790K's frequency while running AVX code is ~3997.630 MHz, wh
 1. The microbenchmark is not working correctly. Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues)
 2. Your CPU is not able to keep a stable frequency. This often happens if it's to hot, so the CPU is forced to low the frequency to not to melt itself.
 
-#### 4.4 What can I do if I do not get the expected results?
+## 4.4 What can I do if I do not get the expected results?
 Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues), posting the output of peakperf.
 
-### 5. Evaluation
+# 5. Evaluation
 This tables show results for each microarchitecture suported by peakperf. To see the full table of benchmarks tested, see [benchmarks](BENCHMARKS.md).
 
-#### Intel
+## Intel
 | uArch           | CPU                | AVX Freq     | PP (Formula) | PP (Experimental)  | Loss    |
 |:---------------:|:------------------:|:------------:|:------------:|:------------------:|:-------:|
 | Sandy Bridge    | i5-2400            | `3.192 GHz`  |  `102.14`    |  `100.64 +- 0.00`  | `1.46%` |
@@ -228,7 +228,7 @@ This tables show results for each microarchitecture suported by peakperf. To see
 | Knights Landing | Xeon Phi 7250      | `1.499 GHz`  | `5991.69`    | `5390.84 +- 7.83`  | `3.72%` |
 
 
-#### AMD
+## AMD
 | uArch | CPU              | AVX Freq     | PP (Formula) | PP (Experimental)  | Loss    |
 |:-----:|:----------------:|:------------:|:------------:|:------------------:|:-------:|
 | Zen   | -                | -            | -            | -                  | -       |
@@ -243,7 +243,7 @@ _NOTE 3_: KNL performance is computed as PP * (6/7) (see [explanation](https://s
 
 _NOTE 4_: Sandy Bridge and Ivy Bridge have ADD and MUL VPUs that can be used in parallel. Therefore, Xeon E5-2650 v2 formula is computed as `FREQ * CORES * 2 * 2 * 8`. However, i5-2400 peak performance is computed as the half. The explanation for this is that ADD and MUL VPUs can only be used if CPU supports hyperthreading. If CPU do not support hyperthreading, one core is unable to fill both VPUs fast enough.
 
-### 6. Microarchitecture table
+# 6. Microarchitecture table
 
 The following table acts as a summary of all supported microarchitectures with their characteristics:
 
