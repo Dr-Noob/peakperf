@@ -210,10 +210,10 @@ As you can see, i7-4790K's frequency while running AVX code is ~3997.630 MHz, wh
 Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues), posting the output of peakperf.
 
 # 5. Evaluation
-This tables show results for each microarchitecture suported by peakperf. To see the full table of benchmarks tested, see [benchmarks](BENCHMARKS.md).
+This tables shows the performance of peakperf for each of the microarchitecture supported by the microbenchmark. **To see all the hardware tested, see [benchmarks](BENCHMARKS.md)**
 
 ## Intel
-| uArch           | CPU                | AVX Freq     | PP (Formula) | PP (Experimental)  | Loss    |
+| uarch           | CPU                | AVX Clock    | PP (Formula) | PP (Experimental)  | Loss    |
 |:---------------:|:------------------:|:------------:|:------------:|:------------------:|:-------:|
 | Sandy Bridge    | i5-2400            | `3.192 GHz`  |  `102.14`    |  `100.64 +- 0.00`  | `1.46%` |
 | Ivy Bridge      | 2x Xeon E5-2650 v2 | `2.999 GHz`  |  `767.74`    |  `744.24 +- 3.85`  | `3.15%` |
@@ -229,15 +229,22 @@ This tables show results for each microarchitecture suported by peakperf. To see
 
 
 ## AMD
-| uArch | CPU              | AVX Freq     | PP (Formula) | PP (Experimental)  | Loss    |
+| uarch | CPU              | AVX Clock    | PP (Formula) | PP (Experimental)  | Loss    |
 |:-----:|:----------------:|:------------:|:------------:|:------------------:|:-------:|
 | Zen   | -                | -            | -            | -                  | -       |
 | Zen+  | AMD Ryzen 5 2600 | `3.724 GHz`  | `357.50`     | `357.08 +- 0.03`   | `0.11%` |
 | Zen 2 | -                | -            | -            | -                  | -       |
 
+## NVIDIA
+| C.C | uarch   | GPU         | Clock        | PP (Formula) | PP (Experimental)   | Loss    |
+|:---:|:-------:|:-----------:|:------------:|:------------:|:-------------------:|:-------:|
+| 5.2 | Maxwell | GTX 970     | `1.341 GHz`  | `4462.84`    | `4333.92 +- 0.90`   | `2.97%` |
+| 6.1 | Pascal  | GTX 1080    | `1.860 GHz`  | `9523.20`    | `9397.97 +- 0.10`   | `1.33%` |
+| 7.5 | Turing  | RTX 2080 Ti | `1.905 GHz`  | `16581.12`   | `16373.28 +- 16.07` | `1.26%` |
+
 _NOTE 1_: Performance measured on simple precision and GFLOP/s (gigaflops per second).
 
-_NOTE 2_: On some machines, I'm not root or even the person running the microbenchmark, in which case, the possible overhead (because of not running the microbenchmark in a adequate environment) may deteriorate the results.
+_NOTE 2_: The clock information is retrieved _experimentally_. In other words, this data is not the theoretical values for each device, but the actual frequency measured on each device (using `freq.sh` script).
 
 _NOTE 3_: KNL performance is computed as PP * (6/7) (see [explanation](https://sites.utexas.edu/jdm4372/2018/01/22/a-peculiar-throughput-limitation-on-intels-xeon-phi-x200-knights-landing/)).
 
