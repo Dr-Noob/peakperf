@@ -61,9 +61,20 @@ endif()
 
 if(ENABLE_GPU_DEVICE)
     target_compile_definitions(peakperf PUBLIC DEVICE_GPU_ENABLED)
-    set(CMAKE_CUDA_ARCHITECTURES 52 61 75)
 
-    #set(CMAKE_CUDA_FLAGS "-g")
+    # https://en.wikipedia.org/w/index.php?title=CUDA&section=5#GPUs_supported
+    # https://raw.githubusercontent.com/PointCloudLibrary/pcl/master/cmake/pcl_find_cuda.cmake
+    if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
+      set(CMAKE_CUDA_ARCHITECTURES 35 37 50 52 53 60 61 62 70 72 75 80 86)
+    elseif(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "10.0")
+      set(CMAKE_CUDA_ARCHITECTURES 30 32 35 37 50 52 53 60 61 62 70 72 75)
+    elseif(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "9.0")
+      set(CMAKE_CUDA_ARCHITECTURES 30 32 35 37 50 52 53 60 61 62 70 72)
+    elseif(${CMAKE_CUDA_COMPILER_VERSION} VERSION_EQUAL "8.0")
+      set(CMAKE_CUDA_ARCHITECTURES 20 21 30 32 35 37 50 52 53 60 61 62)
+    endif()
+
+    set(CMAKE_CUDA_FLAGS "-Wno-deprecated-gpu-targets")
     add_library(gpu_device STATIC ${GPU_DIR}/arch.cu ${GPU_DIR}/kernel.cu)
     target_include_directories(gpu_device PUBLIC ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/common/inc)
     target_link_libraries(peakperf gpu_device)
