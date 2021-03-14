@@ -111,7 +111,7 @@ struct gpu* get_gpu_info(int gpu_idx) {
   gpu->sm_count = deviceProp.multiProcessorCount;
   gpu->name = (char *) malloc(sizeof(char) * (gpu_name_len + 1));
   memset(gpu->name, 0, gpu_name_len + 1);
-  strncpy(gpu->name, deviceProp.name, gpu_name_len);
+  strcpy(gpu->name, deviceProp.name);
 
   // https://en.wikipedia.org/w/index.php?title=CUDA#GPUs_supported
   switch(gpu->compute_capability) {
