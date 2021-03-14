@@ -1,5 +1,6 @@
 Code (empty)
 CMake
+- IMPORTANT: check sm_values are supported!!
 - add debug option in CMake
 DOC
 - update README and github page

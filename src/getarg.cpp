@@ -167,7 +167,8 @@ bool parseArgs(int argc, char* argv[]) {
       case c[ARG_DEVICE]:
         args.device  = parse_device_type(optarg);
         if(args.device == DEVICE_TYPE_INVALID) {
-          printErr("Invalid device: '%s'", args_str[ARG_DEVICE]);
+          printErr("Invalid device: '%s'", optarg);
+          return false;
         }
         break;
 
