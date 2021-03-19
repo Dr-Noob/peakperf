@@ -1,0 +1,52 @@
+.TH PEAKPERF "1" "March 2021" "peakperf v1.14" "User Commands"
+.SH NAME
+peakperf \- manual page for peakperf v1.14
+.SH SYNOPSIS
+.B peakperf
+[\fI\,OPTION\/\fR]...
+.SH DESCRIPTION
+.SS "General options:"
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Prints this help and exit
+.TP
+\fB\-v\fR, \fB\-\-version\fR
+Prints peakperf version and exit
+.TP
+\fB\-r\fR, \fB\-\-trials\fR
+Set the number of trials of the benchmark
+.TP
+\fB\-w\fR, \fB\-\-warmup\-trials\fR
+Set the number of warmup trials
+.TP
+\fB\-d\fR, \fB\-\-device\fR
+Select the device to run the benchmark on
+By default, CPU device is used if it is available
+Possible values are: cpu, gpu
+.SS "CPU device only options:"
+.TP
+\fB\-l\fR, \fB\-\-list\fR
+List the avaiable benchmark types
+.TP
+\fB\-b\fR, \fB\-\-benchmark\fR
+Select a specific benchmark to run
+.TP
+\fB\-t\fR, \fB\-\-threads\fR
+Set the number of threads to use (default: omp_get_max_threads())
+.SS "GPU device only options:"
+.TP
+\fB\-B\fR, \fB\-\-blocks\fR
+Set the number of CUDA blocks to use (default: number of SM in the running GPU)
+.TP
+\fB\-T\fR, \fB\-\-threads\-per\-block\fR
+Set the number of threads per block to use (default: optimized for the GPU)
+.TP
+\fB\-L\fR, \fB\-\-list\-gpus\fR
+Prints a list of the available GPUs in the system
+.TP
+\fB\-g\fR, \fB\-\-gpu\-id\fR
+Select the GPU to run the benchmark on (default: 0)
+.SH BUGS
+Bugs should be posted on: https://github.com/Dr-Noob/peakperf/issues
+.SH AUTHOR
+Dr-Noob (https://github.com/Dr-Noob)
