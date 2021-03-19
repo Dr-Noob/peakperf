@@ -7,6 +7,8 @@ Microbenchmark to achieve peak performance on x86_64 CPUs and NVIDIA GPUs.
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 - [1. Support](#1-support)
+  - [1.1 Software support](#11-software-support)
+  - [1.2 Hardware support](#12-hardware-support)
 - [2. Instalation](#2-instalation)
   - [2.1 Building from source](#21-building-from-source)
   - [2.2 Enabling and disabling support for CPU/GPU](#22-enabling-and-disabling-support-for-cpugpu)
@@ -25,12 +27,32 @@ Microbenchmark to achieve peak performance on x86_64 CPUs and NVIDIA GPUs.
 - [5. Evaluation](#5-evaluation)
   - [Intel](#intel)
   - [AMD](#amd)
+  - [NVIDIA](#nvidia)
 - [6. Microarchitecture table](#6-microarchitecture-table)
+  - [6.1 CPU](#61-cpu)
+  - [6.2 GPU](#62-gpu)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
 # 1. Support
+
+## 1.1 Software support
 peakperf only works properly in Linux. peakperf under Windows / macOS has not been tested, so performance may not be optimal. Windows port may be implemented in the future (see [Issue #1](https://github.com/Dr-Noob/peakperf/issues/1))
+
+## 1.2 Hardware support
+Supported microarchitectures are:
+
+- **CPU (x86_64)**: AVX support is mandatory.
+  - Intel: Sandy Bridge	and newer.
+  - AMD: Zen and newer.
+- **GPU**:
+  - NVIDIA: Compute Capabitliy >= 2.0.
+
+For a complete list of supported microarchitectures, see section [5](#5-evaluation).
+
+NOTES:
+- _Only GPUs that support to read the freqeuncy in real time (using freq.sh) can be actually evaluated._
+- _Other microarchitectures not mentioned here may also work._
 
 # 2. Instalation
 There is a peakperf package available in Arch Linux ([peakperf-git](https://aur.archlinux.org/packages/peakperf-git)).
@@ -220,13 +242,14 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | Haswell         | i7-4790K           | `3.997 GHz`  |  `511.61`    |  `511.43 +- 0.01`  | `0.03%` |
 | Broadwell       | 2x Xeon E5-2698 v4 | `2.599 GHz`  | `3326.72`    | `3269.87 +- 14.42` | `1.73%` |
 | Skylake         | i5-6400            | `3.099 GHz`  |  `396.67`    |  `396.61 +- 0.01 ` | `0.06`  |
+| Knights Landing | Xeon Phi 7250      | `1.499 GHz`  | `5991.69`    | `5390.84 +- 7.83`  | `3.72%` |
 | Kaby Lake       | i5-8250U           | `2.700 GHz`  |  `345.60`    |  `343.57 +- 1.38`  | `0.59%` |
 | Coffee Lake     | i9-9900K           | `3.600 GHz`  |  `921.60`    |  `918.72 +- 1.13`  | `0.31%` |
-| Comet Lake      | i5-10400           | `3.999 GHz`  |  `768.80`    |  `766.97 +- 0.25`  | `0.23%` |
-| Cascade Lake    | 2x Xeon Gold 6238  | `2.099 GHz`  | `5910.78`    | `5851.60 +- 2.69`  | `1.01%` |
+| Comet Lake      | i9-10900KF         | `4.100 GHz`  |  `1312.00`   | `1308.24 +- 0.30`  | `0.30%` |
+| Cascade Lake    | 2x Xeon Gold 6238  | `2.099 GHz`  |  `5910.78`   | `5851.60 +- 2.69`  | `1.01%` |
 | Ice Lake        | i5-1035G1          | `2.990 GHz`  |  `382.72`    |  `382.22 +- 0.18`  | `0.13%` |
-| Knights Landing | Xeon Phi 7250      | `1.499 GHz`  | `5991.69`    | `5390.84 +- 7.83`  | `3.72%` |
-
+| Tiger Lake      | -                  | -            |  -           |  -                 | -       |
+| Rocket Lake     | -                  | -            |  -           |  -                 | -       |
 
 ## AMD
 | uarch | CPU              | AVX Clock    | PP (Formula) | PP (Experimental)  | Loss    |
@@ -234,6 +257,7 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | Zen   | -                | -            | -            | -                  | -       |
 | Zen+  | AMD Ryzen 5 2600 | `3.724 GHz`  | `357.50`     | `357.08 +- 0.03`   | `0.11%` |
 | Zen 2 | -                | -            | -            | -                  | -       |
+| Zen 3 | -                | -            | -            | -                  | -       |
 
 ## NVIDIA
 | C.C | uarch   | GPU         | Clock        | PP (Formula) | PP (Experimental)   | Loss    |
@@ -241,6 +265,7 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | 5.2 | Maxwell | GTX 970     | `1.341 GHz`  | `4462.84`    | `4333.92 +- 0.90`   | `2.97%` |
 | 6.1 | Pascal  | GTX 1080    | `1.860 GHz`  | `9523.20`    | `9397.97 +- 0.10`   | `1.33%` |
 | 7.5 | Turing  | RTX 2080 Ti | `1.905 GHz`  | `16581.12`   | `16373.28 +- 16.07` | `1.26%` |
+| 8.6 | Ampere  | -           | -            | -            | -                   | -       |
 
 _NOTE 1_: Performance measured on simple precision and GFLOP/s (gigaflops per second).
 
@@ -252,23 +277,25 @@ _NOTE 4_: Sandy Bridge and Ivy Bridge have ADD and MUL VPUs that can be used in 
 
 # 6. Microarchitecture table
 
-The following table acts as a summary of all supported microarchitectures with their characteristics:
+The following tables act as a summary of all supported microarchitectures with their characteristics.
 
-| uArch           | AVX              | FMA              | AVX512             | Slots | FPUs            | Latency         | Tested           | Refs |
-|:---------------:|:----------------:|:----------------:|:------------------:|:-----:|:---------------:|:---------------:|:----------------:|:----:|
-| Sandy Bridge    |:heavy_check_mark:| :x:              | :x:                |     6 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [1] |
-| Ivy Bridge      |:heavy_check_mark:| :x:              | :x:                |     6 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [2] |
-| Haswell         |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [3] |
-| Broadwell       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
-| Skylake         |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
-| Kaby Lake       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [4] |
-| Coffee Lake     |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [5] |
-| Comet Lake      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [10] |
-| Ice Lake        |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
-| Knights Landing |:heavy_check_mark:|:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)  | 6 (FMA)         |:heavy_check_mark:|  [6] |
-| Ryzen ZEN       |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
-| Ryzen ZEN+      |:heavy_check_mark:|:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [8] |
-| Ryzen ZEN 2     |:heavy_check_mark:|:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:x:               |  [9] |
+## 6.1 CPU
+| uarch           | FMA              | AVX512             | Slots | FPUs            | Latency         | Tested           | Refs |
+|:---------------:|:----------------:|:------------------:|:-----:|:---------------:|:---------------:|:----------------:|:----:|
+| Sandy Bridge    | :x:              | :x:                |     6 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [1] |
+| Ivy Bridge      | :x:              | :x:                |     6 | 2 (ADD+MUL AVX) | 3 (ADD) 5 (MUL) |:heavy_check_mark:|  [2] |
+| Haswell         |:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [3] |
+| Broadwell       |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
+| Skylake         |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
+| Kaby Lake       |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [4] |
+| Coffee Lake     |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [5] |
+| Comet Lake      |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [10] |
+| Ice Lake        |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [3] |
+| Knights Landing |:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)  | 6 (FMA)         |:heavy_check_mark:|  [6] |
+| Ryzen ZEN       |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
+| Ryzen ZEN+      |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [8] |
+| Ryzen ZEN 2     |:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:x:               |  [9] |
+| Ryzen ZEN 3     |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:x:               | [11] |
 
 References:
 - [1]  [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
@@ -281,6 +308,15 @@ References:
 - [8]  [Wikichip](https://en.wikichip.org/wiki/amd/microarchitectures/zen%2B#Pipeline)
 - [9]  [Agner Fog Instruction Tables (Page 111, VFMADD132PS)](https://www.agner.org/optimize/instruction_tables.pdf)
 - [10] [Wikichip](https://en.wikichip.org/wiki/intel/microarchitectures/comet_lake)
+- [11]  [Agner Fog Instruction Tables (Page 124, VFMADD132PS)](https://www.agner.org/optimize/instruction_tables.pdf)
+
+## 6.2 GPU
+| uarch   | Latency  | Tested           | Refs |
+|:-------:|:--------:|:----------------:|:----:|
+| Maxwell |  6       |:heavy_check_mark:|  [] |
+| Pascal  |  6       |:heavy_check_mark:|  [] |
+| Turing  |  4       |:heavy_check_mark:|  [] |
+| Ampere  |  ?       |:x:               |  [] |
 
 _NOTES:_
 - Older microarchitectures may be added in the future. If I have not added olds architecture is because I can't test peakperf on them since I have not access to this hardware.
