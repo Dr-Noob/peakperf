@@ -8,7 +8,7 @@
 #include "benchmark.hpp"
 #include "global.hpp"
 
-static const char* VERSION = "1.14";
+static const char* VERSION = "1.15";
 
 void printHelp(char *argv[]) {
   const char **t = args_str;
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
     if(!compute(bench, &e_time)) return EXIT_FAILURE;
 
     if (trial >= n_warmup_trials) {
-      mean += gflops/e_time;
+      mean += 1/(gflops/e_time);
       gflops_list[trial-n_warmup_trials] = gflops/e_time;
       printf("%5d %8.5f %8.2f\n",trial+1, e_time, gflops/e_time);
     }
@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
     }
   }
 
-  mean=mean/(double)n_trials;
+  mean=(double)n_trials/mean;
   for(int i=0;i<n_trials;i++)
     sum += (gflops_list[i] - mean)*(gflops_list[i] - mean);
   sd=sqrt(sum/n_trials);
