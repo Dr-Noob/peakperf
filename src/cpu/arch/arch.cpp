@@ -45,9 +45,10 @@ static const char *bench_name[] = {
   /*[BENCH_TYPE_SKYLAKE_256]     = */ "Skylake (AVX2)",
   /*[BENCH_TYPE_SKYLAKE_512]     = */ "Skylake (AVX512)",
   /*[BENCH_TYPE_KABY_LAKE]       = */ "Kaby Lake (AVX2)",
-  /*[BENCH_TYPE_COFFEE_LAKE]     = */ "Coffee Lake (AVX2)",
+  /*[BENCH_TYPE_COFFE_LAKE]      = */ "Coffe Lake (AVX2)",
   /*[BENCH_TYPE_COMET_LAKE]      = */ "Comet Lake (AVX2)",
   /*[BENCH_TYPE_ICE_LAKE]        = */ "Ice Lake (AVX2)",
+  /*[BENCH_TYPE_TIGER_LAKE]      = */ "Tiger Lake (AVX2)",
   /*[BENCH_TYPE_KNIGHTS_LANDING] = */ "Knights Landing (AVX512)",
   /*[BENCH_TYPE_ZEN]             = */ "Zen (AVX2)",
   /*[BENCH_TYPE_ZEN_PLUS]        = */ "Zen+ (AVX2)",
@@ -62,9 +63,10 @@ static const char *bench_types_str[] = {
   /*[BENCH_TYPE_SKYLAKE_256]     = */ "skylake_256",
   /*[BENCH_TYPE_SKYLAKE_512]     = */ "skylake_512",
   /*[BENCH_TYPE_KABY_LAKE]       = */ "kaby_lake",
-  /*[BENCH_TYPE_COFFEE_LAKE]     = */ "coffee_lake",
+  /*[BENCH_TYPE_COFFE_LAKE]      = */ "coffe_lake",
   /*[BENCH_TYPE_COMET_LAKE]      = */ "comet_lake",
   /*[BENCH_TYPE_ICE_LAKE]        = */ "ice_lake",
+  /*[BENCH_TYPE_TIGER_LAKE]      = */ "tiger_lake",
   /*[BENCH_TYPE_KNIGHTS_LANDING] = */ "knights_landing",
   /*[BENCH_TYPE_ZEN]             = */ "zen",
   /*[BENCH_TYPE_ZEN_PLUS]        = */ "zen_plus",
@@ -154,9 +156,10 @@ double compute_gflops(int n_threads, char bench) {
  * - Skylake (512)   -> skylake_512
  * - Broadwell       -> broadwell
  * - Kaby Lake       -> skylake_256
- * - Coffee Lake     -> skylake_256
+ * - Coffe Lake      -> skylake_256
  * - Comet Lake      -> skylake_256
  * - Ice Lake        -> ice_lake
+ * - Tiger Lake      -> ice_lake
  * - Knights Landing -> knl
  * - Zen             -> zen
  * - Zen+            -> zen
@@ -195,7 +198,7 @@ bool select_benchmark(struct benchmark_cpu* bench) {
       bench->compute_function_256 = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
-    case BENCH_TYPE_COFFEE_LAKE:
+    case BENCH_TYPE_COFFE_LAKE:
       bench->compute_function_256 = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
@@ -204,6 +207,10 @@ bool select_benchmark(struct benchmark_cpu* bench) {
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_ICE_LAKE:
+      bench->compute_function_256 = compute_ice_lake;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
+      break;
+    case BENCH_TYPE_TIGER_LAKE:
       bench->compute_function_256 = compute_ice_lake;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
@@ -291,15 +298,18 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         break;  
       case UARCH_KABY_LAKE:
         bench->benchmark_type = BENCH_TYPE_KABY_LAKE;
-        break;  
-      case UARCH_COFFEE_LAKE:
-        bench->benchmark_type = BENCH_TYPE_COFFEE_LAKE;
+        break;
+      case UARCH_COFFE_LAKE:
+        bench->benchmark_type = BENCH_TYPE_COFFE_LAKE;
         break;
       case UARCH_COMET_LAKE:
         bench->benchmark_type = BENCH_TYPE_COMET_LAKE;
-        break;    
+        break;
       case UARCH_ICE_LAKE:
         bench->benchmark_type = BENCH_TYPE_ICE_LAKE;
+        break;
+      case UARCH_TIGER_LAKE:
+        bench->benchmark_type = BENCH_TYPE_TIGER_LAKE;
         break;
       case UARCH_KNIGHTS_LANDING:
         bench->benchmark_type = BENCH_TYPE_KNIGHTS_LANDING;
