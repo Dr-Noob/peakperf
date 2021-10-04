@@ -5,6 +5,31 @@
 #include "../cpufetch/uarch.hpp"
 #include "../../getarg.hpp"
 
+#include "arch_sse.hpp"
+#include "arch_avx.hpp"
+#include "arch_avx512.hpp"
+
+struct benchmark_cpu {
+  int n_threads;
+  double gflops;
+  const char* name;
+  bench_type benchmark_type;
+
+  struct benchmark_cpu_sse* bench_sse;
+  struct benchmark_cpu_avx* bench_avx;
+  struct benchmark_cpu_avx512* bench_avx512;
+};
+
+enum {
+  BENCH_128_8,
+  BENCH_256_6_NOFMA,
+  BENCH_256_5,
+  BENCH_256_8,
+  BENCH_256_10,
+  BENCH_512_8,
+  BENCH_512_12,
+};
+
 enum bench_types {
   BENCH_TYPE_SANDY_BRIDGE,
   BENCH_TYPE_IVY_BRIDGE,
@@ -22,6 +47,44 @@ enum bench_types {
   BENCH_TYPE_ZEN,
   BENCH_TYPE_ZEN_PLUS,
   BENCH_TYPE_ZEN2,
+};
+
+static const char *bench_name[] = {
+  /*[BENCH_TYPE_SANDY_BRIDGE]    = */ "Sandy Bridge (AVX)",
+  /*[BENCH_TYPE_IVY_BRIDGE]      = */ "Ivy Bridge (AVX)",
+  /*[BENCH_TYPE_HASWELL]         = */ "Haswell (AVX2)",
+  /*[BENCH_TYPE_BROADWELL]       = */ "Broadwell (AVX2)",
+  /*[BENCH_TYPE_SKYLAKE_256]     = */ "Skylake (SSE)",
+  /*[BENCH_TYPE_SKYLAKE_256]     = */ "Skylake (AVX2)",
+  /*[BENCH_TYPE_SKYLAKE_512]     = */ "Skylake (AVX512)",
+  /*[BENCH_TYPE_KABY_LAKE]       = */ "Kaby Lake (AVX2)",
+  /*[BENCH_TYPE_COFFE_LAKE]      = */ "Coffe Lake (AVX2)",
+  /*[BENCH_TYPE_COMET_LAKE]      = */ "Comet Lake (AVX2)",
+  /*[BENCH_TYPE_ICE_LAKE]        = */ "Ice Lake (AVX2)",
+  /*[BENCH_TYPE_TIGER_LAKE]      = */ "Tiger Lake (AVX2)",
+  /*[BENCH_TYPE_KNIGHTS_LANDING] = */ "Knights Landing (AVX512)",
+  /*[BENCH_TYPE_ZEN]             = */ "Zen (AVX2)",
+  /*[BENCH_TYPE_ZEN_PLUS]        = */ "Zen+ (AVX2)",
+  /*[BENCH_TYPE_ZEN2]            = */ "Zen 2 (AVX2)",
+};
+
+static const char *bench_types_str[] = {
+  /*[BENCH_TYPE_SANDY_BRIDGE]    = */ "sandy_bridge",
+  /*[BENCH_TYPE_IVY_BRIDGE]      = */ "ivy_bridge",
+  /*[BENCH_TYPE_HASWELL]         = */ "haswell",
+  /*[BENCH_TYPE_BROADWELL]       = */ "broadwell",
+  /*[BENCH_TYPE_SKYLAKE_256]     = */ "skylake_128",
+  /*[BENCH_TYPE_SKYLAKE_256]     = */ "skylake_256",
+  /*[BENCH_TYPE_SKYLAKE_512]     = */ "skylake_512",
+  /*[BENCH_TYPE_KABY_LAKE]       = */ "kaby_lake",
+  /*[BENCH_TYPE_COFFE_LAKE]      = */ "coffe_lake",
+  /*[BENCH_TYPE_COMET_LAKE]      = */ "comet_lake",
+  /*[BENCH_TYPE_ICE_LAKE]        = */ "ice_lake",
+  /*[BENCH_TYPE_TIGER_LAKE]      = */ "tiger_lake",
+  /*[BENCH_TYPE_KNIGHTS_LANDING] = */ "knights_landing",
+  /*[BENCH_TYPE_ZEN]             = */ "zen",
+  /*[BENCH_TYPE_ZEN_PLUS]        = */ "zen_plus",
+  /*[BENCH_TYPE_ZEN2]            = */ "zen2",
 };
 
 #define BENCHMARK_CPU_ITERS 1000000000
@@ -91,5 +154,6 @@ const char* get_benchmark_name_cpu(struct benchmark_cpu* bench);
 bench_type parse_benchmark_cpu(char* str);
 void print_bench_types_cpu(struct cpu* cpu);
 int get_n_threads(struct benchmark_cpu* bench);
+double compute_gflops(int n_threads, char bench);
 
 #endif

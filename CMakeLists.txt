@@ -31,8 +31,12 @@ set(CMAKE_CXX_FLAGS "${SANITY_FLAGS} -O2")
 if(ENABLE_CPU_DEVICE)
     target_compile_definitions(peakperf PUBLIC DEVICE_CPU_ENABLED)
 
-    set_source_files_properties(${ARCH_CPU_DIR}/arch.cpp       PROPERTIES COMPILE_FLAGS "-mavx -mavx512f -fopenmp")
-    add_library(cpu_device STATIC ${CPUFETCH_DIR}/cpufetch.cpp ${CPUFETCH_DIR}/cpuid.cpp ${CPUFETCH_DIR}/uarch.cpp ${ARCH_CPU_DIR}/arch.cpp)
+    set_source_files_properties(${ARCH_CPU_DIR}/arch.cpp        PROPERTIES COMPILE_FLAGS "-fopenmp")
+    set_source_files_properties(${ARCH_CPU_DIR}/arch_sse.cpp    PROPERTIES COMPILE_FLAGS "-msse -fopenmp")
+    set_source_files_properties(${ARCH_CPU_DIR}/arch_avx.cpp    PROPERTIES COMPILE_FLAGS "-mavx -fopenmp")
+    set_source_files_properties(${ARCH_CPU_DIR}/arch_avx512.cpp PROPERTIES COMPILE_FLAGS "-mavx512f -fopenmp")
+
+    add_library(cpu_device STATIC ${CPUFETCH_DIR}/cpufetch.cpp ${CPUFETCH_DIR}/cpuid.cpp ${CPUFETCH_DIR}/uarch.cpp ${ARCH_CPU_DIR}/arch.cpp ${ARCH_CPU_DIR}/arch_sse.cpp ${ARCH_CPU_DIR}/arch_avx.cpp ${ARCH_CPU_DIR}/arch_avx512.cpp)
     target_link_libraries(peakperf -lm -fopenmp cpu_device sandy_bridge ivy_bridge haswell skylake_128 skylake_256 skylake_512 broadwell ice_lake knl zen zen2)
 
     # architecture specific build
