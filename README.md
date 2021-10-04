@@ -42,7 +42,7 @@ peakperf only works properly in Linux. peakperf under Windows / macOS has not be
 ## 1.2 Hardware support
 Supported microarchitectures are:
 
-- **CPU (x86_64)**: AVX support is mandatory.
+- **CPU (x86_64)**:
   - Intel: Sandy Bridge	and newer.
   - AMD: Zen and newer.
 - **GPU**:
@@ -321,6 +321,7 @@ References:
 | Ampere  |  ?       |:x:               |  [] |
 
 _NOTES:_
+- The fact that a CPU belongs to a microarchitecture does not imply that it supports the vector extensions shown in this table (e.g, Pentium Skylake does not support AVX).
 - Older microarchitectures may be added in the future. If I have not added olds architecture is because I can't test peakperf on them since I have not access to this hardware.
 - Ice Lake and Tiger Lake support AVX512 instructions but they only have 1 AVX512 VPU (at least in client versions), while it has 2 VPUs for AVX2. Because AVX512 runs in lower freqeuncy, the performance obtained with AVX2 (using 2 VPUs) is better than with AVX512 (using 1 VPU). Thus, peak performance is obtained using AVX2, although it supports AVX512 instruction set.
 - Slots column is calculated with `FPUs x Latency`.
