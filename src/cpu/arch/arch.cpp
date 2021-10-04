@@ -9,6 +9,7 @@
 #include "sandy_bridge.hpp"
 #include "ivy_bridge.hpp"
 #include "haswell.hpp"
+#include "skylake_128.hpp"
 #include "skylake_256.hpp"
 #include "skylake_512.hpp"
 #include "broadwell.hpp"
@@ -24,11 +25,13 @@ struct benchmark_cpu {
   double gflops;
   const char* name;
   bench_type benchmark_type;
+  void (*compute_function_128)(__m128 *farr_ptr, __m128, int);
   void (*compute_function_256)(__m256 *farr_ptr, __m256, int);
   void (*compute_function_512)(__m512 *farr_ptr, __m512, int);
 };
 
 enum {
+  BENCH_128_8,
   BENCH_256_6_NOFMA,
   BENCH_256_5,
   BENCH_256_8,
@@ -42,6 +45,7 @@ static const char *bench_name[] = {
   /*[BENCH_TYPE_IVY_BRIDGE]      = */ "Ivy Bridge (AVX)",
   /*[BENCH_TYPE_HASWELL]         = */ "Haswell (AVX2)",
   /*[BENCH_TYPE_BROADWELL]       = */ "Broadwell (AVX2)",
+  /*[BENCH_TYPE_SKYLAKE_256]     = */ "Skylake (SSE)",
   /*[BENCH_TYPE_SKYLAKE_256]     = */ "Skylake (AVX2)",
   /*[BENCH_TYPE_SKYLAKE_512]     = */ "Skylake (AVX512)",
   /*[BENCH_TYPE_KABY_LAKE]       = */ "Kaby Lake (AVX2)",
@@ -60,6 +64,7 @@ static const char *bench_types_str[] = {
   /*[BENCH_TYPE_IVY_BRIDGE]      = */ "ivy_bridge",
   /*[BENCH_TYPE_HASWELL]         = */ "haswell",
   /*[BENCH_TYPE_BROADWELL]       = */ "broadwell",
+  /*[BENCH_TYPE_SKYLAKE_256]     = */ "skylake_128",
   /*[BENCH_TYPE_SKYLAKE_256]     = */ "skylake_256",
   /*[BENCH_TYPE_SKYLAKE_512]     = */ "skylake_512",
   /*[BENCH_TYPE_KABY_LAKE]       = */ "kaby_lake",
@@ -108,6 +113,11 @@ double compute_gflops(int n_threads, char bench) {
   int bytes_in_vect;
 
   switch(bench) {
+    case BENCH_128_8:
+      fma_available = B_128_8_FMA_AV;
+      op_per_it = B_128_8_OP_IT;
+      bytes_in_vect = B_128_8_BYTES;
+      break;
     case BENCH_256_6_NOFMA:
       fma_available = B_256_6_NOFMA_FMA_AV;
       op_per_it = B_256_6_NOFMA_OP_IT;
@@ -117,7 +127,7 @@ double compute_gflops(int n_threads, char bench) {
       fma_available = B_256_5_FMA_AV;
       op_per_it = B_256_5_OP_IT;
       bytes_in_vect = B_256_5_BYTES;
-      break;  
+      break;
     case BENCH_256_8:
       fma_available = B_256_8_FMA_AV;
       op_per_it = B_256_8_OP_IT;
@@ -152,7 +162,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Sandy Bridge    -> sandy_bridge
  * - Ivy Bridge      -> ivy_bridge
  * - Haswell         -> haswell
- * - Skylake (256)   -> skylake_256
+ * - Skylake (256)   -> skylake_128 / skylake_256
  * - Skylake (512)   -> skylake_512
  * - Broadwell       -> broadwell
  * - Kaby Lake       -> skylake_256
@@ -166,6 +176,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen 2           -> zen2
  */
 bool select_benchmark(struct benchmark_cpu* bench) {
+  bench->compute_function_128 = NULL;
   bench->compute_function_256 = NULL;
   bench->compute_function_512 = NULL;
 
@@ -189,6 +200,10 @@ bool select_benchmark(struct benchmark_cpu* bench) {
     case BENCH_TYPE_SKYLAKE_256:
       bench->compute_function_256 = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
+      break;
+    case BENCH_TYPE_SKYLAKE_128:
+      bench->compute_function_128 = compute_skylake_128;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);
       break;
     case BENCH_TYPE_BROADWELL:
       bench->compute_function_256 = compute_broadwell;
@@ -287,8 +302,10 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
       case UARCH_SKYLAKE:
         if(avx512)
           bench->benchmark_type = BENCH_TYPE_SKYLAKE_512;
-        else
+        else if(avx)
           bench->benchmark_type = BENCH_TYPE_SKYLAKE_256;
+        else
+          bench->benchmark_type = BENCH_TYPE_SKYLAKE_128;
         break;
       case UARCH_CASCADE_LAKE:
         bench->benchmark_type = BENCH_TYPE_SKYLAKE_512;
@@ -345,6 +362,14 @@ bool compute_cpu (struct benchmark_cpu* bench, double* e_time) {
     #pragma omp parallel for
     for(int t=0; t < bench->n_threads; t++)
       bench->compute_function_512(farr_ptr, mult, t);
+  }
+  else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128) {
+    __m128 mult = {0};
+    __m128 *farr_ptr = NULL;
+
+    #pragma omp parallel for
+    for(int t=0; t < bench->n_threads; t++)
+      bench->compute_function_128(farr_ptr, mult, t);
   }
   else {
     __m256 mult = {0};

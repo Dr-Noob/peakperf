@@ -10,6 +10,7 @@ enum bench_types {
   BENCH_TYPE_IVY_BRIDGE,
   BENCH_TYPE_HASWELL,
   BENCH_TYPE_BROADWELL,
+  BENCH_TYPE_SKYLAKE_128,
   BENCH_TYPE_SKYLAKE_256,
   BENCH_TYPE_SKYLAKE_512,
   BENCH_TYPE_KABY_LAKE,
@@ -38,6 +39,10 @@ enum bench_types {
  *   - AVX / AVX2 : 32 bytes
  *   - AVX512 : 64 bytes
  */
+//      AVX_128_8            //
+#define B_128_8_FMA_AV       1
+#define B_128_8_OP_IT        8
+#define B_128_8_BYTES        16
 //      AVX_256_3_NOFMA      //
 #define B_256_6_NOFMA_FMA_AV 1
 #define B_256_6_NOFMA_OP_IT  6
@@ -70,6 +75,10 @@ enum bench_types {
 #elif defined(AVX_256_10) || defined(AVX_256_8) || defined(AVX_256_5) || defined(AVX_256_6_NOFMA) 
   #define BYTES_IN_VECT 32
   #define TYPE __m256
+  #define SIZE OP_PER_IT*2
+#elif defined(SSE_128_8)
+  #define BYTES_IN_VECT 16
+  #define TYPE __m128
   #define SIZE OP_PER_IT*2
 #endif
 
