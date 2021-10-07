@@ -188,10 +188,13 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         break;
       case UARCH_KNIGHTS_LANDING:
         bench->benchmark_type = BENCH_TYPE_KNIGHTS_LANDING;
-        break;  
+        break;
+      case UARCH_PILEDRIVER:
+        bench->benchmark_type = BENCH_TYPE_PILEDRIVER;
+        break;
       case UARCH_ZEN:
         bench->benchmark_type = BENCH_TYPE_ZEN;
-        break;  
+        break;
       case UARCH_ZEN_PLUS:
         bench->benchmark_type = BENCH_TYPE_ZEN_PLUS;
         break;
@@ -199,7 +202,8 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         bench->benchmark_type = BENCH_TYPE_ZEN2;
         break;    
       default:
-        printErr("No valid uarch found! (uarch: %d)", u);
+        printErr("Found invalid uarch: '%s'", uarch_struct->uarch_str);
+        printErr("peakperf is unable to automatically select the benchmark for your CPU. Please, select the benchmark manually (see peakperf -h) and/or post this error message in https://github.com/Dr-Noob/peakperf/issues");
         return NULL;
     }
   }

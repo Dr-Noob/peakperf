@@ -33,6 +33,7 @@ struct benchmark_cpu_avx {
  * - Comet Lake      -> skylake_256
  * - Ice Lake        -> ice_lake
  * - Tiger Lake      -> ice_lake
+ * - Piledriver      -> zen
  * - Zen             -> zen
  * - Zen+            -> zen
  * - Zen 2           -> zen2
@@ -82,6 +83,7 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
       bench->bench_avx->compute_function_256 = compute_ice_lake;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
+    case BENCH_TYPE_PILEDRIVER: // Piledriver should not use Zen file since it is compiled with AVX2 (piledriver is AVX only)
     case BENCH_TYPE_ZEN:
       bench->bench_avx->compute_function_256 = compute_zen;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
