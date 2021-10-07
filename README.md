@@ -293,10 +293,11 @@ The following tables act as a summary of all supported microarchitectures with t
 | Ice Lake        |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [12] |
 | Tiger Lake      |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [12] |
 | Knights Landing |:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)  | 6 (FMA)         |:heavy_check_mark:|  [6] |
-| Ryzen ZEN       |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
-| Ryzen ZEN+      |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [8] |
-| Ryzen ZEN 2     |:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:x:               |  [9] |
-| Ryzen ZEN 3     |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:x:               | [11] |
+| Piledriver      |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX)     | 5 (FMA)         |:x:               |  [?] |
+| Zen             |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
+| Zen+            |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [8] |
+| Zen 2           |:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:x:               |  [9] |
+| Zen 3           |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:x:               | [11] |
 
 References:
 - [1]  [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
