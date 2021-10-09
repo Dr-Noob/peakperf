@@ -37,9 +37,10 @@ if(ENABLE_CPU_DEVICE)
     set_source_files_properties(${ARCH_CPU_DIR}/arch_avx512.cpp PROPERTIES COMPILE_FLAGS "-mavx512f -fopenmp")
 
     add_library(cpu_device STATIC ${CPUFETCH_DIR}/cpufetch.cpp ${CPUFETCH_DIR}/cpuid.cpp ${CPUFETCH_DIR}/uarch.cpp ${ARCH_CPU_DIR}/arch.cpp ${ARCH_CPU_DIR}/arch_sse.cpp ${ARCH_CPU_DIR}/arch_avx.cpp ${ARCH_CPU_DIR}/arch_avx512.cpp)
-    target_link_libraries(peakperf -lm -fopenmp cpu_device sandy_bridge ivy_bridge haswell skylake_128 skylake_256 skylake_512 broadwell ice_lake knl zen zen2)
+    target_link_libraries(peakperf -lm -fopenmp cpu_device nehalem sandy_bridge ivy_bridge haswell skylake_128 skylake_256 skylake_512 broadwell ice_lake knl zen zen2)
 
     # architecture specific build
+    set_source_files_properties(${ARCH_CPU_DIR}/nehalem.cpp      PROPERTIES COMPILE_FLAGS "-DSSE_128_8       -msse")
     set_source_files_properties(${ARCH_CPU_DIR}/sandy_bridge.cpp PROPERTIES COMPILE_FLAGS "-DAVX_256_6_NOFMA -mavx")
     set_source_files_properties(${ARCH_CPU_DIR}/ivy_bridge.cpp   PROPERTIES COMPILE_FLAGS "-DAVX_256_6_NOFMA -mavx")
     set_source_files_properties(${ARCH_CPU_DIR}/haswell.cpp      PROPERTIES COMPILE_FLAGS "-DAVX_256_10      -mavx2 -mfma")
@@ -52,6 +53,7 @@ if(ENABLE_CPU_DEVICE)
     set_source_files_properties(${ARCH_CPU_DIR}/zen.cpp          PROPERTIES COMPILE_FLAGS "-DAVX_256_5       -mavx2 -mfma")
     set_source_files_properties(${ARCH_CPU_DIR}/zen2.cpp         PROPERTIES COMPILE_FLAGS "-DAVX_256_10      -mavx2 -mfma")
 
+    add_library(nehalem      STATIC ${ARCH_CPU_DIR}/nehalem.cpp)
     add_library(sandy_bridge STATIC ${ARCH_CPU_DIR}/sandy_bridge.cpp)
     add_library(ivy_bridge   STATIC ${ARCH_CPU_DIR}/ivy_bridge.cpp)
     add_library(haswell      STATIC ${ARCH_CPU_DIR}/haswell.cpp)

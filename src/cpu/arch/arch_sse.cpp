@@ -6,6 +6,7 @@
 #include "arch.hpp"
 #include "../../global.hpp"
 
+#include "nehalem.hpp"
 #include "skylake_128.hpp"
 
 struct benchmark_cpu_sse {
@@ -22,6 +23,10 @@ bool select_benchmark_sse(struct benchmark_cpu* bench) {
   bench->bench_sse->compute_function_128 = NULL;
 
   switch(bench->benchmark_type) {
+    case BENCH_TYPE_NEHALEM:
+      bench->bench_sse->compute_function_128 = compute_nehalem;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);
+      break;
     case BENCH_TYPE_SKYLAKE_128:
       bench->bench_sse->compute_function_128 = compute_skylake_128;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);

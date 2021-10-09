@@ -31,6 +31,7 @@ enum {
 };
 
 enum bench_types {
+  BENCH_TYPE_NEHALEM,
   BENCH_TYPE_SANDY_BRIDGE,
   BENCH_TYPE_IVY_BRIDGE,
   BENCH_TYPE_HASWELL,
@@ -51,6 +52,7 @@ enum bench_types {
 };
 
 static const char *bench_name[] = {
+  /*[BENCH_TYPE_NEHALEM]         = */ "Nehalem (SSE)",
   /*[BENCH_TYPE_SANDY_BRIDGE]    = */ "Sandy Bridge (AVX)",
   /*[BENCH_TYPE_IVY_BRIDGE]      = */ "Ivy Bridge (AVX)",
   /*[BENCH_TYPE_HASWELL]         = */ "Haswell (AVX2)",
@@ -71,6 +73,7 @@ static const char *bench_name[] = {
 };
 
 static const char *bench_types_str[] = {
+  /*[BENCH_TYPE_NEHALEM]         = */ "nehalem",
   /*[BENCH_TYPE_SANDY_BRIDGE]    = */ "sandy_bridge",
   /*[BENCH_TYPE_IVY_BRIDGE]      = */ "ivy_bridge",
   /*[BENCH_TYPE_HASWELL]         = */ "haswell",

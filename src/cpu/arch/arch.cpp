@@ -104,7 +104,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen 2           -> zen2
  */
 bool select_benchmark(struct benchmark_cpu* bench) {
-  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128)
+  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM)
     return select_benchmark_sse(bench);
   else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING)
     return select_benchmark_avx512(bench);
@@ -148,6 +148,10 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
     bool avx512 = cpu_has_avx512(cpu);
     
     switch(u) {
+      case UARCH_NEHALEM:
+      case UARCH_WESTMERE:
+        bench->benchmark_type = BENCH_TYPE_NEHALEM;
+        break;
       case UARCH_SANDY_BRIDGE:
         bench->benchmark_type = BENCH_TYPE_SANDY_BRIDGE;
         break;  
@@ -214,7 +218,7 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
 }
 
 bool compute_cpu(struct benchmark_cpu* bench, double* e_time) {
-  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128)
+  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM)
     return compute_cpu_sse(bench, e_time);
   else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING)
     return compute_cpu_avx512(bench, e_time);
