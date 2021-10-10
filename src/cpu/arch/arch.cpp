@@ -41,6 +41,11 @@ double compute_gflops(int n_threads, char bench) {
   int bytes_in_vect;
 
   switch(bench) {
+    case BENCH_128_6:
+      fma_available = B_128_6_FMA_AV;
+      op_per_it = B_128_6_OP_IT;
+      bytes_in_vect = B_128_6_BYTES;
+      break;
     case BENCH_128_8:
       fma_available = B_128_8_FMA_AV;
       op_per_it = B_128_8_OP_IT;
@@ -104,7 +109,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen 2           -> zen2
  */
 bool select_benchmark(struct benchmark_cpu* bench) {
-  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM)
+  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT)
     return select_benchmark_sse(bench);
   else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING)
     return select_benchmark_avx512(bench);
@@ -148,6 +153,9 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
     bool avx512 = cpu_has_avx512(cpu);
     
     switch(u) {
+      case UARCH_AIRMONT:
+        bench->benchmark_type = BENCH_TYPE_AIRMONT;
+        break;
       case UARCH_NEHALEM:
       case UARCH_WESTMERE:
         bench->benchmark_type = BENCH_TYPE_NEHALEM;
@@ -218,7 +226,7 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
 }
 
 bool compute_cpu(struct benchmark_cpu* bench, double* e_time) {
-  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM)
+  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT)
     return compute_cpu_sse(bench, e_time);
   else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING)
     return compute_cpu_avx512(bench, e_time);

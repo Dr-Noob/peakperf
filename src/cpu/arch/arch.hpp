@@ -21,6 +21,7 @@ struct benchmark_cpu {
 };
 
 enum {
+  BENCH_128_6,
   BENCH_128_8,
   BENCH_256_6_NOFMA,
   BENCH_256_5,
@@ -31,6 +32,7 @@ enum {
 };
 
 enum bench_types {
+  BENCH_TYPE_AIRMONT,
   BENCH_TYPE_NEHALEM,
   BENCH_TYPE_SANDY_BRIDGE,
   BENCH_TYPE_IVY_BRIDGE,
@@ -52,6 +54,7 @@ enum bench_types {
 };
 
 static const char *bench_name[] = {
+  /*[BENCH_TYPE_AIRMONT]         = */ "Airmont (SSE)",
   /*[BENCH_TYPE_NEHALEM]         = */ "Nehalem (SSE)",
   /*[BENCH_TYPE_SANDY_BRIDGE]    = */ "Sandy Bridge (AVX)",
   /*[BENCH_TYPE_IVY_BRIDGE]      = */ "Ivy Bridge (AVX)",
@@ -73,6 +76,7 @@ static const char *bench_name[] = {
 };
 
 static const char *bench_types_str[] = {
+  /*[BENCH_TYPE_AIRMONT]         = */ "airmont",
   /*[BENCH_TYPE_NEHALEM]         = */ "nehalem",
   /*[BENCH_TYPE_SANDY_BRIDGE]    = */ "sandy_bridge",
   /*[BENCH_TYPE_IVY_BRIDGE]      = */ "ivy_bridge",
@@ -108,6 +112,10 @@ static const char *bench_types_str[] = {
  *   - AVX / AVX2 : 32 bytes
  *   - AVX512 : 64 bytes
  */
+//      AVX_128_6            //
+#define B_128_6_FMA_AV       1
+#define B_128_6_OP_IT        6
+#define B_128_6_BYTES        16
 //      AVX_128_8            //
 #define B_128_8_FMA_AV       1
 #define B_128_8_OP_IT        8
@@ -141,11 +149,11 @@ static const char *bench_types_str[] = {
   #define BYTES_IN_VECT 64
   #define TYPE __m512
   #define SIZE OP_PER_IT*2
-#elif defined(AVX_256_10) || defined(AVX_256_8) || defined(AVX_256_5) || defined(AVX_256_6_NOFMA) 
+#elif defined(AVX_256_10) || defined(AVX_256_8) || defined(AVX_256_5) || defined(AVX_256_6_NOFMA)
   #define BYTES_IN_VECT 32
   #define TYPE __m256
   #define SIZE OP_PER_IT*2
-#elif defined(SSE_128_8)
+#elif defined(SSE_128_8) || defined(SSE_128_6)
   #define BYTES_IN_VECT 16
   #define TYPE __m128
   #define SIZE OP_PER_IT*2
