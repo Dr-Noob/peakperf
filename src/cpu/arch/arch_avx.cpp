@@ -23,20 +23,21 @@ struct benchmark_cpu_avx {
 /*
  * Mapping between architecture and benchmark:
  *
- * - Sandy Bridge    -> sandy_bridge
- * - Ivy Bridge      -> ivy_bridge
- * - Haswell         -> haswell
- * - Skylake (256)   -> skylake_256
- * - Broadwell       -> broadwell
- * - Kaby Lake       -> skylake_256
- * - Coffe Lake      -> skylake_256
- * - Comet Lake      -> skylake_256
- * - Ice Lake        -> ice_lake
- * - Tiger Lake      -> ice_lake
- * - Piledriver      -> zen
- * - Zen             -> zen
- * - Zen+            -> zen
- * - Zen 2           -> zen2
+ * - Sandy Bridge       -> sandy_bridge
+ * - Ivy Bridge         -> ivy_bridge
+ * - Haswell            -> haswell
+ * - Skylake (256)      -> skylake_256
+ * - Broadwell          -> broadwell
+ * - Whiskey Lake (256) -> skylake_256
+ * - Kaby Lake          -> skylake_256
+ * - Coffe Lake         -> skylake_256
+ * - Comet Lake         -> skylake_256
+ * - Ice Lake           -> ice_lake
+ * - Tiger Lake         -> ice_lake
+ * - Piledriver         -> zen
+ * - Zen                -> zen
+ * - Zen+               -> zen
+ * - Zen 2              -> zen2
  */
 bool select_benchmark_avx(struct benchmark_cpu* bench) {
   bench->bench_avx = (struct benchmark_cpu_avx *) malloc(sizeof(struct benchmark_cpu));
@@ -61,6 +62,10 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
       break;
     case BENCH_TYPE_BROADWELL:
       bench->bench_avx->compute_function_256 = compute_broadwell;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
+      break;
+    case BENCH_TYPE_WHISKEY_LAKE_256:
+      bench->bench_avx->compute_function_256 = compute_skylake_256;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_KABY_LAKE:

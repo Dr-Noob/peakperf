@@ -98,6 +98,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Skylake (256)   -> skylake_128 / skylake_256
  * - Skylake (512)   -> skylake_512
  * - Broadwell       -> broadwell
+ * - Whiskey Lake    -> skylake_256
  * - Kaby Lake       -> skylake_256
  * - Coffe Lake      -> skylake_256
  * - Comet Lake      -> skylake_256
@@ -109,7 +110,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen 2           -> zen2
  */
 bool select_benchmark(struct benchmark_cpu* bench) {
-  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT)
+  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT || bench->benchmark_type == BENCH_TYPE_WHISKEY_LAKE_128)
     return select_benchmark_sse(bench);
   else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING)
     return select_benchmark_avx512(bench);
@@ -182,7 +183,13 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         break;  
       case UARCH_BROADWELL:
         bench->benchmark_type = BENCH_TYPE_BROADWELL;
-        break;  
+        break;
+      case UARCH_WHISKEY_LAKE:
+        if(avx)
+          bench->benchmark_type = BENCH_TYPE_WHISKEY_LAKE_256;
+        else
+          bench->benchmark_type = BENCH_TYPE_WHISKEY_LAKE_128;
+        break;
       case UARCH_KABY_LAKE:
         bench->benchmark_type = BENCH_TYPE_KABY_LAKE;
         break;

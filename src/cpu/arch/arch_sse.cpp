@@ -17,7 +17,8 @@ struct benchmark_cpu_sse {
 /*
  * Mapping between architecture and benchmark:
  *
- * - Skylake (128)   -> skylake_128
+ * - Skylake (128)      -> skylake_128
+ * - Whiskey Lake (128) -> skylake_128
  */
 bool select_benchmark_sse(struct benchmark_cpu* bench) {
   bench->bench_sse = (struct benchmark_cpu_sse*) malloc(sizeof(struct benchmark_cpu_sse));
@@ -33,6 +34,10 @@ bool select_benchmark_sse(struct benchmark_cpu* bench) {
       bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);
       break;
     case BENCH_TYPE_SKYLAKE_128:
+      bench->bench_sse->compute_function_128 = compute_skylake_128;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);
+      break;
+    case BENCH_TYPE_WHISKEY_LAKE_128:
       bench->bench_sse->compute_function_128 = compute_skylake_128;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);
       break;
