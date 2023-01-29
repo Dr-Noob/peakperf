@@ -13,12 +13,6 @@ struct benchmark_cpu_avx512 {
   void (*compute_function_512)(__m512 *farr_ptr, __m512, int);
 };
 
-/*
- * Mapping between architecture and benchmark:
- *
- * - Skylake (512)   -> skylake_512
- * - Knights Landing -> knl
- */
 bool select_benchmark_avx512(struct benchmark_cpu* bench) {
   bench->bench_avx512 = (struct benchmark_cpu_avx512*) malloc(sizeof(struct benchmark_cpu_avx512));
   bench->bench_avx512->compute_function_512 = NULL;
