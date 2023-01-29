@@ -96,6 +96,10 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
       bench->bench_avx->compute_function_256 = compute_256_10;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_10);
       break;
+    case BENCH_TYPE_ZEN3:
+      bench->bench_avx->compute_function_256 = compute_256_8;
+      bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
+      break;
     default:
       printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);
       return false;

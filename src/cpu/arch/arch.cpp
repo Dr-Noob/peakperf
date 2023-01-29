@@ -10,10 +10,10 @@ bench_type parse_benchmark_cpu(char* str) {
   int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
   for(bench_type t = 0; t < len; t++) {
     if(strcmp(str, bench_types_str[t]) == 0) {
-      return t;    
+      return t;
     }
   }
-  return BENCH_TYPE_INVALID;    
+  return BENCH_TYPE_INVALID;
 }
 
 void print_bench_types_cpu(struct cpu* cpu) {
@@ -91,7 +91,7 @@ double compute_gflops(int n_threads, char bench) {
 
 /*
  * Mapping between architecture and benchmark:
- * 
+ *
  * - Sandy Bridge    -> sandy_bridge
  * - Ivy Bridge      -> ivy_bridge
  * - Haswell         -> haswell
@@ -108,6 +108,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen             -> zen
  * - Zen+            -> zen
  * - Zen 2           -> zen2
+ * - Zen 3           -> zen3
  */
 bool select_benchmark(struct benchmark_cpu* bench) {
   if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT || bench->benchmark_type == BENCH_TYPE_WHISKEY_LAKE_128)
@@ -149,10 +150,10 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
   }
   else {  // Automatic benchmark select
     struct uarch* uarch_struct = get_uarch_struct(cpu);
-    MICROARCH u = uarch_struct->uarch;  
+    MICROARCH u = uarch_struct->uarch;
     bool avx = cpu_has_avx(cpu);
     bool avx512 = cpu_has_avx512(cpu);
-    
+
     switch(u) {
       case UARCH_AIRMONT:
         bench->benchmark_type = BENCH_TYPE_AIRMONT;
@@ -163,13 +164,13 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         break;
       case UARCH_SANDY_BRIDGE:
         bench->benchmark_type = BENCH_TYPE_SANDY_BRIDGE;
-        break;  
+        break;
       case UARCH_IVY_BRIDGE:
         bench->benchmark_type = BENCH_TYPE_IVY_BRIDGE;
-        break;  
+        break;
       case UARCH_HASWELL:
         bench->benchmark_type = BENCH_TYPE_HASWELL;
-        break;  
+        break;
       case UARCH_SKYLAKE:
         if(avx512)
           bench->benchmark_type = BENCH_TYPE_SKYLAKE_512;
@@ -180,7 +181,7 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         break;
       case UARCH_CASCADE_LAKE:
         bench->benchmark_type = BENCH_TYPE_SKYLAKE_512;
-        break;  
+        break;
       case UARCH_BROADWELL:
         bench->benchmark_type = BENCH_TYPE_BROADWELL;
         break;
@@ -219,14 +220,17 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         break;
       case UARCH_ZEN2:
         bench->benchmark_type = BENCH_TYPE_ZEN2;
-        break;    
+        break;
+      case UARCH_ZEN3:
+        bench->benchmark_type = BENCH_TYPE_ZEN3;
+        break;
       default:
         printErr("Found invalid uarch: '%s'", uarch_struct->uarch_str);
         printErr("peakperf is unable to automatically select the benchmark for your CPU. Please, select the benchmark manually (see peakperf -h) and/or post this error message in https://github.com/Dr-Noob/peakperf/issues");
         return NULL;
     }
   }
-  
+
   if(select_benchmark(bench))
     return bench;
   return NULL;
