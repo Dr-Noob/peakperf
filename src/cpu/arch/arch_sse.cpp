@@ -6,9 +6,8 @@
 #include "arch.hpp"
 #include "../../global.hpp"
 
-/*#include "airmont.hpp"
-#include "nehalem.hpp"
-#include "skylake_128.hpp"*/
+#include "128_6.hpp"
+#include "128_8.hpp"
 
 struct benchmark_cpu_sse {
   void (*compute_function_128)(__m128 *farr_ptr, __m128, int);
@@ -24,27 +23,27 @@ bool select_benchmark_sse(struct benchmark_cpu* bench) {
   bench->bench_sse = (struct benchmark_cpu_sse*) malloc(sizeof(struct benchmark_cpu_sse));
   bench->bench_sse->compute_function_128 = NULL;
 
-  /*switch(bench->benchmark_type) {
+  switch(bench->benchmark_type) {
     case BENCH_TYPE_AIRMONT:
-      bench->bench_sse->compute_function_128 = compute_airmont;
+      bench->bench_sse->compute_function_128 = compute_128_6;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_128_6);
       break;
     case BENCH_TYPE_NEHALEM:
-      bench->bench_sse->compute_function_128 = compute_nehalem;
+      bench->bench_sse->compute_function_128 = compute_128_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);
       break;
     case BENCH_TYPE_SKYLAKE_128:
-      bench->bench_sse->compute_function_128 = compute_skylake_128;
+      bench->bench_sse->compute_function_128 = compute_128_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);
       break;
     case BENCH_TYPE_WHISKEY_LAKE_128:
-      bench->bench_sse->compute_function_128 = compute_skylake_128;
+      bench->bench_sse->compute_function_128 = compute_128_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_128_8);
       break;
     default:
       printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);
       return false;
-  }*/
+  }
 
   bench->name = bench_name[bench->benchmark_type];
   return true;
