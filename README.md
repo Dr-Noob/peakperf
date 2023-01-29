@@ -241,7 +241,7 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | Ivy Bridge      | 2x Xeon E5-2650 v2 | `2.999 GHz`  |  `767.74`    |  `744.24 +- 3.85`  | `3.15%` |
 | Haswell         | i7-4790K           | `3.997 GHz`  |  `511.61`    |  `511.43 +- 0.01`  | `0.03%` |
 | Broadwell       | 2x Xeon E5-2698 v4 | `2.599 GHz`  | `3326.72`    | `3269.87 +- 14.42` | `1.73%` |
-| Skylake         | i5-6400            | `3.099 GHz`  |  `396.67`    |  `396.61 +- 0.01 ` | `0.06`  |
+| Skylake         | i5-6400            | `3.099 GHz`  |  `396.67`    |  `396.61 +- 0.01 ` | `0.06%` |
 | Knights Landing | Xeon Phi 7250      | `1.499 GHz`  | `5991.69`    | `5390.84 +- 7.83`  | `3.72%` |
 | Kaby Lake       | i5-8250U           | `2.700 GHz`  |  `345.60`    |  `343.57 +- 1.38`  | `0.59%` |
 | Coffee Lake     | i9-9900K           | `3.600 GHz`  |  `921.60`    |  `918.72 +- 1.13`  | `0.31%` |
@@ -249,7 +249,7 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | Cascade Lake    | 2x Xeon Gold 6238  | `2.099 GHz`  |  `5910.78`   | `5851.60 +- 2.69`  | `1.01%` |
 | Ice Lake        | i5-1035G1          | `2.990 GHz`  |  `382.72`    |  `382.22 +- 0.18`  | `0.13%` |
 | Tiger Lake      | -                  | -            |  -           |  -                 | -       |
-| Rocket Lake     | -                  | -            |  -           |  -                 | -       |
+| Rocket Lake     | i7-11700           | `4.400 GHz`  |  `1126.4`    |  `1121.69 +- 0.60` | `0.41%` |
 
 ## AMD
 | uarch | CPU              | AVX Clock    | PP (Formula) | PP (Experimental)  | Loss    |
@@ -257,15 +257,16 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | Zen   | -                | -            | -            | -                  | -       |
 | Zen+  | AMD Ryzen 5 2600 | `3.724 GHz`  | `357.50`     | `357.08 +- 0.03`   | `0.11%` |
 | Zen 2 | -                | -            | -            | -                  | -       |
-| Zen 3 | -                | -            | -            | -                  | -       |
+| Zen 3 | 2x AMD EPYC 7413 | `3.000 GHz`  | `4608.00`    | `4551.55 +- 21.45` | `1.24%` |
 
 ## NVIDIA
-| C.C | uarch   | GPU         | Clock        | PP (Formula) | PP (Experimental)   | Loss    |
-|:---:|:-------:|:-----------:|:------------:|:------------:|:-------------------:|:-------:|
-| 5.2 | Maxwell | GTX 970     | `1.341 GHz`  | `4462.84`    | `4333.92 +- 0.90`   | `2.97%` |
-| 6.1 | Pascal  | GTX 1080    | `1.860 GHz`  | `9523.20`    | `9397.97 +- 0.10`   | `1.33%` |
-| 7.5 | Turing  | RTX 2080 Ti | `1.905 GHz`  | `16581.12`   | `16373.28 +- 16.07` | `1.26%` |
-| 8.6 | Ampere  | -           | -            | -            | -                   | -       |
+| C.C | uarch        | GPU         | Clock        | PP (Formula) | PP (Experimental)   | Loss    |
+|:---:|:------------:|:-----------:|:------------:|:------------:|:-------------------:|:-------:|
+| 5.2 | Maxwell      | GTX 970     | `1.341 GHz`  | `4462.84`    | `4333.92 +- 0.90`   | `2.97%` |
+| 6.1 | Pascal       | GTX 1080    | `1.860 GHz`  | `9523.20`    | `9397.97 +- 0.10`   | `1.33%` |
+| 7.5 | Turing       | RTX 2080 Ti | `1.905 GHz`  | `16581.12`   | `16373.28 +- 16.07` | `1.26%` |
+| 8.6 | Ampere       | -           | -            | -            | -                   | -       |
+| 9.0 | Ada Lovelace | -           | -            | -            | -                   | -       |
 
 _NOTE 1_: Performance measured on simple precision and GFLOP/s (gigaflops per second).
 
@@ -292,12 +293,13 @@ The following tables act as a summary of all supported microarchitectures with t
 | Comet Lake      |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [10] |
 | Ice Lake        |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [12] |
 | Tiger Lake      |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [12] |
+| Rocket Lake     |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [?] |
 | Knights Landing |:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)  | 6 (FMA)         |:heavy_check_mark:|  [6] |
 | Piledriver      |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX)     | 5 (FMA)         |:x:               |  [?] |
 | Zen             |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
 | Zen+            |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:heavy_check_mark:|  [8] |
 | Zen 2           |:heavy_check_mark:| :x:                |    10 | 2 (FMA AVX2)    | 5 (FMA)         |:x:               |  [9] |
-| Zen 3           |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:x:               | [11] |
+| Zen 3           |:heavy_check_mark:| :x:                |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [11] |
 
 References:
 - [1]  [Agner Fog Instruction Tables (Page 199, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
