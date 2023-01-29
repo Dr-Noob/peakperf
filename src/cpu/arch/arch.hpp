@@ -62,9 +62,11 @@ static const char *bench_name[] = {
   /*[BENCH_TYPE_IVY_BRIDGE]      = */ "Ivy Bridge (AVX)",
   /*[BENCH_TYPE_HASWELL]         = */ "Haswell (AVX2)",
   /*[BENCH_TYPE_BROADWELL]       = */ "Broadwell (AVX2)",
-  /*[BENCH_TYPE_SKYLAKE_256]     = */ "Skylake (SSE)",
+  /*[BENCH_TYPE_SKYLAKE_128]     = */ "Skylake (SSE)",
   /*[BENCH_TYPE_SKYLAKE_256]     = */ "Skylake (AVX2)",
   /*[BENCH_TYPE_SKYLAKE_512]     = */ "Skylake (AVX512)",
+  /*[BENCH_TYPE_WHISKEY_LAKE_128]= */ "Whiskey Lake (SSE)",
+  /*[BENCH_TYPE_WHISKEY_LAKE_256]= */ "Whiskey Lake (AVX2)",
   /*[BENCH_TYPE_KABY_LAKE]       = */ "Kaby Lake (AVX2)",
   /*[BENCH_TYPE_COFFE_LAKE]      = */ "Coffe Lake (AVX2)",
   /*[BENCH_TYPE_COMET_LAKE]      = */ "Comet Lake (AVX2)",
@@ -87,6 +89,8 @@ static const char *bench_types_str[] = {
   /*[BENCH_TYPE_SKYLAKE_256]     = */ "skylake_128",
   /*[BENCH_TYPE_SKYLAKE_256]     = */ "skylake_256",
   /*[BENCH_TYPE_SKYLAKE_512]     = */ "skylake_512",
+  /*[BENCH_TYPE_WHISKEY_LAKE_128]= */ "whiskey_lake_128",
+  /*[BENCH_TYPE_WHISKEY_LAKE_256]= */ "whiskey_lake_256",
   /*[BENCH_TYPE_KABY_LAKE]       = */ "kaby_lake",
   /*[BENCH_TYPE_COFFE_LAKE]      = */ "coffe_lake",
   /*[BENCH_TYPE_COMET_LAKE]      = */ "comet_lake",
@@ -102,10 +106,10 @@ static const char *bench_types_str[] = {
 #define BENCHMARK_CPU_ITERS 1000000000
 #define MAX_NUMBER_THREADS 512
 
-/* 
+/*
  * Values for each benchmark:
  * =============================
- * > FMA_AV: 
+ * > FMA_AV:
  *   - FMA not available: 1
  *   - FMA available: 2
  * > OP_IT:
@@ -122,7 +126,7 @@ static const char *bench_types_str[] = {
 #define B_128_8_FMA_AV       1
 #define B_128_8_OP_IT        8
 #define B_128_8_BYTES        16
-//      AVX_256_3_NOFMA      //
+//      AVX_256_6_NOFMA      //
 #define B_256_6_NOFMA_FMA_AV 1
 #define B_256_6_NOFMA_OP_IT  6
 #define B_256_6_NOFMA_BYTES  32
