@@ -6,15 +6,10 @@
 #include "arch.hpp"
 #include "../../global.hpp"
 
-#include "sandy_bridge.hpp"
-#include "ivy_bridge.hpp"
-#include "haswell.hpp"
-#include "skylake_256.hpp"
-#include "broadwell.hpp"
-#include "cannon_lake_256.hpp"
-#include "ice_lake.hpp"
-#include "zen.hpp"
-#include "zen2.hpp"
+#include "256_6_nofma.hpp"
+#include "256_5.hpp"
+#include "256_8.hpp"
+#include "256_10.hpp"
 
 struct benchmark_cpu_avx {
   void (*compute_function_256)(__m256 *farr_ptr, __m256, int);
@@ -45,60 +40,60 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
 
   switch(bench->benchmark_type) {
     case BENCH_TYPE_SANDY_BRIDGE:
-      bench->bench_avx->compute_function_256 = compute_sandy_bridge;
+      bench->bench_avx->compute_function_256 = compute_256_6_nofma;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_6_NOFMA);
       break;
     case BENCH_TYPE_IVY_BRIDGE:
-      bench->bench_avx->compute_function_256 = compute_ivy_bridge;
+      bench->bench_avx->compute_function_256 = compute_256_6_nofma;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_6_NOFMA);
       break;
     case BENCH_TYPE_HASWELL:
-      bench->bench_avx->compute_function_256 = compute_haswell;
+      bench->bench_avx->compute_function_256 = compute_256_10;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_10);
       break;
     case BENCH_TYPE_SKYLAKE_256:
-      bench->bench_avx->compute_function_256 = compute_skylake_256;
+      bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_BROADWELL:
-      bench->bench_avx->compute_function_256 = compute_broadwell;
+      bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_WHISKEY_LAKE_256:
-      bench->bench_avx->compute_function_256 = compute_skylake_256;
+      bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_KABY_LAKE:
-      bench->bench_avx->compute_function_256 = compute_skylake_256;
+      bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_COFFE_LAKE:
-      bench->bench_avx->compute_function_256 = compute_skylake_256;
+      bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_COMET_LAKE:
-      bench->bench_avx->compute_function_256 = compute_skylake_256;
+      bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_ICE_LAKE:
-      bench->bench_avx->compute_function_256 = compute_ice_lake;
+      bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_TIGER_LAKE:
-      bench->bench_avx->compute_function_256 = compute_ice_lake;
+      bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;
     case BENCH_TYPE_PILEDRIVER: // Piledriver should not use Zen file since it is compiled with AVX2 (piledriver is AVX only)
     case BENCH_TYPE_ZEN:
-      bench->bench_avx->compute_function_256 = compute_zen;
+      bench->bench_avx->compute_function_256 = compute_256_5;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
       break;
     case BENCH_TYPE_ZEN_PLUS:
-      bench->bench_avx->compute_function_256 = compute_zen;
+      bench->bench_avx->compute_function_256 = compute_256_5;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
       break;
     case BENCH_TYPE_ZEN2:
-      bench->bench_avx->compute_function_256 = compute_zen2;
+      bench->bench_avx->compute_function_256 = compute_256_10;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_10);
       break;
     default:

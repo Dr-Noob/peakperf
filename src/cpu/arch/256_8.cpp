@@ -1,11 +1,11 @@
-#include "broadwell.hpp"
+#include "256_8.hpp"
 #define OP_PER_IT B_256_8_OP_IT
 
-TYPE farr_broadwell[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
+TYPE farr_256_8[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
 
-void compute_broadwell(TYPE *farr, TYPE mult, int index) {
-  farr = farr_broadwell[index];
-  
+void compute_256_8(TYPE *farr, TYPE mult, int index) {
+  farr = farr_256_8[index];
+
   for(long i=0; i < BENCHMARK_CPU_ITERS; i++) {
     farr[0]  = _mm256_fmadd_ps(mult, farr[0], farr[1]);
     farr[2]  = _mm256_fmadd_ps(mult, farr[2], farr[3]);

@@ -1,11 +1,11 @@
-#include "zen2.hpp"
+#include "256_10.hpp"
 #define OP_PER_IT B_256_10_OP_IT
 
-TYPE farr_zen2[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));  
+TYPE farr_256_10[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
 
-void compute_zen2(TYPE *farr, TYPE mult, int index) {
-  farr = farr_zen2[index];
-    
+void compute_256_10(TYPE *farr, TYPE mult, int index) {
+  farr = farr_256_10[index];
+
   for(long i=0; i < BENCHMARK_CPU_ITERS; i++) {
     farr[0]  = _mm256_fmadd_ps(mult, farr[0], farr[1]);
     farr[2]  = _mm256_fmadd_ps(mult, farr[2], farr[3]);

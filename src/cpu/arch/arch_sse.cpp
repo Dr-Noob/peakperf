@@ -6,9 +6,9 @@
 #include "arch.hpp"
 #include "../../global.hpp"
 
-#include "airmont.hpp"
+/*#include "airmont.hpp"
 #include "nehalem.hpp"
-#include "skylake_128.hpp"
+#include "skylake_128.hpp"*/
 
 struct benchmark_cpu_sse {
   void (*compute_function_128)(__m128 *farr_ptr, __m128, int);
@@ -24,7 +24,7 @@ bool select_benchmark_sse(struct benchmark_cpu* bench) {
   bench->bench_sse = (struct benchmark_cpu_sse*) malloc(sizeof(struct benchmark_cpu_sse));
   bench->bench_sse->compute_function_128 = NULL;
 
-  switch(bench->benchmark_type) {
+  /*switch(bench->benchmark_type) {
     case BENCH_TYPE_AIRMONT:
       bench->bench_sse->compute_function_128 = compute_airmont;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_128_6);
@@ -44,7 +44,7 @@ bool select_benchmark_sse(struct benchmark_cpu* bench) {
     default:
       printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);
       return false;
-  }
+  }*/
 
   bench->name = bench_name[bench->benchmark_type];
   return true;

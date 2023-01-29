@@ -6,9 +6,8 @@
 #include "arch.hpp"
 #include "../../global.hpp"
 
-#include "skylake_512.hpp"
-#include "cannon_lake_512.hpp"
-#include "knl.hpp"
+#include "512_8.hpp"
+#include "512_12.hpp"
 
 struct benchmark_cpu_avx512 {
   void (*compute_function_512)(__m512 *farr_ptr, __m512, int);
@@ -26,11 +25,11 @@ bool select_benchmark_avx512(struct benchmark_cpu* bench) {
 
   switch(bench->benchmark_type) {
     case BENCH_TYPE_SKYLAKE_512:
-      bench->bench_avx512->compute_function_512 = compute_skylake_512;
+      bench->bench_avx512->compute_function_512 = compute_512_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_512_8);
       break;
     case BENCH_TYPE_KNIGHTS_LANDING:
-      bench->bench_avx512->compute_function_512 = compute_knl;
+      bench->bench_avx512->compute_function_512 = compute_512_12;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_512_12);
       break;
     default:
