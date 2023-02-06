@@ -1,3 +1,4 @@
+#include <sched.h>
 #include <stdio.h>
 #include <omp.h>
 #include <string.h>
@@ -7,12 +8,14 @@
 #include "../../global.hpp"
 
 #include "256_6_nofma.hpp"
+#include "256_6.hpp"
 #include "256_5.hpp"
 #include "256_8.hpp"
 #include "256_10.hpp"
 
 struct benchmark_cpu_avx {
   void (*compute_function_256)(__m256 *farr_ptr, __m256, int);
+  void (*compute_function_256_e)(__m256 *farr_ptr, __m256, int);
 };
 
 bool select_benchmark_avx(struct benchmark_cpu* bench) {
@@ -49,6 +52,11 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
       bench->bench_avx->compute_function_256 = compute_256_5;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
       break;
+    case BENCH_TYPE_ALDER_LAKE: // Hybrid architecture
+      bench->bench_avx->compute_function_256 = compute_256_8;
+      bench->bench_avx->compute_function_256_e = compute_256_6;
+      bench->gflops = compute_gflops(16, BENCH_256_8) + compute_gflops(8, BENCH_256_6);
+      break;
     default:
       printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);
       return false;
@@ -59,18 +67,45 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
 }
 
 bool compute_cpu_avx (struct benchmark_cpu* bench, double* e_time) {
+  bool sched_failed = false;
   struct timeval t1, t2;
   gettimeofday(&t1, NULL);
 
   __m256 mult = {0};
   __m256 *farr_ptr = NULL;
 
-  #pragma omp parallel for
-  for(int t=0; t < bench->n_threads; t++)
-    bench->bench_avx->compute_function_256(farr_ptr, mult, t);
+  if(bench->benchmark_type == BENCH_TYPE_ALDER_LAKE) { // TODO check hybrid
+    #pragma omp parallel
+    {
+      int tid = omp_get_thread_num();
+      cpu_set_t currentCPU;
+      CPU_ZERO(&currentCPU);
+      CPU_SET(tid, &currentCPU);
+      if(sched_setaffinity(0, sizeof(currentCPU), &currentCPU) == -1) {
+        perror("compute_cpu_avx: sched_setaffinity");
+        #pragma omp critical
+        sched_failed = true;
+      }
+      if(tid >= 0 && tid <= 15 && !sched_failed) {
+        #pragma omp for
+        for(int t=0; t < bench->n_threads; t++)
+          bench->bench_avx->compute_function_256(farr_ptr, mult, t);
+      }
+      else if(!sched_failed) {
+        #pragma omp for
+        for(int t=0; t < bench->n_threads; t++)
+          bench->bench_avx->compute_function_256_e(farr_ptr, mult, t);
+      }
+    }
+  }
+  else {
+    #pragma omp parallel for
+    for(int t=0; t < bench->n_threads; t++)
+      bench->bench_avx->compute_function_256(farr_ptr, mult, t);
+  }
 
   gettimeofday(&t2, NULL);
   *e_time = (double)((t2.tv_sec-t1.tv_sec)*1000000 + t2.tv_usec-t1.tv_usec)/1000000;
 
-  return true;
+  return !sched_failed;
 }

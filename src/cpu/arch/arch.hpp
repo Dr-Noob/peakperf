@@ -25,6 +25,7 @@ enum {
   BENCH_128_8,
   BENCH_256_6_NOFMA,
   BENCH_256_5,
+  BENCH_256_6,
   BENCH_256_8,
   BENCH_256_10,
   BENCH_512_8,
@@ -49,6 +50,7 @@ enum bench_types {
   BENCH_TYPE_ICE_LAKE,
   BENCH_TYPE_TIGER_LAKE,
   BENCH_TYPE_ROCKET_LAKE,
+  BENCH_TYPE_ALDER_LAKE,
   BENCH_TYPE_KNIGHTS_LANDING,
   BENCH_TYPE_PILEDRIVER,
   BENCH_TYPE_ZEN,
@@ -75,6 +77,7 @@ static const char *bench_name[] = {
   /*[BENCH_TYPE_ICE_LAKE]        = */ "Ice Lake (AVX2)",
   /*[BENCH_TYPE_TIGER_LAKE]      = */ "Tiger Lake (AVX2)",
   /*[BENCH_TYPE_ROCKET_LAKE]     = */ "Rocket Lake (AVX2)",
+  /*[BENCH_TYPE_ALDER_LAKE]      = */ "Alder Lake (AVX2)",
   /*[BENCH_TYPE_KNIGHTS_LANDING] = */ "Knights Landing (AVX512)",
   /*[BENCH_TYPE_PILEDRIVER       = */ "Piledriver (AVX)",
   /*[BENCH_TYPE_ZEN]             = */ "Zen (AVX2)",
@@ -101,6 +104,7 @@ static const char *bench_types_str[] = {
   /*[BENCH_TYPE_ICE_LAKE]        = */ "ice_lake",
   /*[BENCH_TYPE_TIGER_LAKE]      = */ "tiger_lake",
   /*[BENCH_TYPE_ROCKET_LAKE]     = */ "rocket_lake",
+  /*[BENCH_TYPE_ALDER_LAKE]      = */ "alder_lake",
   /*[BENCH_TYPE_KNIGHTS_LANDING] = */ "knights_landing",
   /*[BENCH_TYPE_PILEDRIVER]      = */ "piledriver",
   /*[BENCH_TYPE_ZEN]             = */ "zen",
@@ -140,6 +144,10 @@ static const char *bench_types_str[] = {
 #define B_256_5_FMA_AV       2
 #define B_256_5_OP_IT        5
 #define B_256_5_BYTES        32
+//      AVX_256_6            //
+#define B_256_6_FMA_AV       2
+#define B_256_6_OP_IT        6
+#define B_256_6_BYTES        32
 //      AVX_256_8            //
 #define B_256_8_FMA_AV       2
 #define B_256_8_OP_IT        8
@@ -161,7 +169,7 @@ static const char *bench_types_str[] = {
   #define BYTES_IN_VECT 64
   #define TYPE __m512
   #define SIZE OP_PER_IT*2
-#elif defined(AVX_256_10) || defined(AVX_256_8) || defined(AVX_256_5) || defined(AVX_256_6_NOFMA)
+#elif defined(AVX_256_10) || defined(AVX_256_8) || defined(AVX_256_5) || defined(AVX_256_6) || defined(AVX_256_6_NOFMA)
   #define BYTES_IN_VECT 32
   #define TYPE __m256
   #define SIZE OP_PER_IT*2

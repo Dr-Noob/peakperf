@@ -61,6 +61,11 @@ double compute_gflops(int n_threads, char bench) {
       op_per_it = B_256_5_OP_IT;
       bytes_in_vect = B_256_5_BYTES;
       break;
+    case BENCH_256_6:
+      fma_available = B_256_6_FMA_AV;
+      op_per_it = B_256_6_OP_IT;
+      bytes_in_vect = B_256_6_BYTES;
+      break;
     case BENCH_256_8:
       fma_available = B_256_8_FMA_AV;
       op_per_it = B_256_8_OP_IT;
@@ -208,6 +213,9 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         break;
       case UARCH_ROCKET_LAKE:
         bench->benchmark_type = BENCH_TYPE_ROCKET_LAKE;
+        break;
+      case UARCH_ALDER_LAKE:
+        bench->benchmark_type = BENCH_TYPE_ALDER_LAKE;
         break;
       case UARCH_KNIGHTS_LANDING:
         bench->benchmark_type = BENCH_TYPE_KNIGHTS_LANDING;
