@@ -140,6 +140,8 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
   }
 
   bench->n_threads = n_threads;
+  bench->hybrid_flag = is_hybrid_cpu(cpu);
+  bench->h_topo = get_hybrid_topology(cpu);
 
   if(bench->n_threads == INVALID_CFG) {
     bench->n_threads = omp_get_max_threads();

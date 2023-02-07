@@ -52,10 +52,17 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
       bench->bench_avx->compute_function_256 = compute_256_5;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
       break;
-    case BENCH_TYPE_ALDER_LAKE: // Hybrid architecture
+    case BENCH_TYPE_ALDER_LAKE: // Might be an hybrid architecture
       bench->bench_avx->compute_function_256 = compute_256_8;
-      bench->bench_avx->compute_function_256_e = compute_256_6;
-      bench->gflops = compute_gflops(16, BENCH_256_8) + compute_gflops(8, BENCH_256_6);
+      if(bench->hybrid_flag) {
+        // We have performance and efficiency cores
+        bench->bench_avx->compute_function_256_e = compute_256_6;
+        bench->gflops = compute_gflops(bench->h_topo->p_cores, BENCH_256_8) + compute_gflops(bench->h_topo->e_cores, BENCH_256_6);
+      }
+      else {
+        // All cores are performance
+        bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
+      }
       break;
     default:
       printErr("No valid benchmark! (bench: %d)", bench->benchmark_type);
@@ -74,7 +81,9 @@ bool compute_cpu_avx (struct benchmark_cpu* bench, double* e_time) {
   __m256 mult = {0};
   __m256 *farr_ptr = NULL;
 
-  if(bench->benchmark_type == BENCH_TYPE_ALDER_LAKE) { // TODO check hybrid
+  if(bench->hybrid_flag) {
+    // We have a hybrid CPU with performance
+    // and efficiency cores
     #pragma omp parallel
     {
       int tid = omp_get_thread_num();
@@ -86,7 +95,7 @@ bool compute_cpu_avx (struct benchmark_cpu* bench, double* e_time) {
         #pragma omp critical
         sched_failed = true;
       }
-      if(tid >= 0 && tid <= 15 && !sched_failed) {
+      if(is_performance_core(bench->h_topo, tid) && !sched_failed) {
         #pragma omp for
         for(int t=0; t < bench->n_threads; t++)
           bench->bench_avx->compute_function_256(farr_ptr, mult, t);

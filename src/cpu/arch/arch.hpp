@@ -10,10 +10,12 @@
 #include "arch_avx512.hpp"
 
 struct benchmark_cpu {
+  bool hybrid_flag;
   int n_threads;
   double gflops;
   const char* name;
   bench_type benchmark_type;
+  struct hybrid_topology* h_topo;
 
   struct benchmark_cpu_sse* bench_sse;
   struct benchmark_cpu_avx* bench_avx;

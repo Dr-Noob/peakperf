@@ -23,6 +23,12 @@ enum {
   CPU_VENDOR_AMD,
 };
 
+enum {
+  CORE_TYPE_EFFICIENCY,
+  CORE_TYPE_PERFORMANCE,
+  CORE_TYPE_UNKNOWN
+};
+
 struct cpu {
   VENDOR cpu_vendor;  
   char* cpu_name; 
@@ -31,7 +37,37 @@ struct cpu {
   bool avx2;
   bool fma;
   bool avx512;
+  bool hybrid_flag;
+  struct hybrid_topology* h_topo;
 };
+
+int32_t get_core_type(void) {
+  uint32_t eax = 0x0000001A;
+  uint32_t ebx = 0;
+  uint32_t ecx = 0;
+  uint32_t edx = 0;
+
+  eax = 0x0000001A;
+  cpuid(&eax, &ebx, &ecx, &edx);
+
+  int32_t type = eax >> 24 & 0xFF;
+  if(type == 0x20) return CORE_TYPE_EFFICIENCY;
+  else if(type == 0x40) return CORE_TYPE_PERFORMANCE;
+  else {
+    printErr("Found invalid core type: 0x%.8X\n", type);
+    return CORE_TYPE_UNKNOWN;
+  }
+}
+
+struct hybrid_topology* get_hybrid_topology_internal(struct cpu* cpu) {
+  struct hybrid_topology* h_topo = (struct hybrid_topology*) malloc(sizeof(struct hybrid_topology));
+  h_topo->core_mask = (bool *) malloc(sizeof(bool) * 24);
+  h_topo->e_cores = 8;
+  h_topo->p_cores = 16;
+  for(int i=0; i < 16; i++) h_topo->core_mask[i] = true;
+  for(int i=16; i < 24; i++) h_topo->core_mask[i] = false;
+  return h_topo;
+}
 
 void fill_features_cpuid(struct cpu* cpu) {
   uint32_t eax = 0;
@@ -70,14 +106,26 @@ void fill_features_cpuid(struct cpu* cpu) {
                          ((ebx & ((int)1 << 21)) != 0));
   }
   else {
-    cpu->avx2 = false; 
-    cpu->avx512 = false;    
-  }  
+    cpu->avx2 = false;
+    cpu->avx512 = false;
+  }
+
+  cpu->h_topo = NULL;
+  cpu->hybrid_flag = false;
+  if(cpu->cpu_vendor == CPU_VENDOR_INTEL && maxLevels >= 0x00000007) {
+    eax = 0x00000007;
+    ecx = 0x00000000;
+    cpuid(&eax, &ebx, &ecx, &edx);
+    cpu->hybrid_flag = (edx >> 15) & 0x1;
+    if(cpu->hybrid_flag) {
+      cpu->h_topo = get_hybrid_topology_internal(cpu);
+    }
+  }
 }
 
 void get_name_cpuid(char* name, uint32_t reg1, uint32_t reg2, uint32_t reg3) {
   uint32_t c = 0;
-  
+
   name[c++] = reg1       & MASK;
   name[c++] = (reg1>>8)  & MASK;
   name[c++] = (reg1>>16) & MASK;
@@ -214,6 +262,10 @@ bool is_cpu_amd(struct cpu* cpu) {
   return cpu->cpu_vendor == CPU_VENDOR_AMD;  
 }
 
+bool is_hybrid_cpu(struct cpu* cpu) {
+  return cpu->hybrid_flag;
+}
+
 bool cpu_has_avx(struct cpu* cpu) {
   return cpu->avx;    
 }
@@ -251,4 +303,12 @@ char* get_str_cpu_name(struct cpu* cpu) {
 
 struct uarch* get_uarch_struct(struct cpu* cpu) {
   return cpu->uarch;    
+}
+
+struct hybrid_topology* get_hybrid_topology(struct cpu* cpu) {
+  return cpu->h_topo;
+}
+
+bool is_performance_core(struct hybrid_topology* h_topo, int tid) {
+  return h_topo->core_mask[tid];
 }
