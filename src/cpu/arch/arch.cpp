@@ -219,6 +219,9 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
       case UARCH_ALDER_LAKE:
         bench->benchmark_type = BENCH_TYPE_ALDER_LAKE;
         break;
+      case UARCH_RAPTOR_LAKE:
+        bench->benchmark_type = BENCH_TYPE_RAPTOR_LAKE;
+        break;
       case UARCH_KNIGHTS_LANDING:
         bench->benchmark_type = BENCH_TYPE_KNIGHTS_LANDING;
         break;
