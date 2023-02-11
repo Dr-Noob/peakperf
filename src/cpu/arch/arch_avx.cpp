@@ -55,7 +55,7 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
     case BENCH_TYPE_ALDER_LAKE: // Might be an hybrid architecture
     case BENCH_TYPE_RAPTOR_LAKE:
       bench->bench_avx->compute_function_256 = compute_256_8;
-      if(bench->hybrid_flag) {
+      if(bench->hybrid_flag && !bench->pcores_only) {
         // We have performance and efficiency cores
         bench->bench_avx->compute_function_256_e = compute_256_6;
         bench->gflops = compute_gflops(bench->h_topo->p_cores, BENCH_256_8) + compute_gflops(bench->h_topo->e_cores, BENCH_256_6);

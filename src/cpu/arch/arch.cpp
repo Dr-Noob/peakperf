@@ -124,7 +124,7 @@ bool select_benchmark(struct benchmark_cpu* bench) {
     return select_benchmark_avx(bench);
 }
 
-struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *bench_type_str) {
+struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *bench_type_str, bool pcores_only) {
   struct benchmark_cpu* bench = (struct benchmark_cpu*) malloc(sizeof(struct benchmark_cpu));
   bench_type benchmark_type;
 
@@ -139,9 +139,15 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
    }
   }
 
-  bench->n_threads = n_threads;
+  bench->pcores_only = pcores_only;
   bench->hybrid_flag = is_hybrid_cpu(cpu);
   bench->h_topo = get_hybrid_topology(cpu);
+  if(bench->hybrid_flag && bench->pcores_only) {
+    bench->n_threads = bench->h_topo->p_cores;
+  }
+  else {
+    bench->n_threads = n_threads;
+  }
 
   if(bench->n_threads == INVALID_CFG) {
     bench->n_threads = omp_get_max_threads();

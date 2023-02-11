@@ -27,6 +27,7 @@ struct args_struct {
   bool list_benchmarks_flag;
   bool list_gpus_flag;
   bool show_hybrid_topo;
+  bool pcores_only;
   int n_trials;
   int n_warmup_trials;
   char* benchmark_name;
@@ -100,12 +101,12 @@ char * build_short_options() {
   char* str = (char *) malloc(sizeof(char) * (len*2 + 1));
   memset(str, 0, sizeof(char) * (len*2 + 1));
 
-  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c%c%c:%c%c",
+  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c%c%c%c:%c%c",
   c[ARG_LISTBENCHS], c[ARG_BENCHMARK], c[ARG_DEVICE],
   c[ARG_TRIALS], c[ARG_WARMUP], c[ARG_CPU_THREADS],
   c[ARG_GPU_BLOCKS], c[ARG_GPU_TPB], c[ARG_GPU_LIST],
-  c[ARG_HYBRID_TOPO], c[ARG_GPU_IDX], c[ARG_HELP],
-  c[ARG_VERSION]);
+  c[ARG_HYBRID_TOPO], c[ARG_PCORES_ONLY], c[ARG_GPU_IDX],
+  c[ARG_HELP], c[ARG_VERSION]);
 
   return str;
 }
@@ -125,6 +126,7 @@ bool parseArgs(int argc, char* argv[]) {
   args.list_benchmarks_flag = false;
   args.list_gpus_flag = false;
   args.show_hybrid_topo = false;
+  args.pcores_only = false;
   args.n_trials = DEFAULT_N_TRIALS;
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
   args.device = DEVICE_TYPE_CPU;
@@ -149,6 +151,7 @@ bool parseArgs(int argc, char* argv[]) {
     {args_str[ARG_GPU_TPB],     required_argument, 0, c[ARG_GPU_TPB]     },
     {args_str[ARG_GPU_LIST],    no_argument,       0, c[ARG_GPU_LIST]    },
     {args_str[ARG_HYBRID_TOPO], no_argument,       0, c[ARG_HYBRID_TOPO] },
+    {args_str[ARG_PCORES_ONLY], no_argument,       0, c[ARG_PCORES_ONLY] },
     {args_str[ARG_GPU_IDX],     required_argument, 0, c[ARG_GPU_IDX]     },
     {args_str[ARG_HELP],        no_argument,       0, c[ARG_HELP]        },
     {args_str[ARG_VERSION],     no_argument,       0, c[ARG_VERSION]     },
@@ -186,6 +189,10 @@ bool parseArgs(int argc, char* argv[]) {
 
       case c[ARG_HYBRID_TOPO]:
         args.show_hybrid_topo  = true;
+        break;
+
+      case c[ARG_PCORES_ONLY]:
+        args.pcores_only  = true;
         break;
 
       case c[ARG_TRIALS]:
@@ -312,6 +319,10 @@ bool parseArgs(int argc, char* argv[]) {
       printErr("Option %s is only available in CPU mode", args_str[ARG_HYBRID_TOPO]);
       return false;
     }
+    if(args.pcores_only) {
+      printErr("Option %s is only available in CPU mode", args_str[ARG_PCORES_ONLY]);
+      return false;
+    }
     if(n_threads_set) {
       printErr("Option %s is only available in CPU mode", args_str[ARG_CPU_THREADS]);
       return false;
@@ -348,6 +359,10 @@ bool list_benchmarks() {
 
 bool show_hybrid_topo() {
   return args.show_hybrid_topo;
+}
+
+bool use_pcores_only() {
+  return args.pcores_only;
 }
 
 bool list_gpus() {

@@ -11,6 +11,7 @@
 
 struct benchmark_cpu {
   bool hybrid_flag;
+  bool pcores_only;
   int n_threads;
   double gflops;
   const char* name;
@@ -186,7 +187,7 @@ static const char *bench_types_str[] = {
 
 struct benchmark_cpu;
 
-struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char* bench_type_str);
+struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char* bench_type_str, bool pcores_only);
 bool compute_cpu(struct benchmark_cpu* bench, double* e_time);
 double get_gflops_cpu(struct benchmark_cpu* bench);
 const char* get_benchmark_name_cpu(struct benchmark_cpu* bench);
