@@ -3,9 +3,12 @@
  * https://github.com/Dr-Noob/cpufetch
  */
 
+#include <errno.h>
+#include <sched.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 #include "../../global.hpp"
 #include "cpuid.hpp"
@@ -59,13 +62,57 @@ int32_t get_core_type(void) {
   }
 }
 
+bool bind_to_cpu(int cpu_id) {
+  cpu_set_t currentCPU;
+  CPU_ZERO(&currentCPU);
+  CPU_SET(cpu_id, &currentCPU);
+  if (sched_setaffinity (0, sizeof(currentCPU), &currentCPU) == -1) {
+    return false;
+  }
+  return true;
+}
+
 struct hybrid_topology* get_hybrid_topology_internal(struct cpu* cpu) {
+  int ncores;
+  if((ncores = sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
+    printErr("sysconf(_SC_NPROCESSORS_ONLN): %s", strerror(errno));
+    return NULL;
+  }
+
   struct hybrid_topology* h_topo = (struct hybrid_topology*) malloc(sizeof(struct hybrid_topology));
-  h_topo->core_mask = (bool *) malloc(sizeof(bool) * 24);
-  h_topo->e_cores = 8;
-  h_topo->p_cores = 16;
-  for(int i=0; i < 16; i++) h_topo->core_mask[i] = true;
-  for(int i=16; i < 24; i++) h_topo->core_mask[i] = false;
+  h_topo->e_cores = 0;
+  h_topo->p_cores = 0;
+  h_topo->core_mask = (bool *) malloc(sizeof(bool) * ncores);
+
+  int i=0;
+  bool invalid_core = false;
+
+  while(!invalid_core) {
+    if(bind_to_cpu(i)) {
+      int32_t core_type = get_core_type();
+      if(core_type == CORE_TYPE_PERFORMANCE) {
+        h_topo->p_cores++;
+        h_topo->core_mask[i] = true;
+      }
+      else if(core_type == CORE_TYPE_EFFICIENCY) {
+        h_topo->e_cores++;
+        h_topo->core_mask[i] = false;
+      }
+      else {
+        printErr("Found invalid core type");
+        return NULL;
+      }
+      i++;
+    }
+    else {
+      invalid_core = true;
+    }
+  }
+
+  if(i == 0) {
+    printErr("Unable to bind to core");
+    return NULL;
+  }
   return h_topo;
 }
 
