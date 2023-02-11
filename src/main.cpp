@@ -43,6 +43,7 @@ void printHelp(char *argv[]) {
   printf("  -%c, --%s %*s List the avaiable benchmark types\n", c[ARG_LISTBENCHS], t[ARG_LISTBENCHS], (int) (max_len-strlen(t[ARG_LISTBENCHS])), "");
   printf("  -%c, --%s %*s Select a specific benchmark to run\n", c[ARG_BENCHMARK], t[ARG_BENCHMARK], (int) (max_len-strlen(t[ARG_BENCHMARK])), "");
   printf("  -%c, --%s %*s Set the number of threads to use (default: omp_get_max_threads())\n", c[ARG_CPU_THREADS], t[ARG_CPU_THREADS], (int) (max_len-strlen(t[ARG_CPU_THREADS])), "");
+  printf("  -%c, --%s %*s Show topology mask (hybrid architectures only, like Alder Lake)\n", c[ARG_HYBRID_TOPO], t[ARG_HYBRID_TOPO], (int) (max_len-strlen(t[ARG_HYBRID_TOPO])), "");
   printf("\nGPU device only options:\n");
   printf("  -%c, --%s %*s Set the number of CUDA blocks to use (default: number of SM in the running GPU)\n", c[ARG_GPU_BLOCKS], t[ARG_GPU_BLOCKS], (int) (max_len-strlen(t[ARG_GPU_BLOCKS])), "");
   printf("  -%c, --%s %*s Set the number of threads per block to use (default: optimized for the GPU)\n", c[ARG_GPU_TPB], t[ARG_GPU_TPB], (int) (max_len-strlen(t[ARG_GPU_TPB])), "");
@@ -54,12 +55,14 @@ void print_version() {
   printf("peakperf v%s\n", VERSION);
 }
 
-void print_header(struct benchmark* bench, struct hardware* hw, double gflops) {
+void print_header(struct benchmark* bench, struct hardware* hw, double gflops, bool show_hybrid_topo) {
   struct config_str * cfg_str = get_cfg_str(bench);
   const char* device_type_str = get_device_type_str(bench);
   char* device_name = get_device_name_str(bench, hw);
   const char* device_uarch = get_device_uarch_str(bench, hw);
   const char* bench_name = get_benchmark_name(bench);
+  const char* hybrid_topo = NULL;
+  if(show_hybrid_topo) hybrid_topo = get_hybrid_topology_string(bench);
   long benchmark_iterations = get_benchmark_iterations(bench);
   int line_length = 54;
 
@@ -76,6 +79,9 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops) {
 
   printf("%*s %s: %s\n",          (int) (max_len-strlen(device_type_str)),        "", device_type_str, device_name);
   printf("%*s Microarch: %s\n",   (int) (max_len-strlen("Microarch")),            "", device_uarch);
+  if(hybrid_topo != NULL) {
+    printf("%*s Topology: %s\n",  (int) (max_len-strlen("Topology")),            "", hybrid_topo);
+  }
   if(bench_name != NULL) {
     printf("%*s Benchmark: %s\n",   (int) (max_len-strlen("Benchmark")),            "", bench_name);
   }
@@ -141,7 +147,7 @@ int main(int argc, char* argv[]) {
   double* gflops_list = (double*) malloc(sizeof(double) * n_trials);
 
   int line_length = 54;
-  print_header(bench, hw, gflops);
+  print_header(bench, hw, gflops, show_hybrid_topo());
 
   for (int trial = 0; trial < n_trials+n_warmup_trials; trial++) {
     if(!compute(bench, &e_time)) return EXIT_FAILURE;

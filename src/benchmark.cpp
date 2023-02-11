@@ -138,6 +138,15 @@ const char* get_benchmark_name(struct benchmark* bench) {
   return NULL;
 }
 
+const char* get_hybrid_topology_string(struct benchmark* bench) {
+  if(bench->device == DEVICE_TYPE_CPU) {
+    #ifdef DEVICE_CPU_ENABLED
+      return get_hybrid_topology_string_cpu(bench->cpu_bench);
+    #endif
+  }
+  return NULL;
+}
+
 void exit_benchmark(struct benchmark* bench) {
   if(bench->device == DEVICE_TYPE_GPU) {
     #ifdef DEVICE_GPU_ENABLED

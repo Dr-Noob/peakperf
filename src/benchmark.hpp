@@ -41,6 +41,7 @@ void print_bench_cfg(struct config* cfg);
 bool compute(struct benchmark* bench, double* e_time);
 double get_gflops(struct benchmark* bench);
 const char* get_benchmark_name(struct benchmark* bench);
+const char* get_hybrid_topology_string(struct benchmark* bench);
 void exit_benchmark(struct benchmark* bench);
 char* get_device_name_str(struct benchmark* bench, struct hardware* hw);
 const char* get_device_uarch_str(struct benchmark* bench, struct hardware* hw);

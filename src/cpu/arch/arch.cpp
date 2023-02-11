@@ -269,6 +269,26 @@ const char* get_benchmark_name_cpu(struct benchmark_cpu* bench) {
   return bench->name;
 }
 
+const char* get_hybrid_topology_string_cpu(struct benchmark_cpu* bench) {
+  if(bench->hybrid_flag) {
+    /* Fancy
+    int str_len = 3 + strlen("(performance)") + 6 + strlen("(efficiency)") + 1;
+    char* h_topo_str = (char *) malloc(sizeof(char) * str_len);
+    memset(h_topo_str, 0, str_len);
+    sprintf(h_topo_str, "%d (performance) + %d (efficiency)", bench->h_topo->p_cores, bench->h_topo->e_cores);
+    return h_topo_str;
+    */
+    int ncores = bench->h_topo->p_cores + bench->h_topo->e_cores;
+    char* h_topo_str = (char *) malloc(sizeof(char) * (ncores + 1));
+    memset(h_topo_str, 0, (ncores + 1));
+    for(int i=0; i < ncores; i++) {
+      h_topo_str[i] = bench->h_topo->core_mask[i] ? '1' : '0';
+    }
+    return h_topo_str;
+  }
+  return NULL;
+}
+
 int get_n_threads(struct benchmark_cpu* bench) {
   return bench->n_threads;
 }

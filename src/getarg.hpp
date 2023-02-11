@@ -15,6 +15,7 @@ enum {
   ARG_GPU_BLOCKS,
   ARG_GPU_TPB,
   ARG_GPU_LIST,
+  ARG_HYBRID_TOPO,
   ARG_GPU_IDX,
   ARG_HELP,
   ARG_VERSION
@@ -30,6 +31,7 @@ static constexpr char args_chr[] = {
   /*[ARG_GPU_BLOCKS] = */  'B',
   /*[ARG_GPU_TPB] = */     'T',
   /*[ARG_GPU_LIST] = */    'L',
+  /*[ARG_HYBRID_TOPO = */  'H',
   /*[ARG_GPU_IDX] = */     'g',
   /*[ARG_HELP] = */        'h',
   /*[ARG_VERSION] = */     'v'
@@ -45,6 +47,7 @@ static const char *args_str[] = {
   /*[ARG_GPU_BLOCKS] = */  "blocks",
   /*[ARG_GPU_TPB] = */     "threads-per-block",
   /*[ARG_GPU_LIST] = */    "list-gpus",
+  /*[ARG_HYBRID_TOPO = */  "show-hybrid-topology",
   /*[ARG_GPU_IDX] = */     "gpu-id",
   /*[ARG_HELP] = */        "help",
   /*[ARG_VERSION] = */     "version"
@@ -77,6 +80,7 @@ bool showVersion();
 bool showHelp();
 bool list_benchmarks();
 bool list_gpus();
+bool show_hybrid_topo();
 int get_n_trials();
 int get_warmup_trials();
 char* get_benchmark_str_args();
