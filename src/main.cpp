@@ -8,7 +8,7 @@
 #include "benchmark.hpp"
 #include "global.hpp"
 
-static const char* VERSION = "1.16";
+static const char* VERSION = "1.17";
 
 void printHelp(char *argv[]) {
   const char **t = args_str;
