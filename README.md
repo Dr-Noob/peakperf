@@ -250,6 +250,7 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | Ice Lake        | i5-1035G1          | `2.990 GHz`  |  `382.72`    |  `382.22 +- 0.18`  | `0.13%` |
 | Tiger Lake      | -                  | -            |  -           |  -                 | -       |
 | Rocket Lake     | i7-11700           | `4.400 GHz`  |  `1126.4`    |  `1121.69 +- 0.60` | `0.41%` |
+| Alder Lake      | i9-12900K          | `4.900 GHz`  |  `1727.8`    |  `1709.28 +- 0.22` | `1.07%` |
 
 ## AMD
 | uarch | CPU              | AVX Clock    | PP (Formula) | PP (Experimental)  | Loss    |
@@ -294,6 +295,7 @@ The following tables act as a summary of all supported microarchitectures with t
 | Ice Lake        |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [12] |
 | Tiger Lake      |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:| [12] |
 | Rocket Lake     |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [?] |
+| Alder Lake      |:heavy_check_mark:| :heavy_check_mark: |     8 | 2 (FMA AVX2)    | 4 (FMA)         |:heavy_check_mark:|  [?] |
 | Knights Landing |:heavy_check_mark:| :heavy_check_mark: |    12 | 2 (FMA AVX512)  | 6 (FMA)         |:heavy_check_mark:|  [6] |
 | Piledriver      |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX)     | 5 (FMA)         |:x:               |  [?] |
 | Zen             |:heavy_check_mark:| :x:                |     5 | 1 (FMA AVX2)    | 5 (FMA)         |:x:               |  [7] |
