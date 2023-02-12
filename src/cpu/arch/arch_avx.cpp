@@ -58,7 +58,7 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
       if(bench->hybrid_flag && !bench->pcores_only) {
         // We have performance and efficiency cores
         bench->bench_avx->compute_function_256_e = compute_256_6;
-        bench->gflops = compute_gflops(bench->h_topo->p_cores, BENCH_256_8) + compute_gflops(bench->h_topo->e_cores, BENCH_256_6);
+        bench->gflops = compute_gflops(min(bench->n_threads, bench->h_topo->p_cores), BENCH_256_8) + compute_gflops(max(0, bench->n_threads - bench->h_topo->p_cores), BENCH_256_6);
       }
       else {
         // All cores are performance
