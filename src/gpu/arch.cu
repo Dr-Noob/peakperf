@@ -1,12 +1,11 @@
 #include <cuda_runtime.h>
-#include "helper_cuda.h"
-
 #include <stdio.h>
 #include <string.h>
 
 #include "../global.hpp"
 #include "../getarg.hpp"
 
+#include "peakperf_helper_cuda.hpp"
 #include "kernel.hpp"
 
 enum {

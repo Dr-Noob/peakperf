@@ -79,20 +79,6 @@ if(ENABLE_GPU_DEVICE)
     set(CMAKE_CUDA_FLAGS "-Wno-deprecated-gpu-targets")
     add_library(gpu_device STATIC ${GPU_DIR}/arch.cu ${GPU_DIR}/kernel.cu)
 
-    # https://docs.nvidia.com/cuda/cuda-samples/index.html#new-features-in-cuda-toolkit-11-6
-    # Not sure about this. Is there a better fix for this issue?
-    if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.6")
-      if(NOT EXISTS ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/Common)
-        message(FATAL_ERROR
-                " CUDA samples not found under ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/Common.\n"
-                " Please download CUDA samples manually from https://github.com/NVIDIA/cuda-samples\n"
-                " and make sure that the Common directory can be found under ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/Common.")
-      endif()
-      target_include_directories(gpu_device PUBLIC ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/Common)
-    else()
-      target_include_directories(gpu_device PUBLIC ${CMAKE_CUDA_COMPILER_TOOLKIT_ROOT}/samples/common/inc)
-    endif()
-
     target_link_libraries(peakperf gpu_device)
 endif()
 
