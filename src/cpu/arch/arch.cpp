@@ -114,6 +114,7 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen+            -> zen
  * - Zen 2           -> zen2
  * - Zen 3           -> zen3
+ * - Zen 4           -> zen4
  */
 bool select_benchmark(struct benchmark_cpu* bench) {
   if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT || bench->benchmark_type == BENCH_TYPE_WHISKEY_LAKE_128)
@@ -244,7 +245,11 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
         bench->benchmark_type = BENCH_TYPE_ZEN2;
         break;
       case UARCH_ZEN3:
+      case UARCH_ZEN3_PLUS:
         bench->benchmark_type = BENCH_TYPE_ZEN3;
+        break;
+      case UARCH_ZEN4:
+        bench->benchmark_type = BENCH_TYPE_ZEN4;
         break;
       default:
         printErr("Found invalid uarch: '%s'", uarch_struct->uarch_str);

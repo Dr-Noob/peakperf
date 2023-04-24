@@ -43,6 +43,7 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
     case BENCH_TYPE_TIGER_LAKE:
     case BENCH_TYPE_ROCKET_LAKE:
     case BENCH_TYPE_ZEN3:
+    case BENCH_TYPE_ZEN4:
       bench->bench_avx->compute_function_256 = compute_256_8;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_8);
       break;

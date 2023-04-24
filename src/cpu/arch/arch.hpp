@@ -60,7 +60,8 @@ enum bench_types {
   BENCH_TYPE_ZEN,
   BENCH_TYPE_ZEN_PLUS,
   BENCH_TYPE_ZEN2,
-  BENCH_TYPE_ZEN3
+  BENCH_TYPE_ZEN3,
+  BENCH_TYPE_ZEN4
 };
 
 static const char *bench_name[] = {
@@ -89,6 +90,7 @@ static const char *bench_name[] = {
   /*[BENCH_TYPE_ZEN_PLUS]        = */ "Zen+ (AVX2)",
   /*[BENCH_TYPE_ZEN2]            = */ "Zen 2 (AVX2)",
   /*[BENCH_TYPE_ZEN3]            = */ "Zen 3 (AVX2)",
+  /*[BENCH_TYPE_ZEN4]            = */ "Zen 4 (AVX2)"
 };
 
 static const char *bench_types_str[] = {
@@ -117,6 +119,7 @@ static const char *bench_types_str[] = {
   /*[BENCH_TYPE_ZEN_PLUS]        = */ "zen_plus",
   /*[BENCH_TYPE_ZEN2]            = */ "zen2",
   /*[BENCH_TYPE_ZEN3]            = */ "zen3",
+  /*[BENCH_TYPE_ZEN3]            = */ "zen4"
 };
 
 #define BENCHMARK_CPU_ITERS 1000000000
