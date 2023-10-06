@@ -2,14 +2,21 @@
 
 __global__
 void compute_kernel(float *vec_a, float *vec_b, float *vec_c, int n) {
-  float a = vec_a[0];
-  float b = vec_b[0];
-  float c = 0.0;
+  int cid = threadIdx.x + blockIdx.x * blockDim.x;
+  int tid = threadIdx.x;
+  __shared__ float myblockA[256];
+  __shared__ float myblockB[256];
+  float c = vec_c[cid];
+
+  myblockA[tid] = vec_a[tid];
+  myblockB[tid] = vec_b[tid];
+
+  __syncthreads();
 
   #pragma unroll 2000
   for(long i=0; i < BENCHMARK_GPU_ITERS; i++) {
-    c = (c * a) + b;
+    c = (c * myblockA[tid]) + myblockB[tid];
   }
 
-  vec_c[0] = c;
+  vec_c[cid] = c;
 }
