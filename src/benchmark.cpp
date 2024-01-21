@@ -81,7 +81,7 @@ struct hardware* get_hardware_info(struct benchmark* bench, struct config* cfg) 
 bool init_benchmark(struct benchmark* bench, struct hardware* hw, struct config* cfg, char* bench_type_str) {
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
-      bench->cpu_bench = init_benchmark_cpu(hw->cpu, cfg->n_threads, bench_type_str, use_pcores_only());
+      bench->cpu_bench = init_benchmark_cpu(hw->cpu, cfg->n_threads, cfg->affinity, bench_type_str, use_pcores_only());
 
       if(bench->cpu_bench == NULL)
         return false;
@@ -142,6 +142,15 @@ const char* get_hybrid_topology_string(struct benchmark* bench) {
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
       return get_hybrid_topology_string_cpu(bench->cpu_bench);
+    #endif
+  }
+  return NULL;
+}
+
+const char* get_affinity_string(struct benchmark* bench) {
+  if(bench->device == DEVICE_TYPE_CPU) {
+    #ifdef DEVICE_CPU_ENABLED
+      return get_affinity_string_cpu(bench->cpu_bench);
     #endif
   }
   return NULL;

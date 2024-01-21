@@ -31,6 +31,7 @@ struct args_struct {
   int n_trials;
   int n_warmup_trials;
   char* benchmark_name;
+  struct affinity_list* affinity;
   device_type device;
 
   int n_threads;
@@ -51,6 +52,33 @@ device_type parse_device_type(char* str) {
     return DEVICE_TYPE_GPU;
   }
   return DEVICE_TYPE_INVALID;
+}
+
+struct affinity_list* parse_affinity(char *str) {
+  if (str == NULL)
+    return NULL;
+
+  int n = 1;
+  const char* tmp = str;
+  while (*tmp != '\0') {
+    if (*tmp == ',') {
+      n++;
+    }
+    tmp++;
+  }
+
+  struct affinity_list* aff = (struct affinity_list*) malloc(sizeof(struct affinity_list));
+  aff->n = n;
+  aff->list = (int*) malloc(aff->n * sizeof(int));
+
+  char* token = strtok(str, " ,");
+  int index = 0;
+  while (token != NULL) {
+    aff->list[index++] = atoi(token);
+    token = strtok(NULL, " ,");
+  }
+
+  return aff;
 }
 
 int getarg_int(char* str) {
@@ -101,9 +129,10 @@ char * build_short_options() {
   char* str = (char *) malloc(sizeof(char) * (len*2 + 1));
   memset(str, 0, sizeof(char) * (len*2 + 1));
 
-  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c%c%c%c:%c%c",
+  sprintf(str, "%c%c:%c:%c:%c:%c:%c:%c:%c:%c%c%c%c:%c%c",
   c[ARG_LISTBENCHS], c[ARG_BENCHMARK], c[ARG_DEVICE],
   c[ARG_TRIALS], c[ARG_WARMUP], c[ARG_CPU_THREADS],
+  c[ARG_CPU_AFFINITY],
   c[ARG_GPU_BLOCKS], c[ARG_GPU_TPB], c[ARG_GPU_LIST],
   c[ARG_HYBRID_TOPO], c[ARG_PCORES_ONLY], c[ARG_GPU_IDX],
   c[ARG_HELP], c[ARG_VERSION]);
@@ -117,6 +146,7 @@ bool parseArgs(int argc, char* argv[]) {
   opterr = 0;
 
   bool n_threads_set = false;
+  bool affinity_set = false;
   bool n_blocks_set = false;
   bool n_threads_per_block_set = false;
   bool gpu_idx_set = false;
@@ -131,6 +161,7 @@ bool parseArgs(int argc, char* argv[]) {
   args.n_warmup_trials = DEFAULT_WARMUP_TRIALS;
   args.device = DEVICE_TYPE_CPU;
   args.benchmark_name = NULL;
+  args.affinity = NULL;
 
   args.n_threads = INVALID_CFG;
   args.tpb = INVALID_CFG;
@@ -141,20 +172,21 @@ bool parseArgs(int argc, char* argv[]) {
   constexpr char *c = (char *) args_chr;
 
   static struct option long_options[] = {
-    {args_str[ARG_LISTBENCHS],  no_argument,       0, c[ARG_LISTBENCHS]  },
-    {args_str[ARG_BENCHMARK],   required_argument, 0, c[ARG_BENCHMARK]   },
-    {args_str[ARG_DEVICE],      required_argument, 0, c[ARG_DEVICE]      },
-    {args_str[ARG_TRIALS],      required_argument, 0, c[ARG_TRIALS]      },
-    {args_str[ARG_WARMUP],      required_argument, 0, c[ARG_WARMUP]      },
-    {args_str[ARG_CPU_THREADS], required_argument, 0, c[ARG_CPU_THREADS] },
-    {args_str[ARG_GPU_BLOCKS],  required_argument, 0, c[ARG_GPU_BLOCKS]  },
-    {args_str[ARG_GPU_TPB],     required_argument, 0, c[ARG_GPU_TPB]     },
-    {args_str[ARG_GPU_LIST],    no_argument,       0, c[ARG_GPU_LIST]    },
-    {args_str[ARG_HYBRID_TOPO], no_argument,       0, c[ARG_HYBRID_TOPO] },
-    {args_str[ARG_PCORES_ONLY], no_argument,       0, c[ARG_PCORES_ONLY] },
-    {args_str[ARG_GPU_IDX],     required_argument, 0, c[ARG_GPU_IDX]     },
-    {args_str[ARG_HELP],        no_argument,       0, c[ARG_HELP]        },
-    {args_str[ARG_VERSION],     no_argument,       0, c[ARG_VERSION]     },
+    {args_str[ARG_LISTBENCHS],   no_argument,       0, c[ARG_LISTBENCHS]   },
+    {args_str[ARG_BENCHMARK],    required_argument, 0, c[ARG_BENCHMARK]    },
+    {args_str[ARG_DEVICE],       required_argument, 0, c[ARG_DEVICE]       },
+    {args_str[ARG_TRIALS],       required_argument, 0, c[ARG_TRIALS]       },
+    {args_str[ARG_WARMUP],       required_argument, 0, c[ARG_WARMUP]       },
+    {args_str[ARG_CPU_THREADS],  required_argument, 0, c[ARG_CPU_THREADS]  },
+    {args_str[ARG_CPU_AFFINITY], required_argument, 0, c[ARG_CPU_AFFINITY] },
+    {args_str[ARG_GPU_BLOCKS],   required_argument, 0, c[ARG_GPU_BLOCKS]   },
+    {args_str[ARG_GPU_TPB],      required_argument, 0, c[ARG_GPU_TPB]      },
+    {args_str[ARG_GPU_LIST],     no_argument,       0, c[ARG_GPU_LIST]     },
+    {args_str[ARG_HYBRID_TOPO],  no_argument,       0, c[ARG_HYBRID_TOPO]  },
+    {args_str[ARG_PCORES_ONLY],  no_argument,       0, c[ARG_PCORES_ONLY]  },
+    {args_str[ARG_GPU_IDX],      required_argument, 0, c[ARG_GPU_IDX]      },
+    {args_str[ARG_HELP],         no_argument,       0, c[ARG_HELP]         },
+    {args_str[ARG_VERSION],      no_argument,       0, c[ARG_VERSION]      },
     {0, 0, 0, 0}
   };
 
@@ -222,6 +254,14 @@ bool parseArgs(int argc, char* argv[]) {
           printErr("Option %s: ", args_str[ARG_CPU_THREADS]);
           printerror();
           args.help_flag  = true;
+        }
+        break;
+
+      case c[ARG_CPU_AFFINITY]:
+        affinity_set = true;
+        args.affinity = parse_affinity(optarg);
+        if(args.affinity == NULL) {
+          printErr("Invalid affinity mask: '%s'", optarg);
           return false;
         }
         break;
@@ -289,6 +329,10 @@ bool parseArgs(int argc, char* argv[]) {
       printErr("Number of threads must be greater than zero");
       return false;
     }
+    if(n_threads_set && affinity_set) {
+      printErr("Number of threads and affinity cannot be set at the same time");
+      return false;
+    }
     if(n_blocks_set) {
       printErr("Option %s is only available in GPU mode", args_str[ARG_GPU_BLOCKS]);
       return false;
@@ -338,6 +382,7 @@ bool parseArgs(int argc, char* argv[]) {
   }
 
   args.cfg->n_threads = args.n_threads;
+  args.cfg->affinity = args.affinity;
   args.cfg->tpb = args.tpb;
   args.cfg->nbk = args.nbk;
   args.cfg->gpu_idx = args.gpu_idx;

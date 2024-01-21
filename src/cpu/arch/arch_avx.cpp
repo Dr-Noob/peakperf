@@ -83,7 +83,31 @@ bool compute_cpu_avx (struct benchmark_cpu* bench, double* e_time) {
   __m256 mult = {0};
   __m256 *farr_ptr = NULL;
 
-  if(bench->hybrid_flag) {
+  if(bench->affinity != NULL) {
+    #pragma omp parallel num_threads(bench->affinity->n)
+    {
+      int tid = bench->affinity->list[omp_get_thread_num()]-1;
+      cpu_set_t currentCPU;
+      CPU_ZERO(&currentCPU);
+      CPU_SET(tid, &currentCPU);
+      if(sched_setaffinity(0, sizeof(currentCPU), &currentCPU) == -1) {
+        perror("compute_cpu_avx: sched_setaffinity");
+        #pragma omp critical
+        sched_failed = true;
+      }
+      if(!sched_failed && (!bench->hybrid_flag || is_performance_core(bench->h_topo, tid))) {
+        #pragma omp for
+        for(int t=0; t < bench->n_threads; t++)
+          bench->bench_avx->compute_function_256(farr_ptr, mult, t);
+      }
+      else if(!sched_failed) {
+        #pragma omp for
+        for(int t=0; t < bench->n_threads; t++)
+          bench->bench_avx->compute_function_256_e(farr_ptr, mult, t);
+      }
+    }
+  }
+  else if(bench->hybrid_flag) {
     // We have a hybrid CPU with performance
     // and efficiency cores
     #pragma omp parallel

@@ -12,6 +12,7 @@ enum {
   ARG_TRIALS,
   ARG_WARMUP,
   ARG_CPU_THREADS,
+  ARG_CPU_AFFINITY,
   ARG_GPU_BLOCKS,
   ARG_GPU_TPB,
   ARG_GPU_LIST,
@@ -23,37 +24,39 @@ enum {
 };
 
 static constexpr char args_chr[] = {
-  /*[ARG_LISTBENCHS] = */  'l',
-  /*[ARG_BENCHMARK] = */   'b',
-  /*[ARG_DEVICE] = */      'd',
-  /*[ARG_TRIALS] = */      'r',
-  /*[ARG_WARMUP] = */      'w',
-  /*[ARG_CPU_THREADS] = */ 't',
-  /*[ARG_GPU_BLOCKS] = */  'B',
-  /*[ARG_GPU_TPB] = */     'T',
-  /*[ARG_GPU_LIST] = */    'L',
-  /*[ARG_HYBRID_TOPO] = */ 'H',
-  /*[ARG_PCORES_ONLY] = */ 'P',
-  /*[ARG_GPU_IDX] = */     'g',
-  /*[ARG_HELP] = */        'h',
-  /*[ARG_VERSION] = */     'v'
+  /*[ARG_LISTBENCHS] = */   'l',
+  /*[ARG_BENCHMARK] = */    'b',
+  /*[ARG_DEVICE] = */       'd',
+  /*[ARG_TRIALS] = */       'r',
+  /*[ARG_WARMUP] = */       'w',
+  /*[ARG_CPU_THREADS] = */  't',
+  /*[ARG_CPU_AFFINITY] = */ 'a',
+  /*[ARG_GPU_BLOCKS] = */   'B',
+  /*[ARG_GPU_TPB] = */      'T',
+  /*[ARG_GPU_LIST] = */     'L',
+  /*[ARG_HYBRID_TOPO] = */  'H',
+  /*[ARG_PCORES_ONLY] = */  'P',
+  /*[ARG_GPU_IDX] = */      'g',
+  /*[ARG_HELP] = */         'h',
+  /*[ARG_VERSION] = */      'v'
 };
 
 static const char *args_str[] = {
-  /*[ARG_LISTBENCHS] = */  "list",
-  /*[ARG_BENCHMARK] = */   "benchmark",
-  /*[ARG_DEVICE] = */      "device",
-  /*[ARG_TRIALS] = */      "trials",
-  /*[ARG_WARMUP] = */      "warmup-trials",
-  /*[ARG_CPU_THREADS] = */ "threads",
-  /*[ARG_GPU_BLOCKS] = */  "blocks",
-  /*[ARG_GPU_TPB] = */     "threads-per-block",
-  /*[ARG_GPU_LIST] = */    "list-gpus",
-  /*[ARG_HYBRID_TOPO] = */ "show-hybrid-topology",
-  /*[ARG_PCORES_ONLY] = */ "pcores-only",
-  /*[ARG_GPU_IDX] = */     "gpu-id",
-  /*[ARG_HELP] = */        "help",
-  /*[ARG_VERSION] = */     "version"
+  /*[ARG_LISTBENCHS] = */   "list",
+  /*[ARG_BENCHMARK] = */    "benchmark",
+  /*[ARG_DEVICE] = */       "device",
+  /*[ARG_TRIALS] = */       "trials",
+  /*[ARG_WARMUP] = */       "warmup-trials",
+  /*[ARG_CPU_THREADS] = */  "threads",
+  /*[ARG_CPU_AFFINITY] = */ "affinity",
+  /*[ARG_GPU_BLOCKS] = */   "blocks",
+  /*[ARG_GPU_TPB] = */      "threads-per-block",
+  /*[ARG_GPU_LIST] = */     "list-gpus",
+  /*[ARG_HYBRID_TOPO] = */  "show-hybrid-topology",
+  /*[ARG_PCORES_ONLY] = */  "pcores-only",
+  /*[ARG_GPU_IDX] = */      "gpu-id",
+  /*[ARG_HELP] = */         "help",
+  /*[ARG_VERSION] = */      "version"
 };
 
 typedef unsigned char bench_type;
@@ -70,6 +73,7 @@ enum {
 struct config {
   // DEVICE_CPU
   int n_threads;
+  struct affinity_list* affinity;
 
   // DEVICE_GPU
   int nbk;

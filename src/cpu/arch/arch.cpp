@@ -125,7 +125,7 @@ bool select_benchmark(struct benchmark_cpu* bench) {
     return select_benchmark_avx(bench);
 }
 
-struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *bench_type_str, bool pcores_only) {
+struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, struct affinity_list* affinity, char *bench_type_str, bool pcores_only) {
   struct benchmark_cpu* bench = (struct benchmark_cpu*) malloc(sizeof(struct benchmark_cpu));
   bench_type benchmark_type;
 
@@ -140,6 +140,9 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
    }
   }
 
+  int max_threads = omp_get_max_threads();
+
+  bench->affinity = affinity;
   bench->pcores_only = pcores_only;
   bench->hybrid_flag = is_hybrid_cpu(cpu);
   bench->h_topo = get_hybrid_topology(cpu);
@@ -150,12 +153,33 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char *b
     bench->n_threads = n_threads;
   }
 
-  if(bench->n_threads == INVALID_CFG) {
-    bench->n_threads = omp_get_max_threads();
+  if (bench->affinity == NULL) {
+    if(bench->n_threads == INVALID_CFG) {
+      bench->n_threads = max_threads;
+    }
+    if(bench->n_threads > MAX_NUMBER_THREADS) {
+      printErr("Max number of threads is %d", MAX_NUMBER_THREADS);
+      return NULL;
+    }
   }
-  if(bench->n_threads > MAX_NUMBER_THREADS) {
-    printErr("Max number of threads is %d", MAX_NUMBER_THREADS);
-    return NULL;
+  else {
+    bool* thread_set = (bool *) malloc(sizeof(bool) * bench->affinity->n);
+    memset(thread_set, 0, sizeof(bool) * bench->affinity->n);
+
+    for (int i=0; i < bench->affinity->n; i++) {
+      thread_set[i] = true;
+      printf("%d\n", bench->affinity->list[i]);
+      if (bench->affinity->list[i] > max_threads || bench->affinity->list[i] <= 0) {
+        printErr("Affinity value %d is out of range (min=1,max=%d)", bench->affinity->list[i], max_threads);
+        return NULL;
+      }
+    }
+
+    int n_threads_aff = 0;
+    for (int i=0; i < bench->affinity->n; i++) {
+      if (thread_set[i]) n_threads_aff++;
+    }
+    bench->n_threads = n_threads_aff;
   }
 
   // Manual benchmark select
@@ -300,6 +324,21 @@ const char* get_hybrid_topology_string_cpu(struct benchmark_cpu* bench) {
   return NULL;
 }
 
+const char* get_affinity_string_cpu(struct benchmark_cpu* bench) {
+  if (bench->affinity == NULL)
+    return NULL;
+
+  int aff_str_i = 0;
+  char* aff_str = (char *) malloc(sizeof(char) * (1000));
+  memset(aff_str, 0, 1000);
+  for (int i=0; i < bench->affinity->n; i++) {
+    aff_str_i += sprintf(aff_str + aff_str_i, "%d", bench->affinity->list[i]);
+    if (i+1 < bench->affinity->n)
+      aff_str_i += sprintf(aff_str + aff_str_i, ",");
+  }
+  return aff_str;
+}
+
 int get_n_threads(struct benchmark_cpu* bench) {
-  return bench->n_threads;
+  return bench->affinity->n;
 }

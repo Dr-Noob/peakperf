@@ -9,10 +9,16 @@
 #include "arch_avx.hpp"
 #include "arch_avx512.hpp"
 
+struct affinity_list {
+  int n;
+  int* list;
+};
+
 struct benchmark_cpu {
   bool hybrid_flag;
   bool pcores_only;
   int n_threads;
+  struct affinity_list* affinity;
   double gflops;
   const char* name;
   bench_type benchmark_type;
@@ -190,11 +196,12 @@ static const char *bench_types_str[] = {
 
 struct benchmark_cpu;
 
-struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, char* bench_type_str, bool pcores_only);
+struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, struct affinity_list* affinity, char* bench_type_str, bool pcores_only);
 bool compute_cpu(struct benchmark_cpu* bench, double* e_time);
 double get_gflops_cpu(struct benchmark_cpu* bench);
 const char* get_benchmark_name_cpu(struct benchmark_cpu* bench);
 const char* get_hybrid_topology_string_cpu(struct benchmark_cpu* bench);
+const char* get_affinity_string_cpu(struct benchmark_cpu* bench);
 bench_type parse_benchmark_cpu(char* str);
 void print_bench_types_cpu(struct cpu* cpu);
 int get_n_threads(struct benchmark_cpu* bench);

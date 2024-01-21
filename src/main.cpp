@@ -43,6 +43,7 @@ void printHelp(char *argv[]) {
   printf("  -%c, --%s %*s List the avaiable benchmark types\n", c[ARG_LISTBENCHS], t[ARG_LISTBENCHS], (int) (max_len-strlen(t[ARG_LISTBENCHS])), "");
   printf("  -%c, --%s %*s Select a specific benchmark to run\n", c[ARG_BENCHMARK], t[ARG_BENCHMARK], (int) (max_len-strlen(t[ARG_BENCHMARK])), "");
   printf("  -%c, --%s %*s Set the number of threads to use (default: omp_get_max_threads())\n", c[ARG_CPU_THREADS], t[ARG_CPU_THREADS], (int) (max_len-strlen(t[ARG_CPU_THREADS])), "");
+  printf("  -%c, --%s %*s Set the thread affinity mask (valid values range from 1 to omp_get_max_threads())\n", c[ARG_CPU_AFFINITY], t[ARG_CPU_AFFINITY], (int) (max_len-strlen(t[ARG_CPU_AFFINITY])), "");
   printf("  -%c, --%s %*s Show topology mask (hybrid architectures only, like Alder Lake)\n", c[ARG_HYBRID_TOPO], t[ARG_HYBRID_TOPO], (int) (max_len-strlen(t[ARG_HYBRID_TOPO])), "");
   printf("  -%c, --%s %*s Only use performance cores (hybrid architectures only, like Alder Lake)\n", c[ARG_PCORES_ONLY], t[ARG_PCORES_ONLY], (int) (max_len-strlen(t[ARG_PCORES_ONLY])), "");
   printf("\nGPU device only options:\n");
@@ -63,6 +64,7 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops, b
   const char* device_uarch = get_device_uarch_str(bench, hw);
   const char* bench_name = get_benchmark_name(bench);
   const char* hybrid_topo = NULL;
+  const char* affinity_list = get_affinity_string(bench);
   if(show_hybrid_topo) hybrid_topo = get_hybrid_topology_string(bench);
   long benchmark_iterations = get_benchmark_iterations(bench);
   int line_length = 54;
@@ -88,6 +90,9 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops, b
   }
   printf("%*s Iterations: %.2e\n", (int) (max_len-strlen("Iterations")),           "", (double) benchmark_iterations);
   printf("%*s GFLOP: %.2f\n",     (int) (max_len-strlen("GFLOP")),                "", gflops);
+  if(affinity_list != NULL) {
+    printf("%*s Affinity: %s\n",  (int) (max_len-strlen("Affinity")),            "", affinity_list);
+  }
   for(int i=0; i < cfg_str->num_fields; i++) {
     printf("%*s %s: %d\n",        (int) (max_len-strlen(cfg_str->field_name[i])), "", cfg_str->field_name[i], cfg_str->field_value[i]);
   }
