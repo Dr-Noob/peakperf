@@ -340,5 +340,8 @@ const char* get_affinity_string_cpu(struct benchmark_cpu* bench) {
 }
 
 int get_n_threads(struct benchmark_cpu* bench) {
+  // If no affinity was specified, return the max number of threads
+  if (bench->affinity == NULL)
+     return bench->n_threads;
   return bench->affinity->n;
 }

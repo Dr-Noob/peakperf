@@ -43,7 +43,7 @@ void printHelp(char *argv[]) {
   printf("  -%c, --%s %*s List the avaiable benchmark types\n", c[ARG_LISTBENCHS], t[ARG_LISTBENCHS], (int) (max_len-strlen(t[ARG_LISTBENCHS])), "");
   printf("  -%c, --%s %*s Select a specific benchmark to run\n", c[ARG_BENCHMARK], t[ARG_BENCHMARK], (int) (max_len-strlen(t[ARG_BENCHMARK])), "");
   printf("  -%c, --%s %*s Set the number of threads to use (default: omp_get_max_threads())\n", c[ARG_CPU_THREADS], t[ARG_CPU_THREADS], (int) (max_len-strlen(t[ARG_CPU_THREADS])), "");
-  printf("  -%c, --%s %*s Set the thread affinity mask (valid values range from 1 to omp_get_max_threads())\n", c[ARG_CPU_AFFINITY], t[ARG_CPU_AFFINITY], (int) (max_len-strlen(t[ARG_CPU_AFFINITY])), "");
+  printf("  -%c, --%s %*s Set the thread affinity mask (comma-separated values that must range between 1 to omp_get_max_threads())\n", c[ARG_CPU_AFFINITY], t[ARG_CPU_AFFINITY], (int) (max_len-strlen(t[ARG_CPU_AFFINITY])), "");
   printf("  -%c, --%s %*s Show topology mask (hybrid architectures only, like Alder Lake)\n", c[ARG_HYBRID_TOPO], t[ARG_HYBRID_TOPO], (int) (max_len-strlen(t[ARG_HYBRID_TOPO])), "");
   printf("  -%c, --%s %*s Only use performance cores (hybrid architectures only, like Alder Lake)\n", c[ARG_PCORES_ONLY], t[ARG_PCORES_ONLY], (int) (max_len-strlen(t[ARG_PCORES_ONLY])), "");
   printf("\nGPU device only options:\n");
