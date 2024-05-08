@@ -66,7 +66,9 @@ if(ENABLE_GPU_DEVICE)
 
     # https://en.wikipedia.org/w/index.php?title=CUDA&section=5#GPUs_supported
     # https://raw.githubusercontent.com/PointCloudLibrary/pcl/master/cmake/pcl_find_cuda.cmake
-    if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
+    if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "12.0")
+      set(CMAKE_CUDA_ARCHITECTURES 50 52 53 60 61 62 70 72 75 80 86)
+    elseif(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
       set(CMAKE_CUDA_ARCHITECTURES 35 37 50 52 53 60 61 62 70 72 75 80 86)
     elseif(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "10.0")
       set(CMAKE_CUDA_ARCHITECTURES 30 32 35 37 50 52 53 60 61 62 70 72 75)
@@ -107,4 +109,3 @@ else()
   message(STATUS "GPU mode: ${BoldRed}OFF${ColourReset}")
 endif()
 message(STATUS "----------------------")
-
