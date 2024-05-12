@@ -16,6 +16,7 @@ enum {
   ARCH_VOLTA,
   ARCH_TURING,
   ARCH_AMPERE,
+  ARCH_ADA,
   ARCH_UNKNOWN
 };
 
@@ -27,6 +28,7 @@ static const char *uarch_str[] = {
   /*[ARCH_VOLTA]      = */ "Volta",
   /*[ARCH_TURING]     = */ "Turing",
   /*[ARCH_AMPERE]     = */ "Ampere",
+  /*[ARCH_ADA]        = */ "Ada Lovelace",
 };
 
 struct benchmark_gpu {
@@ -143,7 +145,11 @@ struct gpu* get_gpu_info(int gpu_idx) {
       break;
     case 80:
     case 86:
+    case 87:
       gpu->uarch = ARCH_AMPERE;
+      break;
+    case 89:
+      gpu->uarch = ARCH_ADA;
       break;
     default:
       printf("GPU: %s\n", gpu->name);
@@ -162,6 +168,7 @@ struct gpu* get_gpu_info(int gpu_idx) {
       break;
     case ARCH_TURING:
     case ARCH_AMPERE:     // UNTESTED
+    case ARCH_ADA:        // UNTESTED
       gpu->latency = 4;
       break;
     default:
