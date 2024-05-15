@@ -6,6 +6,7 @@ Microbenchmark to achieve peak performance on x86_64 CPUs and NVIDIA GPUs.
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [1. Support](#1-support)
   - [1.1 Software support](#11-software-support)
   - [1.2 Hardware support](#12-hardware-support)
@@ -21,9 +22,10 @@ Microbenchmark to achieve peak performance on x86_64 CPUs and NVIDIA GPUs.
   - [3.4. Options](#34-options)
 - [4. Understanding the microbenchmark](#4-understanding-the-microbenchmark)
   - [4.1 What is "peak performance" anyway?](#41-what-is-peak-performance-anyway)
-  - [4.2 The formula](#42-the-formula)
-  - [4.3 About the frequency to use in the formula](#43-about-the-frequency-to-use-in-the-formula)
-  - [4.4 What can I do if I do not get the expected results?](#44-what-can-i-do-if-i-do-not-get-the-expected-results)
+  - [4.2 The formula (CPU)](#42-the-formula-cpu)
+  - [4.3 The formula (GPU)](#43-the-formula-gpu)
+  - [4.4 About the frequency to use in the formula](#44-about-the-frequency-to-use-in-the-formula)
+  - [4.5 What can I do if I do not get the expected results?](#45-what-can-i-do-if-i-do-not-get-the-expected-results)
 - [5. Evaluation](#5-evaluation)
   - [Intel](#intel)
   - [AMD](#amd)
@@ -183,14 +185,14 @@ _NOTE_: Some options are available only on CPU or GPU
 ## 4.1 What is "peak performance" anyway?
 Peak performance refers to the maximum performance that a chip (a CPU) can achieve. The more powerful the CPU is, the greater the peak performance can achieve. This performance is a theoretical limit, computed using a formula (see next section), measured in floating point operation per seconds (FLOP/s or GFLOP/s, which stands for gigaflops). This value establishes a performance limit that the CPU is unable to overcome. However, achieving the peak performance (the maximum performance for a given CPU) is a very hard (but also interesting) task. To do so, the software must take advantage of the full power of the CPU. peakperf is a microbenchmark that achieves peak performance on many different x86_64 microarchitectures.
 
-## 4.2 The formula
+## 4.2 The formula (CPU)
 
 ```
 N_CORES * FREQUENCY * FMA * UNITS * (SIZE_OF_VECTOR/32)
 ```
 
 - N_CORES: The number of physical cores. In our example, it is **4**
-- FREQUENCY: The freqeuncy of the CPU measured in GHz. To measure this frequency is a bit tricky, see next section for more details. In our example, it is **3.997**.
+- FREQUENCY: The freqeuncy of the CPU measured in GHz. To measure this frequency is a bit tricky, see next section for more details. In our example, it is **3.997** (see where does this value come from in the next section).
 - FMA: If CPU supports FMA, the peak performance is multipled by 2. If not, it is multiplied by 1. In our example, it is **2**.
 - UNITS: CPUs can provide 1 or 2 functional units per core. Modern Intel CPUs usually provide 2, while AMD CPUs usually provide 1. In our example, it is **2**.
 - SIZE_OF_VECTOR: If CPU supports AVX, the size is 256 (because AVX is 256 bits long). If CPU supports AVX512, the size is 512. In our example, the size is **256**.
@@ -201,15 +203,23 @@ For the example of a i7-4790K, we have:
 4 * 3.997 * 10^9 * 2 * 2 * (256/32) = 511.61 GFLOP/s
 ```
 
-And, as you can see in the previous test, we got 511.43 GFLOP/S, which tell us that peakperf is working properly and our CPU is behaving exactly as we expected. But, why did I chosse 3.997 GHz as the frequency?
+And, as you can see in the previous test, we got 511.43 GFLOP/S, which tell us that peakperf is working properly and our CPU is behaving exactly as we expected.
 
-## 4.3 About the frequency to use in the formula
+## 4.3 The formula (GPU)
+
+```
+N_CORES * FREQUENCY * FMA
+```
+
+The GPU formula is simpler. `N_CORES` in this case is simply the number of CUDA cores (in the case of NVIDIA GPUs). Modern GPUs usually support FMA.
+
+## 4.4 About the frequency to use in the formula
 
 While running this microbenchmark, your CPU will be executing AVX code, so the frequency of your CPU running this code is neither your base nor your turbo frequency. Please, have a look at [this document](http://www.dolbeau.name/dolbeau/publications/peak.pdf) (on section IV.B) for more information.
 
-The AVX frequency for a specific CPU is sometimes available online. The most effective way I know to get this frequency is to to actually measure your CPU frequency on real time while running AVX code. You can use the script I crafted for this task, [freq.sh](https://github.com/Dr-Noob/peakperf/freq.sh), to achieve this:
+The AVX frequency for a specific CPU is sometimes available online. The most effective way I know to get this frequency is to to actually measure your CPU frequency on real time while running AVX code. You can use the script [freq.sh](https://github.com/Dr-Noob/peakperf/freq.sh) to achieve this:
 1. Run the microbenchmark in background (`./peakperf -r 4 -w 0 > /dev/null &`)
-2. Run the script (`./freq.sh`) which will fetch your CPU frequency in real time. In my case, I get:
+2. Run the script (`./freq.sh`) which will fetch your CPU frequency in real time (use `.req.sh gpu` for measuring the GPU). In my case, I get:
 
 ```
 Every 0,2s: grep 'MHz' /proc/cpuinfo
@@ -228,7 +238,7 @@ As you can see, i7-4790K's frequency while running AVX code is ~3997.630 MHz, wh
 1. The microbenchmark is not working correctly. Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues)
 2. Your CPU is not able to keep a stable frequency. This often happens if it's to hot, so the CPU is forced to low the frequency to not to melt itself.
 
-## 4.4 What can I do if I do not get the expected results?
+## 4.5 What can I do if I do not get the expected results?
 Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues), posting the output of peakperf.
 
 # 5. Evaluation
