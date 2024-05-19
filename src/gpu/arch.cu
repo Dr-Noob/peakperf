@@ -16,6 +16,7 @@ enum {
   ARCH_VOLTA,
   ARCH_TURING,
   ARCH_AMPERE,
+  ARCH_ADA,
   ARCH_UNKNOWN
 };
 
@@ -27,6 +28,7 @@ static const char *uarch_str[] = {
   /*[ARCH_VOLTA]      = */ "Volta",
   /*[ARCH_TURING]     = */ "Turing",
   /*[ARCH_AMPERE]     = */ "Ampere",
+  /*[ARCH_ADA]        = */ "Ada",
 };
 
 struct benchmark_gpu {
@@ -145,6 +147,9 @@ struct gpu* get_gpu_info(int gpu_idx) {
     case 86:
       gpu->uarch = ARCH_AMPERE;
       break;
+    case 89:
+      gpu->uarch = ARCH_ADA;
+      break;
     default:
       printf("GPU: %s\n", gpu->name);
       printErr("Invalid uarch: %d.%d\n", deviceProp.major, deviceProp.minor);
@@ -162,6 +167,7 @@ struct gpu* get_gpu_info(int gpu_idx) {
       break;
     case ARCH_TURING:
     case ARCH_AMPERE:     // UNTESTED
+    case ARCH_ADA:     // UNTESTED
       gpu->latency = 4;
       break;
     default:
@@ -174,6 +180,7 @@ struct gpu* get_gpu_info(int gpu_idx) {
 
 struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   struct benchmark_gpu* bench = (struct benchmark_gpu *) malloc(sizeof(struct benchmark_gpu));
+  printf("Init...\n");
 
   // TODO: Warn if nbk or tpb are not optimal values
   if(gpu->compute_capability >= 50) {
@@ -185,7 +192,7 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
     bench->nbk = (nbk == INVALID_CFG) ? (gpu->latency * gpu->sm_count) : nbk;
     bench->tpb = (tpb == INVALID_CFG) ? _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor) : tpb;
   }
-  bench->n = bench->nbk * bench->tpb;
+  bench->n = 32 * bench->nbk * bench->tpb;
   bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n)/(long)1000000000;
 
   cudaError_t err = cudaSuccess;
@@ -193,13 +200,21 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   float *h_B;
   int size = bench->n * sizeof(float);
 
+  printf("mmmmm....\n");
+
+  int bbb;
+  cudaGetDevice(&bbb);
+  printf("Dev (bbb): %d\n", bbb);
+
+  cudaSetDevice(0);
+
   if ((err = cudaMallocHost((void **)&h_A, size)) != cudaSuccess) {
-    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    printErr("XXX %s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMallocHost((void **)&h_B, size)) != cudaSuccess) {
-    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    printErr("XXX %s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
@@ -207,6 +222,11 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
     h_A[i] = rand()/(float)RAND_MAX;
     h_B[i] = rand()/(float)RAND_MAX;
   }
+
+  printf("asdasd\n");
+  int aaa;
+  cudaGetDevice(&aaa);
+  printf("Dev: %d\n", aaa);
 
   if ((err = cudaMalloc((void **) &(bench->d_A), size)) != cudaSuccess) {
     printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
@@ -262,6 +282,9 @@ bool compute_gpu(struct benchmark_gpu* bench, double* e_time) {
   compute_kernel<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
   cudaEventRecord(stop, 0);
   cudaEventSynchronize(stop);
+  unsigned long long total;
+  cudaMemcpyFromSymbol(&total, totThr, sizeof(unsigned long long));
+  printf("Total threads counted: %lu\n", total);
 
   float e_time_gpu;
   cudaEventElapsedTime(&e_time_gpu, start, stop);
