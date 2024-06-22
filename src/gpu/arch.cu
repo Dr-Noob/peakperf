@@ -145,6 +145,7 @@ struct gpu* get_gpu_info(int gpu_idx) {
       break;
     case 80:
     case 86:
+    case 87:
       gpu->uarch = ARCH_AMPERE;
       break;
     case 89:
