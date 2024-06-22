@@ -199,10 +199,6 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   float *h_B;
   int size = bench->n * sizeof(float);
 
-
-  int bbb;
-  cudaGetDevice(&bbb);
-
   cudaSetDevice(0);
 
   if ((err = cudaMallocHost((void **)&h_A, size)) != cudaSuccess) {
@@ -220,8 +216,6 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
     h_B[i] = rand()/(float)RAND_MAX;
   }
 
-  int aaa;
-  cudaGetDevice(&aaa);
 
   if ((err = cudaMalloc((void **) &(bench->d_A), size)) != cudaSuccess) {
     printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
