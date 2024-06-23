@@ -28,7 +28,7 @@ static const char *uarch_str[] = {
   /*[ARCH_VOLTA]      = */ "Volta",
   /*[ARCH_TURING]     = */ "Turing",
   /*[ARCH_AMPERE]     = */ "Ampere",
-  /*[ARCH_ADA]        = */ "Ada Lovelace",
+  /*[ARCH_ADA]        = */ "Ada",
 };
 
 struct benchmark_gpu {
@@ -168,7 +168,7 @@ struct gpu* get_gpu_info(int gpu_idx) {
       break;
     case ARCH_TURING:
     case ARCH_AMPERE:     // UNTESTED
-    case ARCH_ADA:        // UNTESTED
+    case ARCH_ADA:     // UNTESTED
       gpu->latency = 4;
       break;
     default:
@@ -192,7 +192,7 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
     bench->nbk = (nbk == INVALID_CFG) ? (gpu->latency * gpu->sm_count) : nbk;
     bench->tpb = (tpb == INVALID_CFG) ? _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor) : tpb;
   }
-  bench->n = bench->nbk * bench->tpb;
+  bench->n = 16 * bench->nbk * bench->tpb;
   bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n)/(long)1000000000;
 
   cudaError_t err = cudaSuccess;
@@ -200,13 +200,15 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
   float *h_B;
   int size = bench->n * sizeof(float);
 
+  cudaSetDevice(0);
+
   if ((err = cudaMallocHost((void **)&h_A, size)) != cudaSuccess) {
-    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    printErr("XXX %s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
   if ((err = cudaMallocHost((void **)&h_B, size)) != cudaSuccess) {
-    printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
+    printErr("XXX %s: %s", cudaGetErrorName(err), cudaGetErrorString(err));
     return NULL;
   }
 
@@ -214,6 +216,7 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
     h_A[i] = rand()/(float)RAND_MAX;
     h_B[i] = rand()/(float)RAND_MAX;
   }
+
 
   if ((err = cudaMalloc((void **) &(bench->d_A), size)) != cudaSuccess) {
     printErr("%s: %s", cudaGetErrorName(err), cudaGetErrorString(err));

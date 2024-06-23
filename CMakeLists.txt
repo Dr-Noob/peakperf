@@ -66,10 +66,20 @@ if(ENABLE_GPU_DEVICE)
 
     # https://en.wikipedia.org/w/index.php?title=CUDA&section=5#GPUs_supported
     # https://raw.githubusercontent.com/PointCloudLibrary/pcl/master/cmake/pcl_find_cuda.cmake
-    if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "12.0")
-      set(CMAKE_CUDA_ARCHITECTURES 50 52 53 60 61 62 70 72 75 80 86 87 89 90)
+    if(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.1")
+      execute_process(COMMAND ${CMAKE_CUDA_COMPILER} --list-gpu-code RESULT_VARIABLE EXIT_CODE OUTPUT_VARIABLE OUTPUT_VAL)
+      if(EXIT_CODE EQUAL 0)
+      #Remove sm_
+      string(REPLACE "sm_" "" OUTPUT_VAL ${OUTPUT_VAL})
+      #Convert to list
+      string(REPLACE "\n" ";" CMAKE_CUDA_ARCHITECTURES ${OUTPUT_VAL})
+      #Remove last empty entry
+      list(REMOVE_AT CMAKE_CUDA_ARCHITECTURES -1)
+      else()
+        message(FATAL_ERROR "Failed to run NVCC to get list of GPU codes: ${EXIT_CODE}")
+      endif()
     elseif(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "11.0")
-      set(CMAKE_CUDA_ARCHITECTURES 35 37 50 52 53 60 61 62 70 72 75 80 86)
+      set(CMAKE_CUDA_ARCHITECTURES 35 37 50 52 53 60 61 62 70 72 75 80)
     elseif(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "10.0")
       set(CMAKE_CUDA_ARCHITECTURES 30 32 35 37 50 52 53 60 61 62 70 72 75)
     elseif(${CMAKE_CUDA_COMPILER_VERSION} VERSION_GREATER_EQUAL "9.0")
