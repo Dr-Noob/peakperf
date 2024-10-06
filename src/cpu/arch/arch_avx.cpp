@@ -59,7 +59,19 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
       if(bench->hybrid_flag && !bench->pcores_only) {
         // We have performance and efficiency cores
         bench->bench_avx->compute_function_256_e = compute_256_6;
-        bench->gflops = compute_gflops(min(bench->n_threads, bench->h_topo->p_cores), BENCH_256_8) + compute_gflops(max(0, bench->n_threads - bench->h_topo->p_cores), BENCH_256_6);
+        if(bench->affinity == NULL) {
+          bench->gflops = compute_gflops(min(bench->n_threads, bench->h_topo->p_cores), BENCH_256_8) +
+                          compute_gflops(max(0, bench->n_threads - bench->h_topo->p_cores), BENCH_256_6);
+        }
+        else {
+          bench->gflops = 0.0;
+          for (int i=0; i < bench->affinity->n; i++) {
+            if (is_performance_core(bench->h_topo, bench->affinity->list[i]))
+              bench->gflops += compute_gflops(1, BENCH_256_8);
+            else
+              bench->gflops += compute_gflops(1, BENCH_256_6);
+          }
+        }
       }
       else {
         // All cores are performance
