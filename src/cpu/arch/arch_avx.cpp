@@ -9,6 +9,7 @@
 
 #include "256_6_nofma.hpp"
 #include "256_6.hpp"
+#include "256_4.hpp"
 #include "256_5.hpp"
 #include "256_8.hpp"
 #include "256_10.hpp"
@@ -17,6 +18,25 @@ struct benchmark_cpu_avx {
   void (*compute_function_256)(__m256 *farr_ptr, __m256, int);
   void (*compute_function_256_e)(__m256 *farr_ptr, __m256, int);
 };
+
+double compute_gflops_hybrid(struct benchmark_cpu* bench, int BENCH_PCORE, int BENCH_ECORE) {
+  double gflops = 0.0;
+
+  if (bench->affinity == NULL) {
+    gflops = compute_gflops(min(bench->n_threads, bench->h_topo->p_cores), BENCH_PCORE) +
+             compute_gflops(max(0, bench->n_threads - bench->h_topo->p_cores), BENCH_ECORE);
+  }
+  else {
+    for (int i=0; i < bench->affinity->n; i++) {
+      if (is_performance_core(bench->h_topo, bench->affinity->list[i]))
+        gflops += compute_gflops(1, BENCH_PCORE);
+      else
+        gflops += compute_gflops(1, BENCH_ECORE);
+    }
+  }
+
+  return gflops;
+}
 
 bool select_benchmark_avx(struct benchmark_cpu* bench) {
   bench->bench_avx = (struct benchmark_cpu_avx *) malloc(sizeof(struct benchmark_cpu));
@@ -53,24 +73,18 @@ bool select_benchmark_avx(struct benchmark_cpu* bench) {
       bench->bench_avx->compute_function_256 = compute_256_5;
       bench->gflops = compute_gflops(bench->n_threads, BENCH_256_5);
       break;
-    case BENCH_TYPE_ALDER_LAKE: // Might be an hybrid architecture
+    case BENCH_TYPE_ALDER_LAKE:
     case BENCH_TYPE_RAPTOR_LAKE:
       bench->bench_avx->compute_function_256 = compute_256_8;
       if(bench->hybrid_flag && !bench->pcores_only) {
         // We have performance and efficiency cores
-        bench->bench_avx->compute_function_256_e = compute_256_6;
-        if(bench->affinity == NULL) {
-          bench->gflops = compute_gflops(min(bench->n_threads, bench->h_topo->p_cores), BENCH_256_8) +
-                          compute_gflops(max(0, bench->n_threads - bench->h_topo->p_cores), BENCH_256_6);
+        if (bench->benchmark_type == BENCH_TYPE_ALDER_LAKE) {
+          bench->bench_avx->compute_function_256_e = compute_256_6;
+          bench->gflops = compute_gflops_hybrid(bench, BENCH_256_8, BENCH_256_6);
         }
-        else {
-          bench->gflops = 0.0;
-          for (int i=0; i < bench->affinity->n; i++) {
-            if (is_performance_core(bench->h_topo, bench->affinity->list[i]))
-              bench->gflops += compute_gflops(1, BENCH_256_8);
-            else
-              bench->gflops += compute_gflops(1, BENCH_256_6);
-          }
+        else { // BENCH_TYPE_RAPTOR_LAKE
+          bench->bench_avx->compute_function_256_e = compute_256_4;
+          bench->gflops = compute_gflops_hybrid(bench, BENCH_256_8, BENCH_256_4);
         }
       }
       else {
