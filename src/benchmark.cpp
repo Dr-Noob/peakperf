@@ -57,7 +57,7 @@ struct benchmark* init_benchmark_device(device_type device) {
   }
 }
 
-struct hardware* get_hardware_info(struct benchmark* bench, struct config* cfg) {
+struct hardware* get_hardware_info(struct benchmark* bench, [[maybe_unused]] struct config* cfg) {
   struct hardware* hw = (struct hardware *) malloc(sizeof(struct hardware));
 
   if(bench->device == DEVICE_TYPE_CPU) {

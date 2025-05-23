@@ -6,9 +6,12 @@
 #include <errno.h>
 #include <sched.h>
 #include <stdio.h>
-#include <string.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 #include "../../global.hpp"
 #include "cpuid.hpp"
@@ -63,6 +66,9 @@ int32_t get_core_type(void) {
 }
 
 bool bind_to_cpu(int cpu_id) {
+#ifdef _WIN32
+  return SetThreadAffinityMask(GetCurrentThread(), 1 << cpu_id) != 0;
+#else
   cpu_set_t currentCPU;
   CPU_ZERO(&currentCPU);
   CPU_SET(cpu_id, &currentCPU);
@@ -70,11 +76,16 @@ bool bind_to_cpu(int cpu_id) {
     return false;
   }
   return true;
+#endif
 }
 
-struct hybrid_topology* get_hybrid_topology_internal(struct cpu* cpu) {
+struct hybrid_topology* get_hybrid_topology_internal([[maybe_unused]] struct cpu* cpu) {
   int ncores;
+#ifdef _WIN32
+  if ((ncores = GetActiveProcessorGroupCount()) == 0) {
+#else
   if((ncores = sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
+#endif
     printErr("sysconf(_SC_NPROCESSORS_ONLN): %s", strerror(errno));
     return NULL;
   }

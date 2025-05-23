@@ -129,7 +129,7 @@ static const char *bench_types_str[] = {
   /*[BENCH_TYPE_ZEN3]            = */ "zen4"
 };
 
-#define BENCHMARK_CPU_ITERS 1000000000
+#define BENCHMARK_CPU_ITERS 1'000'000'000
 #define MAX_NUMBER_THREADS 512
 
 /*
