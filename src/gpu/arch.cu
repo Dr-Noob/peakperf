@@ -186,7 +186,7 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
     bench->tpb = (tpb == INVALID_CFG) ? _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor) : tpb;
   }
   bench->n = bench->nbk * bench->tpb;
-  bench->gflops = (double)(BENCHMARK_GPU_ITERS * 2 * (long)bench->n)/(long)1000000000;
+  bench->gflops = (double)((long)BENCHMARK_GPU_ITERS * 2 * 4 * bench->n) / 1000000000.0;
 
   cudaError_t err = cudaSuccess;
   float *h_A;
