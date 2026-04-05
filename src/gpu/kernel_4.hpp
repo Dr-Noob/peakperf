@@ -3,6 +3,6 @@
 
 #include "arch.hpp"
 
-__global__ void compute_kernel_4(float *a, float *b, float *c, int n);
+__global__ void compute_kernel_4(float *a, float *b, float *c);
 
 #endif

@@ -1,19 +1,11 @@
 #include "kernel_6.hpp"
 
 __global__
-void compute_kernel_6(float *vec_a, float *vec_b, float *vec_c, int n) {
+void compute_kernel_6(float *vec_a, float *vec_b, float *vec_c) {
   int cid = threadIdx.x + blockIdx.x * blockDim.x;
-  int tid = threadIdx.x;
-  __shared__ float myblockA[256];
-  __shared__ float myblockB[256];
 
-  myblockA[tid] = vec_a[cid];
-  myblockB[tid] = vec_b[cid];
-
-  __syncthreads();
-
-  float a = myblockA[tid];
-  float b = myblockB[tid];
+  float a = vec_a[cid];
+  float b = vec_b[cid];
 
   float c0 = vec_c[cid];
   float c1 = c0;

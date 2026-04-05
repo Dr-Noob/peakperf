@@ -159,15 +159,14 @@ struct gpu* get_gpu_info(int gpu_idx) {
       return NULL;
   }
 
-  // https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html#arithmetic-instructions (?)
+  // NOTE: We also have the GPU kernel for latency 6, but it is not tested yet.
+  // I used to think Pascal and Maxwell had latency 6, but it seems they have latency 4.
   switch(gpu->uarch) {
     case ARCH_FERMI:      // UNTESTED
     case ARCH_KEPLER:     // UNTESTED
-    case ARCH_MAXWELL:
+    case ARCH_MAXWELL:    // UNTESTED
     case ARCH_PASCAL:
     case ARCH_VOLTA:      // UNTESTED
-      gpu->latency = 6;
-      break;
     case ARCH_TURING:
     case ARCH_AMPERE:     // UNTESTED
     case ARCH_ADA:
@@ -270,10 +269,10 @@ bool compute_gpu(struct benchmark_gpu* bench, double* e_time) {
 
   cudaEventRecord(start, 0);
   if (bench->latency == 4) {
-    compute_kernel_4<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
+    compute_kernel_4<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C);
   }
   else if (bench->latency == 6) {
-    compute_kernel_6<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
+    compute_kernel_6<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C);
   }
   else {
     printErr("Invalid latency: %d", bench->latency);
