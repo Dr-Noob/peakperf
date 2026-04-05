@@ -6,7 +6,8 @@
 #include "../getarg.hpp"
 
 #include "peakperf_helper_cuda.hpp"
-#include "kernel.hpp"
+#include "kernel_4.hpp"
+#include "kernel_6.hpp"
 
 enum {
   ARCH_FERMI,
@@ -35,6 +36,7 @@ struct benchmark_gpu {
   int nbk; // Blocks per thread
   int tpb; // Threads per block
   int n;
+  int latency;
   double gflops;
   const char* name;
   float *d_A;
@@ -168,7 +170,7 @@ struct gpu* get_gpu_info(int gpu_idx) {
       break;
     case ARCH_TURING:
     case ARCH_AMPERE:     // UNTESTED
-    case ARCH_ADA:        // UNTESTED
+    case ARCH_ADA:
       gpu->latency = 4;
       break;
     default:
@@ -193,7 +195,8 @@ struct benchmark_gpu* init_benchmark_gpu(struct gpu* gpu, int nbk, int tpb) {
     bench->tpb = (tpb == INVALID_CFG) ? _ConvertSMVer2Cores(gpu->cc_major, gpu->cc_minor) : tpb;
   }
   bench->n = bench->nbk * bench->tpb;
-  bench->gflops = (double)((long)BENCHMARK_GPU_ITERS * 2 * 4 * bench->n) / 1000000000.0;
+  bench->latency = gpu->latency;
+  bench->gflops = (double)((long)BENCHMARK_GPU_ITERS * 2 * bench->latency * bench->n) / 1000000000.0;
 
   cudaError_t err = cudaSuccess;
   float *h_A;
@@ -266,7 +269,16 @@ bool compute_gpu(struct benchmark_gpu* bench, double* e_time) {
   }
 
   cudaEventRecord(start, 0);
-  compute_kernel<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
+  if (bench->latency == 4) {
+    compute_kernel_4<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
+  }
+  else if (bench->latency == 6) {
+    compute_kernel_6<<<dimGrid, dimBlock>>>(bench->d_A, bench->d_B, bench->d_C, bench->n);
+  }
+  else {
+    printErr("Invalid latency: %d", bench->latency);
+    return false;
+  }
   cudaEventRecord(stop, 0);
   cudaEventSynchronize(stop);
 

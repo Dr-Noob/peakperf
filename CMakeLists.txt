@@ -81,7 +81,7 @@ if(ENABLE_GPU_DEVICE)
     endif()
 
     set(CMAKE_CUDA_FLAGS "-Wno-deprecated-gpu-targets")
-    add_library(gpu_device STATIC ${GPU_DIR}/arch.cu ${GPU_DIR}/kernel.cu)
+    add_library(gpu_device STATIC ${GPU_DIR}/arch.cu ${GPU_DIR}/kernel_4.cu ${GPU_DIR}/kernel_6.cu)
 
     target_link_libraries(peakperf gpu_device)
 endif()
