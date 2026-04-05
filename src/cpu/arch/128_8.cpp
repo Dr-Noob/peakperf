@@ -3,7 +3,7 @@
 
 TYPE farr_128_8[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
 
-void compute_128_8(TYPE *farr, TYPE mult, int index) {
+void compute_128_8(TYPE *farr, [[maybe_unused]] TYPE mult, int index) {
   farr = farr_128_8[index];
 
   for(long i=0; i < BENCHMARK_CPU_ITERS; i++) {

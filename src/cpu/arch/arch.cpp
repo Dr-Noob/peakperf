@@ -1,5 +1,6 @@
-#include <stdio.h>
+#include <cstdint>
 #include <omp.h>
+#include <stdio.h>
 #include <string.h>
 #include <sys/time.h>
 
@@ -16,7 +17,7 @@ bench_type parse_benchmark_cpu(char* str) {
   return BENCH_TYPE_INVALID;
 }
 
-void print_bench_types_cpu(struct cpu* cpu) {
+void print_bench_types_cpu([[maybe_unused]] struct cpu* cpu) {
   int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
   long unsigned int longest = 0;
   long unsigned int total_length = 0;
@@ -91,7 +92,9 @@ double compute_gflops(int n_threads, char bench) {
       return -1.0;
   }
 
-  return (double)((long)n_threads*BENCHMARK_CPU_ITERS*op_per_it*(bytes_in_vect/4)*fma_available)/1000000000;
+  return (double)((int64_t)n_threads * BENCHMARK_CPU_ITERS * op_per_it *
+                  (bytes_in_vect / 4) * fma_available) /
+         1'000'000'000;
 }
 
 /*

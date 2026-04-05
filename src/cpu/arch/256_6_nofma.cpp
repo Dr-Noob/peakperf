@@ -3,7 +3,7 @@
 
 TYPE farr_256_6_nofma[MAX_NUMBER_THREADS][SIZE] __attribute__((aligned(64)));
 
-void compute_256_6_nofma(TYPE *farr, TYPE mult, int index) {
+void compute_256_6_nofma(TYPE *farr, [[maybe_unused]] TYPE mult, int index) {
   farr = farr_256_6_nofma[index];
 
   for(long i=0; i < BENCHMARK_CPU_ITERS; i++) {

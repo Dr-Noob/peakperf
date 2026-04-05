@@ -4,6 +4,10 @@
 #include <string.h>
 #include <sys/time.h>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "arch.hpp"
 #include "../../global.hpp"
 
@@ -113,10 +117,14 @@ bool compute_cpu_avx (struct benchmark_cpu* bench, double* e_time) {
     #pragma omp parallel num_threads(bench->affinity->n)
     {
       int tid = bench->affinity->list[omp_get_thread_num()]-1;
+#ifdef _WIN32
+      if (SetThreadAffinityMask(GetCurrentThread(), 1 << tid) == 0) {
+#else
       cpu_set_t currentCPU;
       CPU_ZERO(&currentCPU);
       CPU_SET(tid, &currentCPU);
       if(sched_setaffinity(0, sizeof(currentCPU), &currentCPU) == -1) {
+#endif
         perror("compute_cpu_avx: sched_setaffinity");
         #pragma omp critical
         sched_failed = true;
@@ -139,10 +147,14 @@ bool compute_cpu_avx (struct benchmark_cpu* bench, double* e_time) {
     #pragma omp parallel
     {
       int tid = omp_get_thread_num();
+#ifdef _WIN32
+      if (SetThreadAffinityMask(GetCurrentThread(), 1 << tid) == 0) {
+#else
       cpu_set_t currentCPU;
       CPU_ZERO(&currentCPU);
       CPU_SET(tid, &currentCPU);
       if(sched_setaffinity(0, sizeof(currentCPU), &currentCPU) == -1) {
+#endif
         perror("compute_cpu_avx: sched_setaffinity");
         #pragma omp critical
         sched_failed = true;

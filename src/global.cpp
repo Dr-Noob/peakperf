@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include "global.hpp"
 
-void printErr(const char *fmt, ...) {
+__attribute__ ((format (printf, 1, 2))) void printErr(const char *fmt, ...) {
   const int buffer_size = 4096;
   char buffer[buffer_size];
   va_list args;

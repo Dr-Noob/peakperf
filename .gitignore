@@ -1,3 +1,6 @@
 *.o
 peakperf
-build/
+build*/
+.cache/
+compile_commands.json
+.vscode/
