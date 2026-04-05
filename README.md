@@ -15,7 +15,7 @@ Microbenchmark to achieve peak performance on x86_64 CPUs and NVIDIA GPUs.
   - [2.2 Enabling and disabling support for CPU/GPU](#22-enabling-and-disabling-support-for-cpugpu)
     - [CUDA is installed but peakperf is unable to find it](#cuda-is-installed-but-peakperf-is-unable-to-find-it)
     - [Manually disabling compilation for CPU/GPU](#manually-disabling-compilation-for-cpugpu)
-- [3. Usage:](#3-usage)
+- [3. Usage](#3-usage)
   - [3.1 Selecting CPU or GPU](#31-selecting-cpu-or-gpu)
   - [3.2. The environment](#32-the-environment)
   - [3.3. Microarchitecture detection](#33-microarchitecture-detection)
@@ -102,7 +102,7 @@ For example, building with `-DENABLE_CPU_DEVICE=OFF` results in:
 -- ----------------------
 ```
 
-# 3. Usage:
+# 3. Usage
 
 ## 3.1 Selecting CPU or GPU
 By default, peakperf will run on the CPU:
@@ -253,7 +253,47 @@ As you can see, i7-4790K's frequency while running AVX code is ~3997.630 MHz, wh
 1. The microbenchmark is not working correctly. Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues)
 2. Your CPU is not able to keep a stable frequency. This often happens if it's to hot, so the CPU is forced to low the frequency to not to melt itself.
 
-## 4.5 What can I do if I do not get the expected results?
+## 4.5 GPU Loop Unrolling: Why It Matters
+
+Unlike CPUs, GPUs use **in-order execution within warps**. This has important implications for achieving peak performance.
+
+### CPU vs GPU Scheduling
+
+Modern CPUs have sophisticated **out-of-order (OoO) schedulers** that can:
+- Reorder hundreds of instructions dynamically at runtime
+- Execute loop control instructions in parallel with compute
+- Speculatively execute ahead past branches
+
+This means CPU benchmarks can achieve peak performance by simply matching the number of independent operations to the FMA latency (e.g., 4 independent FMA chains for 4-cycle latency).
+
+GPUs, however, execute instructions **in-order within a warp**. Loop control instructions (increment, compare, branch) must execute sequentially with the FMA operations. This creates overhead that hurts performance when loops aren't unrolled.
+
+### The Problem
+
+With a simple loop containing 4-6 FMAs per iteration:
+- **6 FMAs + 3 control instructions = ~33% overhead**
+- Even with enough independent FMAs to hide latency, the loop overhead causes significant performance loss
+
+### The Solution: Loop Unrolling
+
+For a 4 latency kernel, by unrolling the loop (e.g., 32 iterations), we amortize the loop control overhead:
+- **128 FMAs + 3 control instructions = ~2.3% overhead**
+
+However, excessive unrolling increases register pressure, which reduces occupancy (fewer warps per SM), hurting the GPU's ability to hide latencies through warp-level parallelism.
+
+### Current Implementation
+
+The GPU kernel currently uses `#pragma unroll 32` as a balance between:
+1. Sufficient unrolling to amortize loop overhead
+2. Reasonable register pressure to maintain occupancy
+
+This value was determined empirically on Ada Lovelace. The optimal unroll factor may vary by architecture.
+
+### Future Work: Auto-Tuning
+
+The ideal long-term solution is **auto-tuning**: testing multiple unroll factors at build or runtime and selecting the best for each GPU architecture.
+
+## 4.6 What can I do if I do not get the expected results?
 Please create a [issue in github](https://github.com/Dr-Noob/peakperf/issues), posting the output of peakperf.
 
 # 5. Evaluation
@@ -292,7 +332,7 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | 6.1 | Pascal       | GTX 1080    | `1.809 GHz`  | `9262.08`    | `9031.42 +- 25.50`   | `2.55%` |
 | 7.5 | Turing       | RTX 2080 Ti | `~1.710 GHz` | `14883.84`   | `14717.28 +- 106.41` | `1.13%` |
 | 8.6 | Ampere       | -           | -            | -            | -                    | -       |
-| 8.9 | Ada Lovelace | RTX 4090    | `2.505 GHz`  | `82083.84`   | `79098.02 +- 76.61`  | `3.77%` |
+| 8.9 | Ada Lovelace | RTX 4090    | `2.505 GHz`  | `82083.84`   | `80010.35 +- 58.71`  | `2.59%` |
 
 _NOTE_: GTX 970 tested with old peakperf kernel (before v1.18)
 

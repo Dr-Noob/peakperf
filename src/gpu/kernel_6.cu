@@ -1,7 +1,7 @@
 #include "kernel_6.hpp"
 
 __global__
-void compute_kernel_6(float *vec_a, float *vec_b, float *vec_c) {
+void compute_kernel_6(const float * __restrict__ vec_a, const float * __restrict__ vec_b, float * __restrict__ vec_c) {
   int cid = threadIdx.x + blockIdx.x * blockDim.x;
 
   float a = vec_a[cid];
@@ -14,6 +14,7 @@ void compute_kernel_6(float *vec_a, float *vec_b, float *vec_c) {
   float c4 = c0;
   float c5 = c0;
 
+  #pragma unroll 32
   for (long i = 0; i < BENCHMARK_GPU_ITERS; i++) {
     c0 = (c0 * a) + b;
     c1 = (c1 * a) + b;
