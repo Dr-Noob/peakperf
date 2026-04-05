@@ -208,10 +208,25 @@ And, as you can see in the previous test, we got 511.43 GFLOP/S, which tell us t
 ## 4.3 The formula (GPU)
 
 ```
-N_CORES * FREQUENCY * FMA
+N_CU × ALUs_per_CU × Frequency × FMA
 ```
 
-The GPU formula is simpler. `N_CORES` in this case is simply the number of CUDA cores (in the case of NVIDIA GPUs). Modern GPUs usually support FMA.
+Where:
+- **N_CU** = Number of Compute Units (SMs on NVIDIA, CUs on AMD)
+- **ALUs_per_CU** = Scalar FP32 execution units per compute unit
+- **Frequency** = Boost clock
+- **FMA** = 2 (multiply + add)
+
+### Vendor Terminology
+
+NVIDIA and AMD use different terms for equivalent concepts:
+
+| Concept | NVIDIA Term | AMD Term | Description |
+|---------|-------------|----------|-------------|
+| Compute Unit | SM (Streaming Multiprocessor) | CU (Compute Unit) | Independent processing block with its own schedulers, register file, and local memory |
+| Thread Group | Warp (32 threads) | Wave/Wavefront (32 or 64 threads) | Threads that execute in lockstep (SIMT) |
+| Workgroup | Thread Block | Workgroup | Threads that can synchronize and share local memory |
+| Matrix Accelerator | Tensor Cores | Matrix Cores | Specialized units for matrix multiply-accumulate operations (AI/ML workloads) |
 
 ## 4.4 About the frequency to use in the formula
 
