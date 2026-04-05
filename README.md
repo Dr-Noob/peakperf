@@ -286,13 +286,15 @@ This tables shows the performance of peakperf for each of the microarchitecture 
 | Zen 3 | 2x AMD EPYC 7413 | `3.000 GHz`  | `4608.00`    | `4551.55 +- 21.45` | `1.24%` |
 
 ## NVIDIA
-| C.C | uarch        | GPU         | Clock        | PP (Formula) | PP (Experimental)   | Loss    |
-|:---:|:------------:|:-----------:|:------------:|:------------:|:-------------------:|:-------:|
-| 5.2 | Maxwell      | GTX 970     | `1.341 GHz`  | `4462.84`    | `4333.92 +- 0.90`   | `2.97%` |
-| 6.1 | Pascal       | GTX 1080    | `1.860 GHz`  | `9523.20`    | `9397.97 +- 0.10`   | `1.33%` |
-| 7.5 | Turing       | RTX 2080 Ti | `1.905 GHz`  | `16581.12`   | `16373.28 +- 16.07` | `1.26%` |
-| 8.6 | Ampere       | -           | -            | -            | -                   | -       |
-| 9.0 | Ada Lovelace | -           | -            | -            | -                   | -       |
+| C.C | uarch        | GPU         | Clock        | PP (Formula) | PP (Experimental)    | Loss    |
+|:---:|:------------:|:-----------:|:------------:|:------------:|:--------------------:|:-------:|
+| 5.2 | Maxwell      | GTX 970     | `1.341 GHz`  | `4462.84`    | `4333.92 +- 0.90`    | `2.97%` |
+| 6.1 | Pascal       | GTX 1080    | `1.809 GHz`  | `9262.08`    | `9031.42 +- 25.50`   | `2.55%` |
+| 7.5 | Turing       | RTX 2080 Ti | `~1.710 GHz` | `14883.84`   | `14717.28 +- 106.41` | `1.13%` |
+| 8.6 | Ampere       | -           | -            | -            | -                    | -       |
+| 8.9 | Ada Lovelace | RTX 4090    | `2.505 GHz`  | `82083.84`   | `79098.02 +- 76.61`  | `3.77%` |
+
+_NOTE_: GTX 970 tested with old peakperf kernel (before v1.18)
 
 _NOTE 1_: Performance measured on simple precision and GFLOP/s (gigaflops per second).
 
@@ -342,16 +344,20 @@ References:
 - [11]  [Agner Fog Instruction Tables (Page 124, VFMADD132PS)](https://www.agner.org/optimize/instruction_tables.pdf)
 - [12]  [Agner Fog Instruction Tables (Page 347, VADDPS)](https://www.agner.org/optimize/instruction_tables.pdf)
 
-## 6.2 GPU
-| uarch   | Latency  | Tested           | Refs |
-|:-------:|:--------:|:----------------:|:----:|
-| Maxwell |  6       |:heavy_check_mark:|  [] |
-| Pascal  |  6       |:heavy_check_mark:|  [] |
-| Turing  |  4       |:heavy_check_mark:|  [] |
-| Ampere  |  ?       |:x:               |  [] |
-
 _NOTES:_
 - The fact that a CPU belongs to a microarchitecture does not imply that it supports the vector extensions shown in this table (e.g, Pentium Skylake does not support AVX).
 - Older microarchitectures may be added in the future. If I have not added olds architecture is because I can't test peakperf on them since I have not access to this hardware.
 - Ice Lake and Tiger Lake support AVX512 instructions but they only have 1 AVX512 VPU (at least in client versions), while it has 2 VPUs for AVX2. Because AVX512 runs in lower freqeuncy, the performance obtained with AVX2 (using 2 VPUs) is better than with AVX512 (using 1 VPU). Thus, peak performance is obtained using AVX2, although it supports AVX512 instruction set.
 - Slots column is calculated with `FPUs x Latency`.
+
+## 6.2 GPU
+| uarch        | Latency | Tested           |
+|:------------:|:-------:|:----------------:|
+| Maxwell      | ?       |:x:               |
+| Pascal       | 4       |:heavy_check_mark:|
+| Turing       | 4       |:heavy_check_mark:|
+| Ampere       | ?       |:x:               |
+| Ada Lovelace | 4       |:heavy_check_mark:|
+
+_NOTES_:
+- References are not provided because NVIDIA does not officially publish FP32 FMA instruction latencies in their documentation. However, these latencies are experimentally validated using peakperf, since these are the latencies used by the microbenchmark (see src/gpu/arch.cu, `get_gpu_info`).
