@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.17)
 include(CheckLanguage)
 
 project(peakperf CXX)
@@ -16,6 +16,7 @@ if(NOT DEFINED ENABLE_CPU_DEVICE)
 endif()
 
 if(NOT DEFINED ENABLE_GPU_DEVICE OR ENABLE_GPU_DEVICE)
+  find_package(CUDAToolkit REQUIRED)
   check_language(CUDA)
   if(CMAKE_CUDA_COMPILER)
     enable_language(CUDA)
