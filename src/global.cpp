@@ -7,7 +7,10 @@ void printErr(const char *fmt, ...) {
   char buffer[buffer_size];
   va_list args;
   va_start(args, fmt);
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wformat-nonliteral"
   vsnprintf(buffer,buffer_size, fmt, args);
+#pragma clang diagnostic pop
   va_end(args);
   fprintf(stderr, RED "[ERROR]: " RESET "%s\n",buffer);
 }

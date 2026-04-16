@@ -284,6 +284,8 @@ struct uarch* get_uarch_from_cpuid(struct cpu* cpu, uint32_t ef, uint32_t f, uin
 }
 
 struct uarch* get_uarch(struct cpu* cpu) {
+  (void)cpu;
+#if defined(__x86_64__) || defined(__i386__)
   uint32_t eax = 0x00000001;
   uint32_t ebx = 0;
   uint32_t ecx = 0;
@@ -298,6 +300,15 @@ struct uarch* get_uarch(struct cpu* cpu) {
   uint32_t efamily = (eax >> 20) & 0xFF;
   
   return get_uarch_from_cpuid(cpu, efamily, family, emodel, model, (int)stepping);
+#elif defined(__aarch64__) || defined(__arm__)
+  struct uarch* arch = (struct uarch*) malloc(sizeof(struct uarch));
+  fill_uarch(arch, "ARM NEON", UARCH_ARM);
+  return arch;
+#else
+  struct uarch* arch = (struct uarch*) malloc(sizeof(struct uarch));
+  fill_uarch(arch, "Unknown", UARCH_UNKNOWN);
+  return arch;
+#endif
 }
 
 void free_uarch_struct(struct uarch* arch) {    
