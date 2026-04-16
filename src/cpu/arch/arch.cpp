@@ -2,7 +2,6 @@
 #include <omp.h>
 #include <string.h>
 #include <sys/time.h>
-#include <stdlib.h>
 
 #include "arch.hpp"
 #include "../../global.hpp"
@@ -88,6 +87,16 @@ double compute_gflops(int n_threads, char bench) {
       op_per_it = B_512_12_OP_IT;
       bytes_in_vect = B_512_12_BYTES;
       break;
+    case BENCH_NEON_4:
+      fma_available = B_NEON_4_FMA_AV;
+      op_per_it = B_NEON_4_OP_IT;
+      bytes_in_vect = B_NEON_4_BYTES;
+      break;
+    case BENCH_NEON_6:
+      fma_available = B_NEON_6_FMA_AV;
+      op_per_it = B_NEON_6_OP_IT;
+      bytes_in_vect = B_NEON_6_BYTES;
+      break;
     default:
       printErr("Invalid benchmark type!");
       return -1.0;
@@ -133,6 +142,8 @@ bool select_benchmark(struct benchmark_cpu* bench) {
     return false;
 #endif
   }
+  else if(bench->benchmark_type == BENCH_TYPE_ARM_NEON)
+    return select_benchmark_neon(bench);
   else {
 #if defined(__x86_64__) || defined(__i386__)
     return select_benchmark_avx(bench);
@@ -294,6 +305,9 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, struct 
       case UARCH_ZEN4:
         bench->benchmark_type = BENCH_TYPE_ZEN4;
         break;
+      case UARCH_ARM:
+        bench->benchmark_type = BENCH_TYPE_ARM_NEON;
+        break;
       default:
         printErr("Found invalid uarch: '%s'", uarch_struct->uarch_str);
         printErr("peakperf is unable to automatically select the benchmark for your CPU. Please, select the benchmark manually (see peakperf -h) and/or post this error message in https://github.com/Dr-Noob/peakperf/issues");
@@ -321,6 +335,8 @@ bool compute_cpu(struct benchmark_cpu* bench, double* e_time) {
     return false;
 #endif
   }
+  else if(bench->benchmark_type == BENCH_TYPE_ARM_NEON)
+    return compute_cpu_neon(bench, e_time);
   else {
 #if defined(__x86_64__) || defined(__i386__)
     return compute_cpu_avx(bench, e_time);
@@ -340,6 +356,13 @@ const char* get_benchmark_name_cpu(struct benchmark_cpu* bench) {
 
 const char* get_hybrid_topology_string_cpu(struct benchmark_cpu* bench) {
   if(bench->hybrid_flag) {
+    /* Fancy
+    int str_len = 3 + strlen("(performance)") + 6 + strlen("(efficiency)") + 1;
+    char* h_topo_str = (char *) malloc(sizeof(char) * str_len);
+    memset(h_topo_str, 0, str_len);
+    sprintf(h_topo_str, "%d (performance) + %d (efficiency)", bench->h_topo->p_cores, bench->h_topo->e_cores);
+    return h_topo_str;
+    */
     int ncores = bench->h_topo->p_cores + bench->h_topo->e_cores;
     char* h_topo_str = (char *) malloc(sizeof(char) * (ncores + 1));
     memset(h_topo_str, 0, (ncores + 1));
@@ -378,5 +401,9 @@ void free_benchmark_cpu(struct benchmark_cpu* bench) {
   if (bench->bench_sse) free(bench->bench_sse);
   if (bench->bench_avx) free(bench->bench_avx);
   if (bench->bench_avx512) free(bench->bench_avx512);
+  if (bench->bench_neon) free(bench->bench_neon);
+  // affinity and h_topo are managed elsewhere or shared, 
+  // but if they were allocated here, we should free them.
+  // In this project, affinity comes from cfg, and h_topo from cpu.
   free(bench);
 }

@@ -1,13 +1,19 @@
-#ifndef __ARCH__
-#define __ARCH__
+#ifndef ARCH_HPP
+#define ARCH_HPP
 
-#include <immintrin.h>
+#if defined(__x86_64__) || defined(__i386__)
+  #include <immintrin.h>
+#elif defined(__aarch64__) || defined(__arm__)
+  #include <arm_neon.h>
+#endif
+
 #include "../cpufetch/uarch.hpp"
 #include "../../getarg.hpp"
 
 #include "arch_sse.hpp"
 #include "arch_avx.hpp"
 #include "arch_avx512.hpp"
+#include "arch_neon.hpp"
 
 struct affinity_list {
   int n;
@@ -27,6 +33,7 @@ struct benchmark_cpu {
   struct benchmark_cpu_sse* bench_sse;
   struct benchmark_cpu_avx* bench_avx;
   struct benchmark_cpu_avx512* bench_avx512;
+  struct benchmark_cpu_neon* bench_neon;
 };
 
 enum {
@@ -40,6 +47,8 @@ enum {
   BENCH_256_10,
   BENCH_512_8,
   BENCH_512_12,
+  BENCH_NEON_4,
+  BENCH_NEON_6,
 };
 
 enum bench_types {
@@ -68,7 +77,8 @@ enum bench_types {
   BENCH_TYPE_ZEN_PLUS,
   BENCH_TYPE_ZEN2,
   BENCH_TYPE_ZEN3,
-  BENCH_TYPE_ZEN4
+  BENCH_TYPE_ZEN4,
+  BENCH_TYPE_ARM_NEON
 };
 
 static const char *bench_name[] = {
@@ -97,7 +107,8 @@ static const char *bench_name[] = {
   /*[BENCH_TYPE_ZEN_PLUS]        = */ "Zen+ (AVX2)",
   /*[BENCH_TYPE_ZEN2]            = */ "Zen 2 (AVX2)",
   /*[BENCH_TYPE_ZEN3]            = */ "Zen 3 (AVX2)",
-  /*[BENCH_TYPE_ZEN4]            = */ "Zen 4 (AVX2)"
+  /*[BENCH_TYPE_ZEN4]            = */ "Zen 4 (AVX2)",
+  /*[BENCH_TYPE_ARM_NEON]        = */ "ARM (NEON)"
 };
 
 static const char *bench_types_str[] = {
@@ -126,7 +137,8 @@ static const char *bench_types_str[] = {
   /*[BENCH_TYPE_ZEN_PLUS]        = */ "zen_plus",
   /*[BENCH_TYPE_ZEN2]            = */ "zen2",
   /*[BENCH_TYPE_ZEN3]            = */ "zen3",
-  /*[BENCH_TYPE_ZEN3]            = */ "zen4"
+  /*[BENCH_TYPE_ZEN3]            = */ "zen4",
+  /*[BENCH_TYPE_ARM_NEON]        = */ "arm_neon"
 };
 
 #define BENCHMARK_CPU_ITERS 1000000000
@@ -184,6 +196,14 @@ static const char *bench_types_str[] = {
 #define B_512_12_FMA_AV      2
 #define B_512_12_OP_IT       12
 #define B_512_12_BYTES       64
+//      NEON_4               //
+#define B_NEON_4_FMA_AV      2
+#define B_NEON_4_OP_IT       4
+#define B_NEON_4_BYTES       16
+//      NEON_6               //
+#define B_NEON_6_FMA_AV      2
+#define B_NEON_6_OP_IT       6
+#define B_NEON_6_BYTES       16
 
 #if defined(AVX_512_12) || defined(AVX_512_8)
   #define BYTES_IN_VECT 64
@@ -196,6 +216,10 @@ static const char *bench_types_str[] = {
 #elif defined(SSE_128_8) || defined(SSE_128_6)
   #define BYTES_IN_VECT 16
   #define TYPE __m128
+  #define SIZE OP_PER_IT*2
+#elif defined(NEON_4) || defined(NEON_6)
+  #define BYTES_IN_VECT 16
+  #define TYPE float32x4_t
   #define SIZE OP_PER_IT*2
 #endif
 

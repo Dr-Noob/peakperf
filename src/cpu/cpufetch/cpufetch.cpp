@@ -40,6 +40,7 @@ struct cpu {
   bool avx2;
   bool fma;
   bool avx512;
+  bool neon;
   bool hybrid_flag;
   struct hybrid_topology* h_topo;
 };
@@ -163,6 +164,7 @@ void fill_features_cpuid(struct cpu* cpu) {
     cpu->avx512 = false;
   }
 
+  cpu->neon = false;
   cpu->h_topo = NULL;
   cpu->hybrid_flag = false;
   if(cpu->cpu_vendor == CPU_VENDOR_INTEL && maxLevels >= 0x00000007) {
@@ -174,11 +176,12 @@ void fill_features_cpuid(struct cpu* cpu) {
       cpu->h_topo = get_hybrid_topology_internal(cpu);
     }
   }
-#else
+#elif defined(__aarch64__) || defined(__arm__)
   cpu->avx = false;
   cpu->avx2 = false;
   cpu->fma = false;
   cpu->avx512 = false;
+  cpu->neon = true;
   cpu->h_topo = NULL;
   cpu->hybrid_flag = false;
 #endif
@@ -320,7 +323,7 @@ char* cpu_name() {
   return name_withoutblank;
 #else
   char* name = (char*) malloc(sizeof(char)*64);
-  sprintf(name,"Unknown CPU");
+  sprintf(name,"ARM CPU");
   return name;
 #endif
 }
@@ -353,6 +356,10 @@ bool cpu_has_avx512(struct cpu* cpu) {
   return cpu->avx512;    
 }
 
+bool cpu_has_neon(struct cpu* cpu) {
+  return cpu->neon;
+}
+
 const char* get_str_uarch(struct cpu* cpu) {
   return cpu->uarch->uarch_str;
 }
@@ -360,8 +367,9 @@ const char* get_str_uarch(struct cpu* cpu) {
 struct cpu* get_cpu_info() {
   struct cpu* cpu = (struct cpu*) malloc(sizeof(struct cpu));
   memset(cpu, 0, sizeof(struct cpu));
-  
+
   cpu->cpu_name = cpu_name();
+
   cpu->cpu_vendor = cpu_vendor();
   cpu->uarch = get_uarch(cpu);
   fill_features_cpuid(cpu);

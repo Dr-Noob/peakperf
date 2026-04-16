@@ -1,3 +1,4 @@
+#if defined(__x86_64__) || defined(__i386__)
 void cpuid(unsigned int *eax, unsigned int *ebx, unsigned int *ecx, unsigned int *edx)
 {
         __asm__ volatile("cpuid"
@@ -7,3 +8,4 @@ void cpuid(unsigned int *eax, unsigned int *ebx, unsigned int *ecx, unsigned int
               "=d" (*edx)
             : "0" (*eax), "2" (*ecx));
 }
+#endif
