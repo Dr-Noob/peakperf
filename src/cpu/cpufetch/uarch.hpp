@@ -75,7 +75,8 @@ enum {
   UARCH_ZEN2,
   UARCH_ZEN3,
   UARCH_ZEN3_PLUS,
-  UARCH_ZEN4
+  UARCH_ZEN4,
+  UARCH_ARM
 };
 
 struct uarch {

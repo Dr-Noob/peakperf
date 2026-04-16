@@ -84,6 +84,7 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops, b
   printf("%*s Microarch: %s\n",   (int) (max_len-strlen("Microarch")),            "", device_uarch);
   if(hybrid_topo != NULL) {
     printf("%*s Topology: %s\n",  (int) (max_len-strlen("Topology")),            "", hybrid_topo);
+    free((void*)hybrid_topo);
   }
   if(bench_name != NULL) {
     printf("%*s Benchmark: %s\n",   (int) (max_len-strlen("Benchmark")),            "", bench_name);
@@ -92,6 +93,7 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops, b
   printf("%*s GFLOP: %.2f\n",     (int) (max_len-strlen("GFLOP")),                "", gflops);
   if(affinity_list != NULL) {
     printf("%*s Affinity: %s\n",  (int) (max_len-strlen("Affinity")),            "", affinity_list);
+    free((void*)affinity_list);
   }
   for(int i=0; i < cfg_str->num_fields; i++) {
     printf("%*s %s: %d\n",        (int) (max_len-strlen(cfg_str->field_name[i])), "", cfg_str->field_name[i], cfg_str->field_value[i]);
@@ -99,6 +101,7 @@ void print_header(struct benchmark* bench, struct hardware* hw, double gflops, b
   putchar('\n');
 
   printf(BOLD "%6s %8s %8s" RESET "\n","Nº","Time(s)","GFLOP/s");
+  free_cfg_str(cfg_str);
 }
 
 int main(int argc, char* argv[]) {
@@ -126,22 +129,28 @@ int main(int argc, char* argv[]) {
   }
 
   if(list_gpus()) {
-    return print_gpus_list(bench);
+    int ret = print_gpus_list(bench);
+    exit_benchmark(bench);
+    return ret;
   }
   struct config* cfg = get_config();
-  bool list_benchs = list_benchmarks();
   struct hardware* hw = get_hardware_info(bench, cfg);
   if(hw == NULL) {
+    exit_benchmark(bench);
     return EXIT_FAILURE;
   }
 
   if(list_benchmarks()) {
     print_bench_types(bench, hw);
+    free_hardware(hw);
+    exit_benchmark(bench);
     return EXIT_SUCCESS;
   }
 
   bool flag = init_benchmark(bench, hw, cfg, benchmark_name);
   if(!flag) {
+    free_hardware(hw);
+    exit_benchmark(bench);
     return EXIT_FAILURE;
   }
 
@@ -156,7 +165,12 @@ int main(int argc, char* argv[]) {
   print_header(bench, hw, gflops, show_hybrid_topo());
 
   for (int trial = 0; trial < n_trials+n_warmup_trials; trial++) {
-    if(!compute(bench, &e_time)) return EXIT_FAILURE;
+    if(!compute(bench, &e_time)) {
+      free(gflops_list);
+      free_hardware(hw);
+      exit_benchmark(bench);
+      return EXIT_FAILURE;
+    }
 
     if (trial >= n_warmup_trials) {
       mean += 1/(gflops/e_time);
@@ -180,7 +194,10 @@ int main(int argc, char* argv[]) {
     printf("\n* - warm-up, not included in average");
   printf("\n\n");
 
+  free(gflops_list);
+  free_hardware(hw);
   exit_benchmark(bench);
+  free_config(cfg);
 
   return EXIT_SUCCESS;
 }

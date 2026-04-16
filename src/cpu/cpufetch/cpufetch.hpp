@@ -13,6 +13,7 @@ struct hybrid_topology {
 };
 
 struct cpu* get_cpu_info();
+void free_cpu_info(struct cpu* cpu);
 
 bool is_cpu_intel(struct cpu* cpu);
 bool is_cpu_amd(struct cpu* cpu);
@@ -21,6 +22,7 @@ bool cpu_has_avx(struct cpu* cpu);
 bool cpu_has_avx2(struct cpu* cpu);
 bool cpu_has_fma(struct cpu* cpu);
 bool cpu_has_avx512(struct cpu* cpu);
+bool cpu_has_neon(struct cpu* cpu);
 char* get_str_cpu_name(struct cpu* cpu);
 struct uarch* get_uarch_struct(struct cpu* cpu);
 struct hybrid_topology* get_hybrid_topology(struct cpu* cpu);
