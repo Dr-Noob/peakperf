@@ -94,5 +94,6 @@ int get_warmup_trials();
 char* get_benchmark_str_args();
 device_type get_device_type();
 struct config* get_config();
+void free_config(struct config* cfg);
 
 #endif

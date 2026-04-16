@@ -45,6 +45,7 @@ struct cpu {
 };
 
 int32_t get_core_type(void) {
+#if defined(__x86_64__) || defined(__i386__)
   uint32_t eax = 0x0000001A;
   uint32_t ebx = 0;
   uint32_t ecx = 0;
@@ -60,6 +61,9 @@ int32_t get_core_type(void) {
     printErr("Found invalid core type: 0x%.8X\n", type);
     return CORE_TYPE_UNKNOWN;
   }
+#else
+  return CORE_TYPE_PERFORMANCE;
+#endif
 }
 
 bool bind_to_cpu(int cpu_id) {
@@ -73,6 +77,7 @@ bool bind_to_cpu(int cpu_id) {
 }
 
 struct hybrid_topology* get_hybrid_topology_internal(struct cpu* cpu) {
+  (void)cpu;
   int ncores;
   if((ncores = sysconf(_SC_NPROCESSORS_ONLN)) == -1) {
     printErr("sysconf(_SC_NPROCESSORS_ONLN): %s", strerror(errno));
@@ -117,6 +122,7 @@ struct hybrid_topology* get_hybrid_topology_internal(struct cpu* cpu) {
 }
 
 void fill_features_cpuid(struct cpu* cpu) {
+#if defined(__x86_64__) || defined(__i386__)
   uint32_t eax = 0;
   uint32_t ebx = 0;
   uint32_t ecx = 0;
@@ -168,6 +174,14 @@ void fill_features_cpuid(struct cpu* cpu) {
       cpu->h_topo = get_hybrid_topology_internal(cpu);
     }
   }
+#else
+  cpu->avx = false;
+  cpu->avx2 = false;
+  cpu->fma = false;
+  cpu->avx512 = false;
+  cpu->h_topo = NULL;
+  cpu->hybrid_flag = false;
+#endif
 }
 
 void get_name_cpuid(char* name, uint32_t reg1, uint32_t reg2, uint32_t reg3) {
@@ -190,6 +204,7 @@ void get_name_cpuid(char* name, uint32_t reg1, uint32_t reg2, uint32_t reg3) {
 }
 
 VENDOR cpu_vendor() {
+#if defined(__x86_64__) || defined(__i386__)
   uint32_t eax = 0;
   uint32_t ebx = 0;
   uint32_t ecx = 0;
@@ -209,9 +224,13 @@ VENDOR cpu_vendor() {
     printf("Unknown CPU vendor: %s", name);
     return CPU_VENDOR_UNKNOWN;
   }    
+#else
+  return CPU_VENDOR_UNKNOWN;
+#endif
 }
 
 char* cpu_name() {
+#if defined(__x86_64__) || defined(__i386__)
   unsigned eax = 0;
   unsigned ebx = 0;
   unsigned ecx = 0;
@@ -233,64 +252,64 @@ char* cpu_name() {
   eax = 0x80000002;
   cpuid(&eax, &ebx, &ecx, &edx);
 
-  name[__COUNTER__] = eax       & MASK;
-  name[__COUNTER__] = (eax>>8)  & MASK;
-  name[__COUNTER__] = (eax>>16) & MASK;
-  name[__COUNTER__] = (eax>>24) & MASK;
-  name[__COUNTER__] = ebx       & MASK;
-  name[__COUNTER__] = (ebx>>8)  & MASK;
-  name[__COUNTER__] = (ebx>>16) & MASK;
-  name[__COUNTER__] = (ebx>>24) & MASK;
-  name[__COUNTER__] = ecx       & MASK;
-  name[__COUNTER__] = (ecx>>8)  & MASK;
-  name[__COUNTER__] = (ecx>>16) & MASK;
-  name[__COUNTER__] = (ecx>>24) & MASK;
-  name[__COUNTER__] = edx       & MASK;
-  name[__COUNTER__] = (edx>>8)  & MASK;
-  name[__COUNTER__] = (edx>>16) & MASK;
-  name[__COUNTER__] = (edx>>24) & MASK;
+  name[0] = eax       & MASK;
+  name[1] = (eax>>8)  & MASK;
+  name[2] = (eax>>16) & MASK;
+  name[3] = (eax>>24) & MASK;
+  name[4] = ebx       & MASK;
+  name[5] = (ebx>>8)  & MASK;
+  name[6] = (ebx>>16) & MASK;
+  name[7] = (ebx>>24) & MASK;
+  name[8] = ecx       & MASK;
+  name[9] = (ecx>>8)  & MASK;
+  name[10] = (ecx>>16) & MASK;
+  name[11] = (ecx>>24) & MASK;
+  name[12] = edx       & MASK;
+  name[13] = (edx>>8)  & MASK;
+  name[14] = (edx>>16) & MASK;
+  name[15] = (edx>>24) & MASK;
 
   eax = 0x80000003;
   cpuid(&eax, &ebx, &ecx, &edx);
 
-  name[__COUNTER__] = eax       & MASK;
-  name[__COUNTER__] = (eax>>8)  & MASK;
-  name[__COUNTER__] = (eax>>16) & MASK;
-  name[__COUNTER__] = (eax>>24) & MASK;
-  name[__COUNTER__] = ebx       & MASK;
-  name[__COUNTER__] = (ebx>>8)  & MASK;
-  name[__COUNTER__] = (ebx>>16) & MASK;
-  name[__COUNTER__] = (ebx>>24) & MASK;
-  name[__COUNTER__] = ecx       & MASK;
-  name[__COUNTER__] = (ecx>>8)  & MASK;
-  name[__COUNTER__] = (ecx>>16) & MASK;
-  name[__COUNTER__] = (ecx>>24) & MASK;
-  name[__COUNTER__] = edx       & MASK;
-  name[__COUNTER__] = (edx>>8)  & MASK;
-  name[__COUNTER__] = (edx>>16) & MASK;
-  name[__COUNTER__] = (edx>>24) & MASK;
+  name[16] = eax       & MASK;
+  name[17] = (eax>>8)  & MASK;
+  name[18] = (eax>>16) & MASK;
+  name[19] = (eax>>24) & MASK;
+  name[20] = ebx       & MASK;
+  name[21] = (ebx>>8)  & MASK;
+  name[22] = (ebx>>16) & MASK;
+  name[23] = (ebx>>24) & MASK;
+  name[24] = ecx       & MASK;
+  name[25] = (ecx>>8)  & MASK;
+  name[26] = (ecx>>16) & MASK;
+  name[27] = (ecx>>24) & MASK;
+  name[28] = edx       & MASK;
+  name[29] = (edx>>8)  & MASK;
+  name[30] = (edx>>16) & MASK;
+  name[31] = (edx>>24) & MASK;
 
   eax = 0x80000004;
   cpuid(&eax, &ebx, &ecx, &edx);
 
-  name[__COUNTER__] = eax       & MASK;
-  name[__COUNTER__] = (eax>>8)  & MASK;
-  name[__COUNTER__] = (eax>>16) & MASK;
-  name[__COUNTER__] = (eax>>24) & MASK;
-  name[__COUNTER__] = ebx       & MASK;
-  name[__COUNTER__] = (ebx>>8)  & MASK;
-  name[__COUNTER__] = (ebx>>16) & MASK;
-  name[__COUNTER__] = (ebx>>24) & MASK;
-  name[__COUNTER__] = ecx       & MASK;
-  name[__COUNTER__] = (ecx>>8)  & MASK;
-  name[__COUNTER__] = (ecx>>16) & MASK;
-  name[__COUNTER__] = (ecx>>24) & MASK;
-  name[__COUNTER__] = edx       & MASK;
-  name[__COUNTER__] = (edx>>8)  & MASK;
-  name[__COUNTER__] = (edx>>16) & MASK;
-  name[__COUNTER__] = (edx>>24) & MASK;
+  name[32] = eax       & MASK;
+  name[33] = (eax>>8)  & MASK;
+  name[34] = (eax>>16) & MASK;
+  name[35] = (eax>>24) & MASK;
+  name[36] = ebx       & MASK;
+  name[37] = (ebx>>8)  & MASK;
+  name[38] = (ebx>>16) & MASK;
+  name[39] = (ebx>>24) & MASK;
+  name[40] = ecx       & MASK;
+  name[41] = (ecx>>8)  & MASK;
+  name[42] = (ecx>>16) & MASK;
+  name[43] = (ecx>>24) & MASK;
+  name[44] = edx       & MASK;
+  name[45] = (edx>>8)  & MASK;
+  name[46] = (edx>>16) & MASK;
+  name[47] = (edx>>24) & MASK;
 
-  name[__COUNTER__] = '\0';
+  name[48] = '\0';
 
   //Remove unused characters
   int i = 0;
@@ -299,6 +318,11 @@ char* cpu_name() {
   char* name_withoutblank = (char *) malloc(sizeof(char)*64);
   strcpy(name_withoutblank,name+i);
   return name_withoutblank;
+#else
+  char* name = (char*) malloc(sizeof(char)*64);
+  sprintf(name,"Unknown CPU");
+  return name;
+#endif
 }
 
 bool is_cpu_intel(struct cpu* cpu) {
@@ -335,6 +359,7 @@ const char* get_str_uarch(struct cpu* cpu) {
 
 struct cpu* get_cpu_info() {
   struct cpu* cpu = (struct cpu*) malloc(sizeof(struct cpu));
+  memset(cpu, 0, sizeof(struct cpu));
   
   cpu->cpu_name = cpu_name();
   cpu->cpu_vendor = cpu_vendor();
@@ -342,6 +367,17 @@ struct cpu* get_cpu_info() {
   fill_features_cpuid(cpu);
   
   return cpu;
+}
+
+void free_cpu_info(struct cpu* cpu) {
+  if (cpu == NULL) return;
+  if (cpu->cpu_name) free(cpu->cpu_name);
+  if (cpu->uarch) free_uarch_struct(cpu->uarch);
+  if (cpu->h_topo) {
+    if (cpu->h_topo->core_mask) free(cpu->h_topo->core_mask);
+    free(cpu->h_topo);
+  }
+  free(cpu);
 }
 
 char* get_str_cpu_name(struct cpu* cpu) {

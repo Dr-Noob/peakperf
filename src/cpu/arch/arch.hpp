@@ -202,6 +202,7 @@ static const char *bench_types_str[] = {
 struct benchmark_cpu;
 
 struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, struct affinity_list* affinity, char* bench_type_str, bool pcores_only);
+void free_benchmark_cpu(struct benchmark_cpu* bench);
 bool compute_cpu(struct benchmark_cpu* bench, double* e_time);
 double get_gflops_cpu(struct benchmark_cpu* bench);
 const char* get_benchmark_name_cpu(struct benchmark_cpu* bench);

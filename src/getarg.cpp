@@ -168,6 +168,7 @@ bool parseArgs(int argc, char* argv[]) {
   args.nbk = INVALID_CFG;
   args.gpu_idx = 0;
   args.cfg = (struct config *) malloc(sizeof(struct config));
+  memset(args.cfg, 0, sizeof(struct config));
 
   constexpr char *c = (char *) args_chr;
 
@@ -432,4 +433,13 @@ device_type get_device_type() {
 
 struct config* get_config() {
   return args.cfg;
+}
+
+void free_config(struct config* cfg) {
+  if (cfg == NULL) return;
+  if (cfg->affinity) {
+    if (cfg->affinity->list) free(cfg->affinity->list);
+    free(cfg->affinity);
+  }
+  free(cfg);
 }

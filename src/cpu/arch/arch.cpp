@@ -2,6 +2,7 @@
 #include <omp.h>
 #include <string.h>
 #include <sys/time.h>
+#include <stdlib.h>
 
 #include "arch.hpp"
 #include "../../global.hpp"
@@ -17,6 +18,7 @@ bench_type parse_benchmark_cpu(char* str) {
 }
 
 void print_bench_types_cpu(struct cpu* cpu) {
+  (void)cpu;
   int len = sizeof(bench_types_str) / sizeof(bench_types_str[0]);
   long unsigned int longest = 0;
   long unsigned int total_length = 0;
@@ -31,7 +33,7 @@ void print_bench_types_cpu(struct cpu* cpu) {
   for(long unsigned i=0; i < total_length; i++) putchar('-');
   putchar('\n');
   for(bench_type t = 0; t < len; t++) {
-    printf("  - %s %*s(Keyword: %s)\n", bench_name[t], (int) (strlen(bench_name[t]) - longest), "", bench_types_str[t]);
+    printf("  - %s %*s(Keyword: %s)\n", bench_name[t], (int) (longest - strlen(bench_name[t])), "", bench_types_str[t]);
   }
 }
 
@@ -117,16 +119,32 @@ double compute_gflops(int n_threads, char bench) {
  * - Zen 4           -> zen4
  */
 bool select_benchmark(struct benchmark_cpu* bench) {
-  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT || bench->benchmark_type == BENCH_TYPE_WHISKEY_LAKE_128)
+  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT || bench->benchmark_type == BENCH_TYPE_WHISKEY_LAKE_128) {
+#if defined(__x86_64__) || defined(__i386__)
     return select_benchmark_sse(bench);
-  else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING)
+#else
+    return false;
+#endif
+  }
+  else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING) {
+#if defined(__x86_64__) || defined(__i386__)
     return select_benchmark_avx512(bench);
-  else
+#else
+    return false;
+#endif
+  }
+  else {
+#if defined(__x86_64__) || defined(__i386__)
     return select_benchmark_avx(bench);
+#else
+    return false;
+#endif
+  }
 }
 
 struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, struct affinity_list* affinity, char *bench_type_str, bool pcores_only) {
   struct benchmark_cpu* bench = (struct benchmark_cpu*) malloc(sizeof(struct benchmark_cpu));
+  memset(bench, 0, sizeof(struct benchmark_cpu));
   bench_type benchmark_type;
 
   if(bench_type_str == NULL) {
@@ -168,9 +186,9 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, struct 
 
     for (int i=0; i < bench->affinity->n; i++) {
       thread_set[i] = true;
-      printf("%d\n", bench->affinity->list[i]);
       if (bench->affinity->list[i] > max_threads || bench->affinity->list[i] <= 0) {
         printErr("Affinity value %d is out of range (min=1,max=%d)", bench->affinity->list[i], max_threads);
+        free(thread_set);
         return NULL;
       }
     }
@@ -180,6 +198,7 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, struct 
       if (thread_set[i]) n_threads_aff++;
     }
     bench->n_threads = n_threads_aff;
+    free(thread_set);
   }
 
   // Manual benchmark select
@@ -288,12 +307,27 @@ struct benchmark_cpu* init_benchmark_cpu(struct cpu* cpu, int n_threads, struct 
 }
 
 bool compute_cpu(struct benchmark_cpu* bench, double* e_time) {
-  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT)
+  if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_128 || bench->benchmark_type == BENCH_TYPE_NEHALEM || bench->benchmark_type == BENCH_TYPE_AIRMONT) {
+#if defined(__x86_64__) || defined(__i386__)
     return compute_cpu_sse(bench, e_time);
-  else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING)
+#else
+    return false;
+#endif
+  }
+  else if(bench->benchmark_type == BENCH_TYPE_SKYLAKE_512 || bench->benchmark_type == BENCH_TYPE_KNIGHTS_LANDING) {
+#if defined(__x86_64__) || defined(__i386__)
     return compute_cpu_avx512(bench, e_time);
-  else
+#else
+    return false;
+#endif
+  }
+  else {
+#if defined(__x86_64__) || defined(__i386__)
     return compute_cpu_avx(bench, e_time);
+#else
+    return false;
+#endif
+  }
 }
 
 double get_gflops_cpu(struct benchmark_cpu* bench) {
@@ -306,13 +340,6 @@ const char* get_benchmark_name_cpu(struct benchmark_cpu* bench) {
 
 const char* get_hybrid_topology_string_cpu(struct benchmark_cpu* bench) {
   if(bench->hybrid_flag) {
-    /* Fancy
-    int str_len = 3 + strlen("(performance)") + 6 + strlen("(efficiency)") + 1;
-    char* h_topo_str = (char *) malloc(sizeof(char) * str_len);
-    memset(h_topo_str, 0, str_len);
-    sprintf(h_topo_str, "%d (performance) + %d (efficiency)", bench->h_topo->p_cores, bench->h_topo->e_cores);
-    return h_topo_str;
-    */
     int ncores = bench->h_topo->p_cores + bench->h_topo->e_cores;
     char* h_topo_str = (char *) malloc(sizeof(char) * (ncores + 1));
     memset(h_topo_str, 0, (ncores + 1));
@@ -344,4 +371,12 @@ int get_n_threads(struct benchmark_cpu* bench) {
   if (bench->affinity == NULL)
      return bench->n_threads;
   return bench->affinity->n;
+}
+
+void free_benchmark_cpu(struct benchmark_cpu* bench) {
+  if (bench == NULL) return;
+  if (bench->bench_sse) free(bench->bench_sse);
+  if (bench->bench_avx) free(bench->bench_avx);
+  if (bench->bench_avx512) free(bench->bench_avx512);
+  free(bench);
 }
