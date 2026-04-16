@@ -33,6 +33,7 @@ static const char *device_str[] = {
 
 struct benchmark* init_benchmark_device(device_type device) {
   struct benchmark* bench = (struct benchmark *) malloc(sizeof(struct benchmark));
+  memset(bench, 0, sizeof(struct benchmark));
   bench->device = device;
 
   if(device == DEVICE_TYPE_CPU) {
@@ -58,7 +59,9 @@ struct benchmark* init_benchmark_device(device_type device) {
 }
 
 struct hardware* get_hardware_info(struct benchmark* bench, struct config* cfg) {
-  struct hardware* hw = (struct hardware *) malloc(sizeof(struct hardware));
+  (void)cfg;
+  struct hardware* hw = (struct hardware*) malloc(sizeof(struct hardware));
+
 
   if(bench->device == DEVICE_TYPE_CPU) {
     #ifdef DEVICE_CPU_ENABLED
@@ -157,11 +160,37 @@ const char* get_affinity_string(struct benchmark* bench) {
 }
 
 void exit_benchmark(struct benchmark* bench) {
+  if (bench == NULL) return;
   if(bench->device == DEVICE_TYPE_GPU) {
     #ifdef DEVICE_GPU_ENABLED
     exit_benchmark_gpu();
     #endif
   }
+  #ifdef DEVICE_CPU_ENABLED
+  else if (bench->device == DEVICE_TYPE_CPU) {
+    if (bench->cpu_bench) free_benchmark_cpu(bench->cpu_bench);
+  }
+  #endif
+  free(bench);
+}
+
+void free_hardware(struct hardware* hw) {
+  if (hw == NULL) return;
+  #ifdef DEVICE_CPU_ENABLED
+  if (hw->cpu) free_cpu_info(hw->cpu);
+  #endif
+  // GPU hardware cleanup if needed
+  free(hw);
+}
+
+void free_cfg_str(struct config_str* cfg_str) {
+  if (cfg_str == NULL) return;
+  for (int i=0; i < cfg_str->num_fields; i++) {
+    free(cfg_str->field_name[i]);
+  }
+  free(cfg_str->field_name);
+  free(cfg_str->field_value);
+  free(cfg_str);
 }
 
 char* get_device_name_str(struct benchmark* bench, struct hardware* hw) {

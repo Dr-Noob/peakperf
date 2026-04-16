@@ -13,6 +13,7 @@ struct hybrid_topology {
 };
 
 struct cpu* get_cpu_info();
+void free_cpu_info(struct cpu* cpu);
 
 bool is_cpu_intel(struct cpu* cpu);
 bool is_cpu_amd(struct cpu* cpu);
